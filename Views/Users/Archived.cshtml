@@ -1,0 +1,32 @@
+﻿@model IEnumerable<SocialWelfarre.Models.ApplicationUser>
+@{
+    ViewData["Title"] = "Archived Users";
+}
+
+<h2>Archived Users</h2>
+<table class="table">
+    <thead>
+        <tr>
+            <th>EmpNo</th>
+            <th>Full Name</th>
+            <th>Email</th>
+            <th>Gender</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var user in Model)
+        {
+            <tr>
+                <td>@user.EmpNo</td>
+                <td>@user.FullName</td>
+                <td>@user.Email</td>
+                <td>@user.Gender</td>
+                <td>
+                    <a asp-action="Unarchive" asp-route-id="@user.Id" class="btn btn-success btn-sm">Unarchive</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+<a asp-action="ViewCreate" class="btn btn-secondary">View Active Users</a>

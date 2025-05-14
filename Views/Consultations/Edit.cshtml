@@ -1,0 +1,314 @@
+﻿@model SocialWelfarre.Models.Consultation
+
+@{
+    ViewData["Title"] = "Edit Consultation";
+    Layout = "/Views/Shared/_DashboardLayout.cshtml";
+}
+
+<style>
+    .form-select {
+        border-radius: 8px;
+        padding: 10px;
+        font-size: 16px;
+        border: 1px solid #ced4da;
+        transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    }
+
+        .form-select:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
+            outline: none;
+        }
+
+        .form-select:hover {
+            border-color: #6c757d;
+        }
+
+    .form-group label {
+        font-weight: 500;
+        color: #343a40;
+        margin-bottom: 8px;
+    }
+
+    .form-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+    }
+
+    .form-group {
+        flex: 1;
+        min-width: 200px;
+    }
+
+        .form-group label i {
+            color: #007bff;
+            margin-right: 5px;
+        }
+
+    .custom-file-upload {
+        position: relative;
+        display: inline-block;
+        width: 100%;
+    }
+
+        .custom-file-upload input[type="file"] {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+    .custom-file-label {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 10px 15px;
+        background-color: #007bff;
+        color: white;
+        border-radius: 8px;
+        font-size: 16px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        width: 100%;
+        text-align: center;
+    }
+
+        .custom-file-label i {
+            margin-right: 8px;
+        }
+
+        .custom-file-label:hover {
+            background-color: #0056b3;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+            transform: translateY(-1px);
+        }
+
+        .custom-file-label:active {
+            transform: translateY(1px);
+        }
+
+    .text-danger {
+        margin-top: 5px;
+        display: block;
+    }
+</style>
+
+<div class="card">
+    <div class="card-body">
+        <div class="form-section">
+            <h4><i class="fas fa-edit"></i> Edit Consultation</h4>
+            <form asp-action="Edit" method="post" enctype="multipart/form-data">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <input type="hidden" asp-for="Id" />
+                <div class="form-row">
+                    <div class="form-group col-md-2">
+                        <label asp-for="First_Name2" class="form-label"><i class="fas fa-user"></i> First Name</label>
+                        <input asp-for="First_Name2" class="form-control" placeholder="Enter First Name" />
+                        <span asp-validation-for="First_Name2" class="text-danger"></span>
+                    </div>
+                    <div class="form-group col-md-2">
+                        <label asp-for="Middle_Name2" class="form-label"><i class="fas fa-user"></i> Middle Name</label>
+                        <input asp-for="Middle_Name2" class="form-control" placeholder="Enter Middle Name" />
+                        <span asp-validation-for="Middle_Name2" class="text-danger"></span>
+                    </div>
+                    <div class="form-group col-md-2">
+                        <label asp-for="Last_Name2" class="form-label"><i class="fas fa-user"></i> Last Name</label>
+                        <input asp-for="Last_Name2" class="form-control" placeholder="Enter Last Name" />
+                        <span asp-validation-for="Last_Name2" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <!-- Barangay Certificate -->
+                    <div class="form-group col-md-3">
+                        <label for="brgyCertFile"><i class="fas fa-file-alt"></i> Barangay Certificate</label>
+                        <div class="custom-file-upload">
+                            <input type="file" name="brgyCertFile" id="brgyCertFile" accept=".jpg,.jpeg,.png,.pdf" />
+                            <label for="brgyCertFile" class="custom-file-label"><i class="fas fa-upload"></i> Choose File</label>
+                        </div>
+                        <span asp-validation-for="Brgy_Cert2" class="text-danger"></span>
+                        @if (ViewData.ModelState["brgyCertFile"]?.Errors.Any() == true)
+                        {
+                            <span class="text-danger">@ViewData.ModelState["brgyCertFile"].Errors.First().ErrorMessage</span>
+                        }
+                        @if (!string.IsNullOrEmpty(Model.Brgy_Cert_Path2))
+                        {
+                            <p>
+                                Current file:
+                                @{
+                                    var extension = System.IO.Path.GetExtension(Model.Brgy_Cert_Path2)?.ToLower();
+                                    if (!string.IsNullOrEmpty(extension) && (extension == ".jpg" || extension == ".jpeg" || extension == ".png"))
+                                    {
+                                        <img src="@Url.Content(Model.Brgy_Cert_Path2)" alt="Barangay Certificate" width="100" />
+                                    }
+                                    else
+                                    {
+                                        <span>Non-image file</span>
+                                    }
+                                }
+                            </p>
+                        }
+                    </div>
+                    <!-- Proof of Solo Parent -->
+                    <div class="form-group col-md-3">
+                        <label for="proofSoloParentFile"><i class="fas fa-file-alt"></i> Proof of Solo Parent</label>
+                        <div class="custom-file-upload">
+                            <input type="file" name="proofSoloParentFile" id="proofSoloParentFile" accept=".jpg,.jpeg,.png,.pdf" />
+                            <label for="proofSoloParentFile" class="custom-file-label"><i class="fas fa-upload"></i> Choose File</label>
+                        </div>
+                        <span asp-validation-for="Proof_SoloParent2" class="text-danger"></span>
+                        @if (ViewData.ModelState["proofSoloParentFile"]?.Errors.Any() == true)
+                        {
+                            <span class="text-danger">@ViewData.ModelState["proofSoloParentFile"].Errors.First().ErrorMessage</span>
+                        }
+                        @if (!string.IsNullOrEmpty(Model.Proof_SoloParent_Path2))
+                        {
+                            <p>
+                                Current file:
+                                @{
+                                    var extension = System.IO.Path.GetExtension(Model.Proof_SoloParent_Path2)?.ToLower();
+                                    if (!string.IsNullOrEmpty(extension) && (extension == ".jpg" || extension == ".jpeg" || extension == ".png"))
+                                    {
+                                        <img src="@Url.Content(Model.Proof_SoloParent_Path2)" alt="Proof of Solo Parent" width="100" />
+                                    }
+                                    else
+                                    {
+                                        <span>Non-image file</span>
+                                    }
+                                }
+                            </p>
+                        }
+                    </div>
+                </div>
+                <div class="form-row">
+                    <!-- Birth Certificate -->
+                    <div class="form-group col-md-3">
+                        <label for="birthCertFile"><i class="fas fa-file-alt"></i> Birth Certificate</label>
+                        <div class="custom-file-upload">
+                            <input type="file" name="birthCertFile" id="birthCertFile" accept=".jpg,.jpeg,.png,.pdf" />
+                            <label for="birthCertFile" class="custom-file-label"><i class="fas fa-upload"></i> Choose File</label>
+                        </div>
+                        <span asp-validation-for="Birth_Cert2" class="text-danger"></span>
+                        @if (ViewData.ModelState["birthCertFile"]?.Errors.Any() == true)
+                        {
+                            <span class="text-danger">@ViewData.ModelState["birthCertFile"].Errors.First().ErrorMessage</span>
+                        }
+                        @if (!string.IsNullOrEmpty(Model.Birth_Cert_Path2))
+                        {
+                            <p>
+                                Current file:
+                                @{
+                                    var extension = System.IO.Path.GetExtension(Model.Birth_Cert_Path2)?.ToLower();
+                                    if (!string.IsNullOrEmpty(extension) && (extension == ".jpg" || extension == ".jpeg" || extension == ".png"))
+                                    {
+                                        <img src="@Url.Content(Model.Birth_Cert_Path2)" alt="Birth Certificate" width="100" />
+                                    }
+                                    else
+                                    {
+                                        <span>Non-image file</span>
+                                    }
+                                }
+                            </p>
+                        }
+                    </div>
+                    <!-- Valid ID -->
+                    <div class="form-group col-md-3">
+                        <label for="validIdFile"><i class="fas fa-id-card"></i> Valid ID</label>
+                        <div class="custom-file-upload">
+                            <input type="file" name="validIdFile" id="validIdFile" accept=".jpg,.jpeg,.png,.pdf" />
+                            <label for="validIdFile" class="custom-file-label"><i class="fas fa-upload"></i> Choose File</label>
+                        </div>
+                        <span asp-validation-for="Valid_ID2" class="text-danger"></span>
+                        @if (ViewData.ModelState["validIdFile"]?.Errors.Any() == true)
+                        {
+                            <span class="text-danger">@ViewData.ModelState["validIdFile"].Errors.First().ErrorMessage</span>
+                        }
+                        @if (!string.IsNullOrEmpty(Model.Valid_ID_Path2))
+                        {
+                            <p>
+                                Current file:
+                                @{
+                                    var extension = System.IO.Path.GetExtension(Model.Valid_ID_Path2)?.ToLower();
+                                    if (!string.IsNullOrEmpty(extension) && (extension == ".jpg" || extension == ".jpeg" || extension == ".png"))
+                                    {
+                                        <img src="@Url.Content(Model.Valid_ID_Path2)" alt="Valid ID" width="100" />
+                                    }
+                                    else
+                                    {
+                                        <span>Non-image file</span>
+                                    }
+                                }
+                            </p>
+                        }
+                    </div>
+                </div>
+                <div class="form-row">
+                    <!-- 1x1 Picture -->
+                    <div class="form-group col-md-3">
+                        <label for="x1PicFile"><i class="fas fa-image"></i> 1x1 Picture</label>
+                        <div class="custom-file-upload">
+                            <input type="file" name="x1PicFile" id="x1PicFile" accept=".jpg,.jpeg,.png" />
+                            <label for="x1PicFile" class="custom-file-label"><i class="fas fa-upload"></i> Choose File</label>
+                        </div>
+                        <span asp-validation-for="x1_Pic2" class="text-danger"></span>
+                        @if (ViewData.ModelState["x1PicFile"]?.Errors.Any() == true)
+                        {
+                            <span class="text-danger">@ViewData.ModelState["x1PicFile"].Errors.First().ErrorMessage</span>
+                        }
+                        @if (!string.IsNullOrEmpty(Model.x1_Pic_Path2))
+                        {
+                            <p>
+                                Current file:
+                                <img src="@Url.Content(Model.x1_Pic_Path2)" alt="1x1 Picture" width="100" />
+                            </p>
+                        }
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-md-2">
+                        <label asp-for="Consultation_Date" class="form-label"><i class="fas fa-calendar-alt"></i> Consultation Date</label>
+                        <input asp-for="Consultation_Date" class="form-control" type="date" />
+                        <span asp-validation-for="Consultation_Date" class="text-danger"></span>
+                    </div>
+                    <div class="form-group col-md-2">
+                        <label asp-for="Consultation_Time" class="form-label"><i class="fas fa-clock"></i> Consultation Time</label>
+                        <input asp-for="Consultation_Time" class="form-control" type="time" />
+                        <span asp-validation-for="Consultation_Time" class="text-danger"></span>
+                    </div>
+                    <div class="form-group col-md-2">
+                        <label asp-for="Consultation_status" class="form-label"><i class="fas fa-info-circle"></i> Status</label>
+                        <select asp-for="Consultation_status" class="form-select">
+                            <option value="">-- Select Status --</option>
+                            <option value="Pending">Pending</option>
+                            <option value="Approved">Approved</option>
+                            <option value="Rejected">Rejected</option>
+                        </select>
+                        <span asp-validation-for="Consultation_status" class="text-danger"></span>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary mt-1"><i class="fas fa-save"></i> Save</button>
+                <a asp-action="Index" class="btn btn-secondary mt-1">Cancel</a>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script>
+        document.querySelectorAll('.custom-file-upload input[type="file"]').forEach(input => {
+            input.addEventListener('change', function () {
+                const label = this.nextElementSibling;
+                const fileName = this.files.length > 0 ? this.files[0].name : 'Choose File';
+                label.innerHTML = `<i class="fas fa-upload"></i> ${fileName}`;
+            });
+        });
+    </script>
+}

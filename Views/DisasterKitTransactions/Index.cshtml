@@ -1,0 +1,140 @@
+﻿@model IEnumerable<SocialWelfarre.Models.DisasterKitTransaction>
+
+@{
+    ViewData["Title"] = "Disaster Kit Transactions";
+    Layout = "/Views/Shared/_DashboardLayout.cshtml";
+}
+
+<style>
+    .form-select {
+        border-radius: 8px;
+        padding: 10px;
+        font-size: 16px;
+        border: 1px solid #ced4da;
+        transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    }
+
+        .form-select:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
+            outline: none;
+        }
+
+        .form-select:hover {
+            border-color: #6c757d;
+        }
+
+    .form-group label {
+        font-weight: 500;
+        color: #343a40;
+        margin-bottom: 8px;
+    }
+
+    .form-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+    }
+
+    .form-group {
+        flex: 1;
+        min-width: 200px;
+    }
+</style>
+
+<!-- Disaster Kit Transactions Card -->
+<div class="card">
+    <div class="card-body">
+        <!-- Add Transaction Form Section -->
+        <div class="form-section">
+            <h4><i class="fas fa-plus-circle"></i> Add New Transaction</h4>
+            <form asp-action="Create" method="post">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label asp-for="@(new SocialWelfarre.Models.DisasterKitTransaction().TransactionDate)" class="form-label"><i class="fas fa-calendar-alt"></i> Transaction Date</label>
+                        <input asp-for="@(new SocialWelfarre.Models.DisasterKitTransaction().TransactionDate)" class="form-control" type="date" required />
+                        <span asp-validation-for="@(new SocialWelfarre.Models.DisasterKitTransaction().TransactionDate)" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="@(new SocialWelfarre.Models.DisasterKitTransaction().TransactionTime)" class="form-label"><i class="fas fa-clock"></i> Transaction Time</label>
+                        <input asp-for="@(new SocialWelfarre.Models.DisasterKitTransaction().TransactionTime)" class="form-control" type="time" required />
+                        <span asp-validation-for="@(new SocialWelfarre.Models.DisasterKitTransaction().TransactionTime)" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="@(new SocialWelfarre.Models.DisasterKitTransaction().NumberOfPacks3)" class="form-label"><i class="fas fa-boxes"></i> Number of Packs</label>
+                        <input asp-for="@(new SocialWelfarre.Models.DisasterKitTransaction().NumberOfPacks3)" class="form-control" type="number" placeholder="Enter Number of Packs" required />
+                        <span asp-validation-for="@(new SocialWelfarre.Models.DisasterKitTransaction().NumberOfPacks3)" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-md-4">
+                        <label asp-for="@(new SocialWelfarre.Models.DisasterKitTransaction().Barangay3)" class="form-label"><i class="fas fa-map-marker-alt"></i> Barangay</label>
+                        <select asp-for="@(new SocialWelfarre.Models.DisasterKitTransaction().Barangay3)" class="form-select">
+                            <option value="">-- Select Barangay --</option>
+                            @foreach (var barangay in Html.GetEnumSelectList<Barangay>())
+                            {
+                                <option value="@barangay.Value">@barangay.Text</option>
+                            }
+                        </select>
+                        <span asp-validation-for="@(new SocialWelfarre.Models.DisasterKitTransaction().Barangay3)" class="text-danger"></span>
+                    </div>
+                    <div class="form-group col-md-4">
+                        <label asp-for="@(new SocialWelfarre.Models.DisasterKitTransaction().Reason3)" class="form-label"><i class="fas fa-comment"></i> Reason</label>
+                        <select asp-for="@(new SocialWelfarre.Models.DisasterKitTransaction().Reason3)" class="form-select">
+                            <option value="">-- Select Reason --</option>
+                            @foreach (var reason in Html.GetEnumSelectList<Reason>())
+                            {
+                                <option value="@reason.Value">@reason.Text</option>
+                            }
+                        </select>
+                        <span asp-validation-for="@(new SocialWelfarre.Models.DisasterKitTransaction().Reason3)" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary mt-3"><i class="fas fa-save"></i> Add Transaction</button>
+            </form>
+        </div>
+        <div class="card">
+            <div class="card-body">
+                <!-- Transactions Table Section -->
+                <div class="table-section mt-4">
+                    <table id="example1" class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th><i class="fas fa-map-marker-alt"></i> @Html.DisplayNameFor(model => model.Barangay3)</th>
+                                <th><i class="fas fa-comment"></i> @Html.DisplayNameFor(model => model.Reason3)</th>
+                                <th><i class="fas fa-calendar-alt"></i> @Html.DisplayNameFor(model => model.TransactionDate)</th>
+                                <th><i class="fas fa-clock"></i> @Html.DisplayNameFor(model => model.TransactionTime)</th>
+                                <th><i class="fas fa-boxes"></i> @Html.DisplayNameFor(model => model.NumberOfPacks3)</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td>@Html.DisplayFor(modelItem => item.Barangay3)</td>
+                                    <td>@Html.DisplayFor(modelItem => item.Reason3)</td>
+                                    <td>@Html.DisplayFor(modelItem => item.TransactionDate)</td>
+                                    <td>@Html.DisplayFor(modelItem => item.TransactionTime)</td>
+                                    <td>@Html.DisplayFor(modelItem => item.NumberOfPacks3)</td>
+                                    <td>
+                                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-warning btn-action"><i class="fa fa-edit"></i> Edit</a>
+                                        <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-primary btn-action"><i class="fa fa-eye"></i> View</a>
+                                        <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger btn-action"><i class="fa fa-trash"></i> Delete</a>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

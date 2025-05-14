@@ -1,0 +1,87 @@
+﻿@model IEnumerable<SocialWelfarre.Controllers.FoodPackInventoriesController.FoodPackInventoryViewModel>
+
+@{
+    ViewData["Title"] = "Food Pack Inventory";
+    Layout = "/Views/Shared/_DashboardLayout.cshtml";
+}
+
+<!-- DataTables CSS -->
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css" />
+
+<!-- jQuery -->
+<script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+
+<!-- DataTables JS -->
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+
+<style>
+    .btn-action {
+        margin-right: 5px;
+        padding: 6px 12px;
+        font-size: 14px;
+    }
+
+  
+
+    /* Remove padding and margin from other DataTables controls (if needed) */
+    div.dataTables_filter,
+    div.dataTables_info,
+    div.dataTables_paginate {
+        padding: 0 !important;
+        margin-top: 10px;
+    }
+</style>
+
+<div class="card">
+    <div class="card-body">
+        <h4><i class="fas fa-boxes"></i> Food Pack Inventory</h4>
+        <div class="mb-3">
+            <a asp-controller="FoodPackInventories" asp-action="AddStock" class="btn btn-success"><i class="fas fa-plus"></i> Add Stock</a>
+            <a asp-controller="ApplicationFoodPacks" asp-action="Index" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Back to Applications</a>
+        </div>
+        <div class="table-section">
+            <table id="example" class="table table-striped">
+                <thead>
+                    <tr>
+                        <th><i class="fas fa-user"></i> Applicant Name</th>
+                        <th><i class="fas fa-boxes"></i> Number of Packs</th>
+                        <th><i class="fas fa-map-marker-alt"></i> Barangay</th>
+                        <th><i class="fas fa-comment"></i> Reason</th>
+                        <th><i class="fas fa-box-open"></i> Total Packs</th>
+                        <th><i class="fas fa-box-open"></i> Stock Left</th>
+                        <th><i class="fas fa-calendar-alt"></i> Request Date</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@Html.DisplayFor(modelItem => item.FullName)</td>
+                            <td>@Html.DisplayFor(modelItem => item.Packs)</td>
+                            <td>@Html.DisplayFor(modelItem => item.Barangay)</td>
+                            <td>@Html.DisplayFor(modelItem => item.Reason)</td>
+                            <td>@Html.DisplayFor(modelItem => item.TotalPacks)</td>
+                            <td>@Html.DisplayFor(modelItem => item.StockLeft)</td>
+                            <td>@Html.DisplayFor(modelItem => item.RequestDate)</td>
+                            <td>
+                                <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-primary btn-action"><i class="fas fa-eye"></i> View</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        $('#example').DataTable({
+            "dom": '<"top"lf>rt<"bottom"ip><"clear">',
+            "language": {
+                "lengthMenu": "Show _MENU_ entries"
+            }
+        });
+    });
+</script>

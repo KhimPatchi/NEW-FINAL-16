@@ -1,0 +1,215 @@
+﻿@model SocialWelfarre.Models.Certificate_Of_Indigency
+
+@{
+    ViewData["Title"] = "Create";
+    Layout = "/Views/Shared/_DashboardLayout.cshtml";
+}
+
+<style>
+    .form-select {
+        border-radius: 8px;
+        padding: 10px;
+        font-size: 16px;
+        border: 1px solid #ced4da;
+        transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    }
+
+        .form-select:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
+            outline: none;
+        }
+
+        .form-select:hover {
+            border-color: #6c757d;
+        }
+
+    .form-group label {
+        font-weight: 500;
+        color: #343a40;
+        margin-bottom: 8px;
+    }
+
+    .form-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+    }
+
+    .form-group {
+        flex: 1;
+        min-width: 200px;
+    }
+
+        /* Style for the icons to make them blue */
+        .form-group label i {
+            color: #007bff;
+            margin-right: 5px;
+        }
+
+    /* Custom file input styling */
+    .custom-file-upload {
+        position: relative;
+        display: inline-block;
+        width: 100%;
+    }
+
+        .custom-file-upload input[type="file"] {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+    .custom-file-label {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 10px 15px;
+        background-color: #ffffff;
+        color: #343a40;
+        border: 1px solid #ced4da;
+        border-radius: 8px;
+        font-size: 16px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        width: 100%;
+        text-align: center;
+    }
+
+        .custom-file-label i {
+            margin-right: 8px;
+            color: #343a40;
+        }
+
+        .custom-file-label:hover {
+            background-color: #f8f9fa;
+            border-color: #6c757d;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+            transform: translateY(-1px);
+        }
+
+        .custom-file-label:active {
+            transform: translateY(1px);
+        }
+
+    /* Ensure validation messages align with the custom styling */
+    .text-danger {
+        margin-top: 5px;
+        display: block;
+    }
+</style>
+
+<h1>Create</h1>
+
+<h4>Certificate Of Indigency</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create" enctype="multipart/form-data">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="FirstName1" class="control-label"><i class="fas fa-user"></i> First Name</label>
+                <input asp-for="FirstName1" class="form-control" required />
+                <span asp-validation-for="FirstName1" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="MiddleName1" class="control-label"><i class="fas fa-user"></i> Middle Name</label>
+                <input asp-for="MiddleName1" class="form-control" />
+                <span asp-validation-for="MiddleName1" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="LastName1" class="control-label"><i class="fas fa-user"></i> Last Name</label>
+                <input asp-for="LastName1" class="form-control" required />
+                <span asp-validation-for="LastName1" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Age1" class="control-label"><i class="fas fa-birthday-cake"></i> Age</label>
+                <input asp-for="Age1" class="form-control" type="number" required />
+                <span asp-validation-for="Age1" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Barangay1" class="control-label"><i class="fas fa-map-marker-alt"></i> Barangay</label>
+                <select asp-for="Barangay1" class="form-select" asp-items="Html.GetEnumSelectList<Barangay>()">
+                    <option value="">-- Select Barangay --</option>
+                </select>
+                <span asp-validation-for="Barangay1" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="No_Rquested1" class="control-label"><i class="fas fa-request"></i> Request</label>
+                <input asp-for="No_Rquested1" class="form-control" type="number" required />
+                <span asp-validation-for="No_Rquested1" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Address1" class="control-label"><i class="fas fa-home"></i> Address</label>
+                <input asp-for="Address1" class="form-control" required />
+                <span asp-validation-for="Address1" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ContactNumber1" class="control-label"><i class="fas fa-phone"></i> Contact Number</label>
+                <input asp-for="ContactNumber1" class="form-control" required />
+                <span asp-validation-for="ContactNumber1" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label for="brgyCertFile"><i class="fas fa-file-alt"></i> Barangay Certificate</label>
+                <div class="custom-file-upload">
+                    <input type="file" name="brgyCertFile" id="brgyCertFile" accept=".jpg,.jpeg,.png,.pdf" required />
+                    <label for="brgyCertFile" class="custom-file-label"><i class="fas fa-upload"></i> Choose File</label>
+                </div>
+                <span asp-validation-for="Brgy_Cert1" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label for="validIdFile"><i class="fas fa-id-card"></i> Valid ID</label>
+                <div class="custom-file-upload">
+                    <input type="file" name="validIdFile" id="validIdFile" accept=".jpg,.jpeg,.png,.pdf" required />
+                    <label for="validIdFile" class="custom-file-label"><i class="fas fa-upload"></i> Choose File</label>
+                </div>
+                <span asp-validation-for="Valid_ID1" class="text-danger"></span>
+            </div>
+            <!-- Reason Enum Dropdown -->
+            <div class="form-group">
+                <label asp-for="Reason1" class="control-label"><i class="fas fa-comment"></i> Reason</label>
+                <select asp-for="Reason1" class="form-select" asp-items="Html.GetEnumSelectList<Reason>()">
+                    <option value="">-- Select Reason --</option>
+                </select>
+                <span asp-validation-for="Reason1" class="text-danger"></span>
+            </div>
+            <!-- Status Enum Dropdown -->
+            <div class="form-group">
+                <label asp-for="Status1" class="control-label"><i class="fas fa-info-circle"></i> Status</label>
+                <select asp-for="Status1" class="form-select" asp-items="Html.GetEnumSelectList<ActiveStatus>()">
+                    <option value="">-- Select Status --</option>
+                </select>
+                <span asp-validation-for="Status1" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script>
+        // Update the label text to show the selected file name
+        document.querySelectorAll('.custom-file-upload input[type="file"]').forEach(input => {
+            input.addEventListener('change', function () {
+                const label = this.nextElementSibling;
+                const fileName = this.files.length > 0 ? this.files[0].name : 'Choose File';
+                label.innerHTML = `<i class="fas fa-upload"></i> ${fileName}`;
+            });
+        });
+    </script>
+}

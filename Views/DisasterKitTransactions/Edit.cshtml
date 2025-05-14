@@ -1,0 +1,159 @@
+﻿@model SocialWelfarre.Models.DisasterKitTransaction
+
+@{
+    ViewData["Title"] = "Edit Disaster Kit Transaction";
+    Layout = "/Views/Shared/_DashboardLayout.cshtml";
+}
+
+<style>
+    .form-select {
+        border-radius: 8px;
+        padding: 10px;
+        font-size: 16px;
+        border: 1px solid #ced4da;
+        transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    }
+
+        .form-select:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
+            outline: none;
+        }
+
+        .form-select:hover {
+            border-color: #6c757d;
+        }
+
+    .form-group label {
+        font-weight: 500;
+        color: #343a40;
+        margin-bottom: 8px;
+    }
+
+    .form-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+    }
+
+    .form-group {
+        flex: 1;
+        min-width: 200px;
+    }
+
+        /* Style for the icons to make them blue */
+        .form-group label i {
+            color: #007bff;
+            margin-right: 5px;
+        }
+
+    /* Custom file input styling */
+    .custom-file-upload {
+        position: relative;
+        display: inline-block;
+        width: 100%;
+    }
+
+        .custom-file-upload input[type="file"] {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+    .custom-file-label {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 10px 15px;
+        background-color: #007bff;
+        color: white;
+        border-radius: 8px;
+        font-size: 16px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        width: 100%;
+        text-align: center;
+    }
+
+        .custom-file-label i {
+            margin-right: 8px;
+        }
+
+        .custom-file-label:hover {
+            background-color: #0056b3;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+            transform: translateY(-1px);
+        }
+
+        .custom-file-label:active {
+            transform: translateY(1px);
+        }
+
+    /* Ensure validation messages align with the custom styling */
+    .text-danger {
+        margin-top: 5px;
+        display: block;
+    }
+</style>
+
+<div class="card">
+    <div class="card-body">
+        <!-- Edit DisasterKitTransaction Form Section -->
+        <div class="form-section">
+            <h4><i class="fas fa-edit"></i> Edit Disaster Kit Transaction</h4>
+            <form asp-action="Edit" method="post">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <input type="hidden" asp-for="Id" />
+                <div class="form-row">
+                    <div class="form-group col-md-4">
+                        <label asp-for="Barangay3" class="form-label"><i class="fas fa-map-marker-alt"></i> Barangay</label>
+                        <select asp-for="Barangay3" class="form-select" asp-items="Html.GetEnumSelectList<Barangay>()">
+                            <option value="">-- Select Barangay --</option>
+                        </select>
+                        <span asp-validation-for="Barangay3" class="text-danger"></span>
+                    </div>
+                    <div class="form-group col-md-4">
+                        <label asp-for="Reason3" class="form-label"><i class="fas fa-comment"></i> Reason</label>
+                        <select asp-for="Reason3" class="form-select" asp-items="Html.GetEnumSelectList<Reason>()">
+                            <option value="">-- Select Reason --</option>
+                        </select>
+                        <span asp-validation-for="Reason3" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-md-4">
+                        <label asp-for="TransactionDate" class="control-label"><i class="fas fa-calendar-day"></i> Transaction Date</label>
+                        <input asp-for="TransactionDate" class="form-control" />
+                        <span asp-validation-for="TransactionDate" class="text-danger"></span>
+                    </div>
+                    <div class="form-group col-md-4">
+                        <label asp-for="TransactionTime" class="control-label"><i class="fas fa-clock"></i> Transaction Time</label>
+                        <input asp-for="TransactionTime" class="form-control" />
+                        <span asp-validation-for="TransactionTime" class="text-danger"></span>
+                    </div>
+                    <div class="form-group col-md-4">
+                        <label asp-for="NumberOfPacks3" class="control-label"><i class="fas fa-boxes"></i> Number of Packs</label>
+                        <input asp-for="NumberOfPacks3" class="form-control" />
+                        <span asp-validation-for="NumberOfPacks3" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <button type="submit" class="btn btn-primary mt-1"><i class="fas fa-save"></i> Save</button>
+                    <a asp-action="Index" class="btn btn-secondary mt-1"><i class="fas fa-arrow-left"></i> Back to List</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

@@ -1,0 +1,31 @@
+﻿@model SocialWelfarre.Models.StockIn_FoodPacks
+
+@{
+    ViewData["Title"] = "Add Stock";
+    Layout = "/Views/Shared/_DashboardLayout.cshtml";
+}
+
+<h1>Add Stock</h1>
+
+<div class="card">
+    <div class="card-body">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="Add_Stock2" class="control-label"></label>
+                <input asp-for="Add_Stock2" class="form-control" type="number" min="1" />
+                <span asp-validation-for="Add_Stock2" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Add Stock" class="btn btn-primary" />
+                <a asp-action="Index" asp-controller="FoodPackInventories" class="btn btn-secondary">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

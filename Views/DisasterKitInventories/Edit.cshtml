@@ -1,0 +1,72 @@
+﻿@model SocialWelfarre.Models.DisasterKitInventory
+
+@{
+    ViewData["Title"] = "Edit";
+    Layout = "/Views/Shared/_DashboardLayout.cshtml";
+}
+
+<h1>Edit</h1>
+
+<h4>DisasterKitInventory</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="Id" />
+            <div class="form-group">
+                <label asp-for="StockInId1" class="control-label"></label>
+                <input asp-for="StockInId1" class="form-control" />
+                <span asp-validation-for="StockInId1" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="TotalPacks1" class="control-label"></label>
+                <input asp-for="TotalPacks1" class="form-control" />
+                <span asp-validation-for="TotalPacks1" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="RequestDate1" class="control-label"></label>
+                <input asp-for="RequestDate1" class="form-control" />
+                <span asp-validation-for="RequestDate1" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Barangay3" class="control-label"></label>
+                <select asp-for="Barangay3" class="form-control"></select>
+                <span asp-validation-for="Barangay3" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Reason3" class="control-label"></label>
+                <select asp-for="Reason3" class="form-control"></select>
+                <span asp-validation-for="Reason3" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="TransactionDate" class="control-label"></label>
+                <input asp-for="TransactionDate" class="form-control" />
+                <span asp-validation-for="TransactionDate" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="TransactionTime" class="control-label"></label>
+                <input asp-for="TransactionTime" class="form-control" />
+                <span asp-validation-for="TransactionTime" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="NumberOfPacks3" class="control-label"></label>
+                <input asp-for="NumberOfPacks3" class="form-control" />
+                <span asp-validation-for="NumberOfPacks3" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

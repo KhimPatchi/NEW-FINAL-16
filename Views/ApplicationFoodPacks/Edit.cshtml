@@ -1,0 +1,257 @@
+﻿@model SocialWelfarre.Models.ApplicationFoodPack
+
+@{
+    ViewData["Title"] = "Edit Application";
+    Layout = "/Views/Shared/_DashboardLayout.cshtml";
+}
+
+<style>
+    .form-select {
+        border-radius: 8px;
+        padding: 10px;
+        font-size: 16px;
+        border: 1px solid #ced4da;
+        transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    }
+
+    .form-select:focus {
+        border-color: #007bff;
+        box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
+        outline: none;
+    }
+
+    .form-select:hover {
+        border-color: #6c757d;
+    }
+
+    .form-group label {
+        font-weight: 500;
+        color: #343a40;
+        margin-bottom: 8px;
+    }
+
+    .form-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+    }
+
+    .form-group {
+        flex: 1;
+        min-width: 200px;
+    }
+
+    .form-group label i {
+        color: #007bff;
+        margin-right: 5px;
+    }
+
+    .custom-file-upload {
+        position: relative;
+        display: inline-block;
+        width: 100%;
+    }
+
+    .custom-file-upload input[type="file"] {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        opacity: 0;
+        cursor: pointer;
+    }
+
+    .custom-file-label {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 10px 15px;
+        background-color: #007bff;
+        color: white;
+        border-radius: 8px;
+        font-size: 16px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        width: 100%;
+        text-align: center;
+    }
+
+    .custom-file-label i {
+        margin-right: 8px;
+    }
+
+    .custom-file-label:hover {
+        background-color: #0056b3;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+        transform: translateY(-1px);
+    }
+
+    .custom-file-label:active {
+        transform: translateY(1px);
+    }
+
+    .text-danger {
+        margin-top: 5px;
+        display: block;
+    }
+</style>
+
+<div class="card">
+    <div class="card-body">
+        <div class="form-section">
+            <h4><i class="fas fa-edit"></i> Edit Application</h4>
+            <form asp-action="Edit" method="post" enctype="multipart/form-data">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <input type="hidden" asp-for="Id" />
+                <div class="form-row">
+                    <div class="form-group col-md-2">
+                        <label asp-for="FirstName" class="form-label"><i class="fas fa-user"></i> First Name</label>
+                        <input asp-for="FirstName" class="form-control" value="@Model.FirstName" placeholder="Enter First Name" required />
+                        <span asp-validation-for="FirstName" class="text-danger"></span>
+                    </div>
+                    <div class="form-group col-md-2">
+                        <label asp-for="MiddleName" class="form-label"><i class="fas fa-user"></i> Middle Name</label>
+                        <input asp-for="MiddleName" class="form-control" value="@Model.MiddleName" placeholder="Enter Middle Name" />
+                        <span asp-validation-for="MiddleName" class="text-danger"></span>
+                    </div>
+                    <div class="form-group col-md-2">
+                        <label asp-for="LastName" class="form-label"><i class="fas fa-user"></i> Last Name</label>
+                        <input asp-for="LastName" class="form-control" value="@Model.LastName" placeholder="Enter Last Name" required />
+                        <span asp-validation-for="LastName" class="text-danger"></span>
+                    </div>
+                    <div class="form-group col-sm-1">
+                        <label asp-for="Age" class="form-label"><i class="fas fa-birthday-cake"></i> Age</label>
+                        <input asp-for="Age" class="form-control" type="number" value="@Model.Age" placeholder="Enter Age" required />
+                        <span asp-validation-for="Age" class="text-danger"></span>
+                    </div>
+                    <div class="form-group col-md-2">
+                        <label asp-for="ContactNumber" class="form-label"><i class="fas fa-phone"></i> Contact Number</label>
+                        <input asp-for="ContactNumber" class="form-control" value="@Model.ContactNumber" placeholder="Enter Contact Number" required />
+                        <span asp-validation-for="ContactNumber" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-sm-1">
+                        <label asp-for="Packs" class="form-label"><i class="fas fa-boxes"></i> Number of Packs</label>
+                        <input asp-for="Packs" class="form-control" type="number" value="@Model.Packs" placeholder="Enter Number of Packs" required />
+                        <span asp-validation-for="Packs" class="text-danger"></span>
+                    </div>
+                    <div class="form-group col-sm-1">
+                        <label asp-for="Address" class="form-label"><i class="fas fa-home"></i> Address</label>
+                        <input asp-for="Address" class="form-control" value="@Model.Address" placeholder="Enter Address" required />
+                        <span asp-validation-for="Address" class="text-danger"></span>
+                    </div>
+                    <div class="form-group col-md-2">
+                        <label asp-for="Barangay" class="form-label"><i class="fas fa-map-marker-alt"></i> Barangay</label>
+                        <select asp-for="Barangay" class="form-select">
+                            <option value="">-- Select Barangay --</option>
+                            @foreach (var barangay in Html.GetEnumSelectList<Barangay>())
+                            {
+                                    <option value="@barangay.Value" selected="@(Model.Barangay.ToString() == barangay.Value ? "selected" : null)">@barangay.Text</option>
+                            }
+                        </select>
+                        <span asp-validation-for="Barangay" class="text-danger"></span>
+                    </div>
+                    <div class="form-group col-sm-1">
+                        <label asp-for="Reason" class="form-label"><i class="fas fa-comment"></i> Reason</label>
+                        <select asp-for="Reason" class="form-select">
+                            <option value="">-- Select Reason --</option>
+                            @foreach (var reason in Html.GetEnumSelectList<Reason>())
+                            {
+                                    <option value="@reason.Value" selected="@(Model.Reason.ToString() == reason.Value ? "selected" : null)">@reason.Text</option>
+                            }
+                        </select>
+                        <span asp-validation-for="Reason" class="text-danger"></span>
+                    </div>
+                    <div class="form-group col-sm-1">
+                        <label asp-for="Status" class="form-label"><i class="fas fa-info-circle"></i> Status</label>
+                        <select asp-for="Status" class="form-select">
+                            <option value="">-- Select Status --</option>
+                            @foreach (var status in Html.GetEnumSelectList<ActiveStatus>())
+                            {
+                                    <option value="@status.Value" selected="@(Model.Status.ToString() == status.Value ? "selected" : null)">@status.Text</option>
+                            }
+                        </select>
+                        <span asp-validation-for="Status" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-md-3">
+                        <label for="brgyCertFile"><i class="fas fa-file-alt"></i> Barangay Certificate (Optional)</label>
+                        <div class="custom-file-upload">
+                            <input type="file" name="brgyCertFile" id="brgyCertFile" accept=".jpg,.jpeg,.png,.pdf" />
+                            <label for="brgyCertFile" class="custom-file-label"><i class="fas fa-upload"></i> Choose File</label>
+                        </div>
+                        <span asp-validation-for="Brgy_Cert" class="text-danger"></span>
+                        @if (!string.IsNullOrEmpty(Model.Brgy_Cert_Path))
+                        {
+                                <p>
+                                    Current file:
+                                @{
+                                    var extension = System.IO.Path.GetExtension(Model.Brgy_Cert_Path)?.ToLower();
+                                    if (!string.IsNullOrEmpty(extension) && (extension == ".jpg" || extension == ".jpeg" || extension == ".png"))
+                                    {
+                                                    <img src="@Url.Content(Model.Brgy_Cert_Path)" alt="Barangay Certificate" width="100" />
+                                    }
+                                    else
+                                    {
+                                                    <span>Non-image file</span>
+                                    }
+                                }
+                                </p>
+                        }
+                    </div>
+                    <div class="form-group col-md-3">
+                        <label for="validIdFile"><i class="fas fa-id-card"></i> Valid ID (Optional)</label>
+                        <div class="custom-file-upload">
+                            <input type="file" name="validIdFile" id="validIdFile" accept=".jpg,.jpeg,.png,.pdf" />
+                            <label for="validIdFile" class="custom-file-label"><i class="fas fa-upload"></i> Choose File</label>
+                        </div>
+                        <span asp-validation-for="Valid_ID" class="text-danger"></span>
+                        @if (!string.IsNullOrEmpty(Model.Valid_ID_Path))
+                        {
+                                <p>
+                                    Current file:
+                                @{
+                                    var extension = System.IO.Path.GetExtension(Model.Valid_ID_Path)?.ToLower();
+                                    if (!string.IsNullOrEmpty(extension) && (extension == ".jpg" || extension == ".jpeg" || extension == ".png"))
+                                    {
+                                                    <img src="@Url.Content(Model.Valid_ID_Path)" alt="Valid ID" width="100" />
+                                    }
+                                    else
+                                    {
+                                                    <span>Non-image file</span>
+                                    }
+                                }
+                                </p>
+                        }
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary mt-1"><i class="fas fa-save"></i> Save</button>
+                <a asp-action="Index" class="btn btn-secondary mt-1">Cancel</a>
+            </form>
+        </div>
+    </div>
+
+    @section Scripts {
+            <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+            <script>
+                document.addEventListener('DOMContentLoaded', function () {
+                    const successMessage = '@TempData["SuccessMessage"]';
+                    if (successMessage) {
+                        Swal.fire({
+                            title: 'Success!',
+                            text: successMessage,
+                            icon: 'success',
+                            confirmButtonText: 'OK'
+                        }).then(() => {
+                            window.location.href = '@Url.Action("Index")';
+                        });
+                    }
+                });
+            </script>
+    }
+}

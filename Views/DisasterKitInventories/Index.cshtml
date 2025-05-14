@@ -1,0 +1,67 @@
+﻿@model IEnumerable<SocialWelfarre.Models.DisasterKitInventory>
+
+@{
+    ViewData["Title"] = "Disaster Kit Inventory";
+    Layout = "/Views/Shared/_DashboardLayout.cshtml";
+}
+
+<style>
+    .table-section table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .table-section th, .table-section td {
+        padding: 12px;
+        text-align: left;
+        border-bottom: 1px solid #dee2e6;
+    }
+
+    .table-section th {
+        background-color: #f8f9fa;
+        font-weight: 600;
+    }
+
+    .btn-action {
+        margin-right: 5px;
+        padding: 6px 12px;
+        font-size: 14px;
+    }
+</style>
+
+<div class="card">
+    <div class="card-body">
+        <h4><i class="fas fa-boxes"></i> Disaster Kit Inventory</h4>
+        <div class="mb-3">
+            <a asp-controller="DisasterKitInventories" asp-action="AddStock" class="btn btn-success"><i class="fas fa-plus"></i> Add Stock</a>
+            <a asp-controller="DisasterKitTransactions" asp-action="Index" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Back to Transactions</a>
+        </div>
+        <div class="table-section">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th><i class="fas fa-map-marker-alt"></i> Barangay</th>
+                        <th><i class="fas fa-comment"></i> Reason</th>
+                        <th><i class="fas fa-boxes"></i> Number of Packs</th>
+                        <th><i class="fas fa-box-open"></i> Total Packs</th>
+                        <th><i class="fas fa-box-open"></i> Stock Left</th>
+                        <th><i class="fas fa-calendar-alt"></i> Request Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@Html.DisplayFor(modelItem => item.Barangay3)</td>
+                            <td>@Html.DisplayFor(modelItem => item.Reason3)</td>
+                            <td>@Html.DisplayFor(modelItem => item.NumberOfPacks3)</td>
+                            <td>@Html.DisplayFor(modelItem => item.TotalPacks1)</td>
+                            <td>@Html.DisplayFor(modelItem => item.StockLeft)</td>
+                            <td>@Html.DisplayFor(modelItem => item.RequestDate1)</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

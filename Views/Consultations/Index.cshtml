@@ -1,0 +1,887 @@
+﻿    @model IEnumerable<SocialWelfarre.Models.Consultation>
+
+    @{
+        ViewData["Title"] = "Consultation Records";
+        Layout = "/Views/Shared/_DashboardLayout.cshtml";
+    }
+
+<div class="card">
+    <div class="card-body">
+        <div class="form-section">
+            <h4><i class="fas fa-plus-circle"></i> Add New Consultation</h4>
+            <!-- Success Alert -->
+            <div id="successAlert" class="alert alert-success d-none" role="alert">
+                Consultation submitted successfully!
+            </div>
+
+            <form asp-action="Create" method="post" enctype="multipart/form-data" id="Create" onsubmit="return handleSubmit(event)">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                <!-- Row 1 -->
+                <div class="form-row">
+                    <div class="form-group col-md-4">
+                        <label for="First_Name2"><i class="fas fa-user"></i> First Name</label>
+                        <input name="First_Name2" class="form-control" placeholder="Enter First Name" required />
+                        <span class="text-danger" data-valmsg-for="First_Name2"></span>
+                    </div>
+                    <div class="form-group col-md-4">
+                        <label for="Middle_Name2"><i class="fas fa-user"></i> Middle Name</label>
+                        <input name="Middle_Name2" class="form-control" placeholder="Enter Middle Name" required />
+                        <span class="text-danger" data-valmsg-for="Middle_Name2"></span>
+                    </div>
+                    <div class="form-group col-md-4">
+                        <label for="Last_Name2"><i class="fas fa-user"></i> Last Name</label>
+                        <input name="Last_Name2" class="form-control" placeholder="Enter Last Name" required />
+                        <span class="text-danger" data-valmsg-for="Last_Name2"></span>
+                    </div>
+                </div>
+
+                <!-- Row 2 -->
+                <div class="form-row">
+                    <div class="form-group col-md-4">
+                        <label for="ContactNumber2"><i class="fas fa-phone"></i> Contact Number</label>
+                        <input name="ContactNumber2" class="form-control" placeholder="0998......." required />
+                        <span class="text-danger" data-valmsg-for="ContactNumber2"></span>
+                    </div>
+                    <div class="form-group col-md-4">
+                        <label for="brgyCertFile"><i class="fas fa-file-alt"></i> Barangay Certificate</label>
+                        <div class="custom-file-upload">
+                            <input type="file" name="brgyCertFile" id="brgyCertFile" accept=".jpg,.jpeg,.png,.pdf" required />
+                            <label for="brgyCertFile" class="custom-file-label"><i class="fas fa-upload"></i> Choose File</label>
+                        </div>
+                        <span class="text-danger" data-valmsg-for="brgyCertFile"></span>
+                    </div>
+                    <div class="form-group col-md-4">
+                        <label for="proofSoloParentFile"><i class="fas fa-file-alt"></i> Proof of Solo Parent</label>
+                        <div class="custom-file-upload">
+                            <input type="file" name="proofSoloParentFile" id="proofSoloParentFile" accept=".jpg,.jpeg,.png,.pdf" required />
+                            <label for="proofSoloParentFile" class="custom-file-label"><i class="fas fa-upload"></i> Choose File</label>
+                        </div>
+                        <span class="text-danger" data-valmsg-for="proofSoloParentFile"></span>
+                    </div>
+                </div>
+
+                <!-- Row 3 -->
+                <div class="form-row">
+                    <div class="form-group col-md-4">
+                        <label for="birthCertFile"><i class="fas fa-file-alt"></i> Birth Certificate</label>
+                        <div class="custom-file-upload">
+                            <input type="file" name="birthCertFile" id="birthCertFile" accept=".jpg,.jpeg,.png,.pdf" required />
+                            <label for="birthCertFile" class="custom-file-label"><i class="fas fa-upload"></i> Choose File</label>
+                        </div>
+                        <span class="text-danger" data-valmsg-for="birthCertFile"></span>
+                    </div>
+                    <div class="form-group col-md-4">
+                        <label for="validIdFile"><i class="fas fa-id-card"></i> Valid ID</label>
+                        <div class="custom-file-upload">
+                            <input type="file" name="validIdFile" id="validIdFile" accept=".jpg,.jpeg,.png,.pdf" required />
+                            <label for="validIdFile" class="custom-file-label"><i class="fas fa-upload"></i> Choose File</label>
+                        </div>
+                        <span class="text-danger" data-valmsg-for="validIdFile"></span>
+                    </div>
+                    <div class="form-group col-md-4">
+                        <label for="x1PicFile"><i class="fas fa-image"></i> 1x1 Picture</label>
+                        <div class="custom-file-upload">
+                            <input type="file" name="x1PicFile" id="x1PicFile" accept=".jpg,.jpeg,.png,.pdf" required />
+                            <label for="x1PicFile" class="custom-file-label"><i class="fas fa-upload"></i> Choose File</label>
+                        </div>
+                        <span class="text-danger" data-valmsg-for="x1PicFile"></span>
+                    </div>
+                </div>
+
+                <!-- Row 4 -->
+                <div class="form-row">
+                    <div class="form-group col-md-4">
+                        <label for="Consultation_Date"><i class="fas fa-calendar-alt"></i> Consultation Date</label>
+                        <input name="Consultation_Date" class="form-control" type="date" required />
+                        <span class="text-danger" data-valmsg-for="Consultation_Date"></span>
+                    </div>
+                    <div class="form-group col-md-4">
+                        <label for="Consultation_Time"><i class="fas fa-clock"></i> Consultation Time</label>
+                        <input name="Consultation_Time" class="form-control" type="time" required />
+                        <span class="text-danger" data-valmsg-for="Consultation_Time"></span>
+                    </div>
+                    <div class="form-group col-md-4">
+                        <!-- Empty column to maintain 3x3 grid alignment -->
+                    </div>
+                </div>
+
+                <!-- Submit -->
+                <div class="form-row mt-3">
+                    <div class="col-md-12 text-end">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save"></i> Add Consultation
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+    @{
+        var pendingStatus = ActiveStatus2.Pending.ToString();
+        var approvedStatus = ActiveStatus2.Approved.ToString();
+        var deniedStatus = ActiveStatus2.Denied.ToString();
+        var processStatus = ActiveStatus2.Process.ToString();
+    }
+
+    <div class="card">
+        <div class="card-body">
+            <!-- Tabs for Pending, Approved, Denied -->
+            <ul class="nav nav-tabs" id="consultationTab" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <a class="nav-link active" id="pending-tab" data-bs-toggle="tab" href="#pending" role="tab" aria-controls="pending" aria-selected="true">Pending</a>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <a class="nav-link" id="process-tab" data-bs-toggle="tab" href="#process" role="tab" aria-controls="process" aria-selected="false">Process</a>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <a class="nav-link" id="approved-tab" data-bs-toggle="tab" href="#approved" role="tab" aria-controls="approved" aria-selected="false">Approved</a>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <a class="nav-link" id="denied-tab" data-bs-toggle="tab" href="#denied" role="tab" aria-controls="denied" aria-selected="false">Denied</a>
+                </li>
+            </ul>
+
+            <div class="tab-content" id="consultationTabContent">
+                <!-- Pending Tab -->
+                <div class="tab-pane fade show active" id="pending" role="tabpanel" aria-labelledby="pending-tab">
+                    <h3>Pending Consultations</h3>
+                    <div class="table-responsive">
+                        <table id="pendingTable" class="table table-striped nowrap" style="width:100%">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Contact</th>
+                                    <th>Barangay Cert</th>
+                                    <th>Solo Parent Proof</th>
+                                    <th>Birth Cert</th>
+                                    <th>Valid ID</th>
+                                    <th>Photo</th>
+                                    <th>Date</th>
+                                    <th>Time</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model.Where(x => x.Consultation_status == null || Enum.GetName(typeof(ActiveStatus2), x.Consultation_status) == pendingStatus))
+                                {
+                                    <tr>
+                                        <td>@Html.DisplayFor(modelItem => item.FullName)</td>
+                                        <td>@Html.DisplayFor(modelItem => item.ContactNumber2)</td>
+                                        <td>
+                                            @if (!string.IsNullOrEmpty(item.Brgy_Cert_Path2))
+                                            {
+                                                var extension = System.IO.Path.GetExtension(item.Brgy_Cert_Path2)?.ToLower();
+                                                if (!string.IsNullOrEmpty(extension) && (extension == ".jpg" || extension == ".jpeg" || extension == ".png"))
+                                                {
+                                                    <img src="@Url.Content(item.Brgy_Cert_Path2)" alt="@item.Brgy_Cert2" width="50" class="img-thumbnail" />
+                                                }
+                                                else
+                                                {
+                                                    <span class="badge bg-secondary">Document</span>
+                                                }
+                                            }
+                                            else
+                                            {
+                                                <span class="text-muted">None</span>
+                                            }
+                                        </td>
+                                        <td>
+                                            @if (!string.IsNullOrEmpty(item.Proof_SoloParent_Path2))
+                                            {
+                                                var extension = System.IO.Path.GetExtension(item.Proof_SoloParent_Path2)?.ToLower();
+                                                if (!string.IsNullOrEmpty(extension) && (extension == ".jpg" || extension == ".jpeg" || extension == ".png"))
+                                                {
+                                                    <img src="@Url.Content(item.Proof_SoloParent_Path2)" alt="@item.Proof_SoloParent2" width="50" class="img-thumbnail" />
+                                                }
+                                                else
+                                                {
+                                                    <span class="badge bg-secondary">Document</span>
+                                                }
+                                            }
+                                            else
+                                            {
+                                                <span class="text-muted">None</span>
+                                            }
+                                        </td>
+                                        <td>
+                                            @if (!string.IsNullOrEmpty(item.Birth_Cert_Path2))
+                                            {
+                                                var extension = System.IO.Path.GetExtension(item.Birth_Cert_Path2)?.ToLower();
+                                                if (!string.IsNullOrEmpty(extension) && (extension == ".jpg" || extension == ".jpeg" || extension == ".png"))
+                                                {
+                                                    <img src="@Url.Content(item.Birth_Cert_Path2)" alt="@item.Birth_Cert2" width="50" class="img-thumbnail" />
+                                                }
+                                                else
+                                                {
+                                                    <span class="badge bg-secondary">Document</span>
+                                                }
+                                            }
+                                            else
+                                            {
+                                                <span class="text-muted">None</span>
+                                            }
+                                        </td>
+                                        <td>
+                                            @if (!string.IsNullOrEmpty(item.Valid_ID_Path2))
+                                            {
+                                                var extension = System.IO.Path.GetExtension(item.Valid_ID_Path2)?.ToLower();
+                                                if (!string.IsNullOrEmpty(extension) && (extension == ".jpg" || extension == ".jpeg" || extension == ".png"))
+                                                {
+                                                    <img src="@Url.Content(item.Valid_ID_Path2)" alt="@item.Valid_ID2" width="50" class="img-thumbnail" />
+                                                }
+                                                else
+                                                {
+                                                    <span class="badge bg-secondary">Document</span>
+                                                }
+                                            }
+                                            else
+                                            {
+                                                <span class="text-muted">None</span>
+                                            }
+                                        </td>
+                                        <td>
+                                            @if (!string.IsNullOrEmpty(item.x1_Pic_Path2))
+                                            {
+                                                <img src="@Url.Content(item.x1_Pic_Path2)" alt="@item.x1_Pic2" width="50" class="img-thumbnail" />
+                                            }
+                                            else
+                                            {
+                                                <span class="text-muted">None</span>
+                                            }
+                                        </td>
+                                        <td>@Html.DisplayFor(modelItem => item.Consultation_Date)</td>
+                                        <td>@Html.DisplayFor(modelItem => item.Consultation_Time)</td>
+                                        <td><span class="badge bg-warning rounded-pill">@Html.DisplayFor(modelItem => item.Consultation_status)</span></td>
+                                        <td>
+                                            @if (User.IsInRole("Staff1") || User.IsInRole("Admin"))
+                                            {
+                                                <div class="btn-group" role="group">
+                                                    <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-info btn-sm"><i class="fa fa-eye"></i></a>
+                                                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-warning btn-sm"><i class="fa fa-edit"></i></a>
+                                                   
+                                                </div>
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Process Tab -->
+                <div class="tab-pane fade" id="process" role="tabpanel" aria-labelledby="process-tab">
+                    <h3>Process Consultations</h3>
+                    <div class="table-responsive">
+                        <table id="processTable" class="table table-striped nowrap" style="width:100%">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Contact</th>
+                                    <th>Barangay Cert</th>
+                                    <th>Solo Parent Proof</th>
+                                    <th>Birth Cert</th>
+                                    <th>Valid ID</th>
+                                    <th>Photo</th>
+                                    <th>Date</th>
+                                    <th>Time</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model.Where(x => x.Consultation_status == null || Enum.GetName(typeof(ActiveStatus2), x.Consultation_status) == processStatus))
+                                {
+                                    <tr>
+                                        <td>@Html.DisplayFor(modelItem => item.FullName)</td>
+                                        <td>@Html.DisplayFor(modelItem => item.ContactNumber2)</td>
+                                        <td>
+                                            @if (!string.IsNullOrEmpty(item.Brgy_Cert_Path2))
+                                            {
+                                                var extension = System.IO.Path.GetExtension(item.Brgy_Cert_Path2)?.ToLower();
+                                                if (!string.IsNullOrEmpty(extension) && (extension == ".jpg" || extension == ".jpeg" || extension == ".png"))
+                                                {
+                                                    <img src="@Url.Content(item.Brgy_Cert_Path2)" alt="@item.Brgy_Cert2" width="50" class="img-thumbnail" />
+                                                }
+                                                else
+                                                {
+                                                    <span class="badge bg-secondary">Document</span>
+                                                }
+                                            }
+                                            else
+                                            {
+                                                <span class="text-muted">None</span>
+                                            }
+                                        </td>
+                                        <td>
+                                            @if (!string.IsNullOrEmpty(item.Proof_SoloParent_Path2))
+                                            {
+                                                var extension = System.IO.Path.GetExtension(item.Proof_SoloParent_Path2)?.ToLower();
+                                                if (!string.IsNullOrEmpty(extension) && (extension == ".jpg" || extension == ".jpeg" || extension == ".png"))
+                                                {
+                                                    <img src="@Url.Content(item.Proof_SoloParent_Path2)" alt="@item.Proof_SoloParent2" width="50" class="img-thumbnail" />
+                                                }
+                                                else
+                                                {
+                                                    <span class="badge bg-secondary">Document</span>
+                                                }
+                                            }
+                                            else
+                                            {
+                                                <span class="text-muted">None</span>
+                                            }
+                                        </td>
+                                        <td>
+                                            @if (!string.IsNullOrEmpty(item.Birth_Cert_Path2))
+                                            {
+                                                var extension = System.IO.Path.GetExtension(item.Birth_Cert_Path2)?.ToLower();
+                                                if (!string.IsNullOrEmpty(extension) && (extension == ".jpg" || extension == ".jpeg" || extension == ".png"))
+                                                {
+                                                    <img src="@Url.Content(item.Birth_Cert_Path2)" alt="@item.Birth_Cert2" width="50" class="img-thumbnail" />
+                                                }
+                                                else
+                                                {
+                                                    <span class="badge bg-secondary">Document</span>
+                                                }
+                                            }
+                                            else
+                                            {
+                                                <span class="text-muted">None</span>
+                                            }
+                                        </td>
+                                        <td>
+                                            @if (!string.IsNullOrEmpty(item.Valid_ID_Path2))
+                                            {
+                                                var extension = System.IO.Path.GetExtension(item.Valid_ID_Path2)?.ToLower();
+                                                if (!string.IsNullOrEmpty(extension) && (extension == ".jpg" || extension == ".jpeg" || extension == ".png"))
+                                                {
+                                                    <img src="@Url.Content(item.Valid_ID_Path2)" alt="@item.Valid_ID2" width="50" class="img-thumbnail" />
+                                                }
+                                                else
+                                                {
+                                                    <span class="badge bg-secondary">Document</span>
+                                                }
+                                            }
+                                            else
+                                            {
+                                                <span class="text-muted">None</span>
+                                            }
+                                        </td>
+                                        <td>
+                                            @if (!string.IsNullOrEmpty(item.x1_Pic_Path2))
+                                            {
+                                                <img src="@Url.Content(item.x1_Pic_Path2)" alt="@item.x1_Pic2" width="50" class="img-thumbnail" />
+                                            }
+                                            else
+                                            {
+                                                <span class="text-muted">None</span>
+                                            }
+                                        </td>
+                                        <td>@Html.DisplayFor(modelItem => item.Consultation_Date)</td>
+                                        <td>@Html.DisplayFor(modelItem => item.Consultation_Time)</td>
+                                        <td><span class="badge custom-orange rounded-pill">@Html.DisplayFor(modelItem => item.Consultation_status)</span></td>
+                                        <td>
+                                            @if (User.IsInRole("Staff2") || User.IsInRole("Admin"))
+                                            {
+                                                <div class="btn-group" role="group">
+                                                    <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-info btn-sm"><i class="fa fa-eye"></i></a>
+                                                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-warning btn-sm"><i class="fa fa-edit"></i></a>
+                                                   
+                                                </div>
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Approved Tab -->
+                <div class="tab-pane fade" id="approved" role="tabpanel" aria-labelledby="approved-tab">
+                    <h3>Approved Consultations</h3>
+                    <div class="table-responsive">
+                        <table id="approvedTable" class="table table-striped nowrap" style="width:100%">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Contact</th>
+                                    <th>Barangay Cert</th>
+                                    <th>Solo Parent Proof</th>
+                                    <th>Birth Cert</th>
+                                    <th>Valid ID</th>
+                                    <th>Photo</th>
+                                    <th>Date</th>
+                                    <th>Time</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model.Where(x => Enum.GetName(typeof(ActiveStatus2), x.Consultation_status) == approvedStatus))
+                                {
+                                    <tr>
+                                        <td>@Html.DisplayFor(modelItem => item.FullName)</td>
+                                        <td>@Html.DisplayFor(modelItem => item.ContactNumber2)</td>
+                                        <td>
+                                            @if (!string.IsNullOrEmpty(item.Brgy_Cert_Path2))
+                                            {
+                                                var extension = System.IO.Path.GetExtension(item.Brgy_Cert_Path2)?.ToLower();
+                                                if (!string.IsNullOrEmpty(extension) && (extension == ".jpg" || extension == ".jpeg" || extension == ".png"))
+                                                {
+                                                    <img src="@Url.Content(item.Brgy_Cert_Path2)" alt="@item.Brgy_Cert2" width="50" class="img-thumbnail" />
+                                                }
+                                                else
+                                                {
+                                                    <span class="badge bg-secondary">Document</span>
+                                                }
+                                            }
+                                            else
+                                            {
+                                                <span class="text-muted">None</span>
+                                            }
+                                        </td>
+                                        <td>
+                                            @if (!string.IsNullOrEmpty(item.Proof_SoloParent_Path2))
+                                            {
+                                                var extension = System.IO.Path.GetExtension(item.Proof_SoloParent_Path2)?.ToLower();
+                                                if (!string.IsNullOrEmpty(extension) && (extension == ".jpg" || extension == ".jpeg" || extension == ".png"))
+                                                {
+                                                    <img src="@Url.Content(item.Proof_SoloParent_Path2)" alt="@item.Proof_SoloParent2" width="50" class="img-thumbnail" />
+                                                }
+                                                else
+                                                {
+                                                    <span class="badge bg-secondary">Document</span>
+                                                }
+                                            }
+                                            else
+                                            {
+                                                <span class="text-muted">None</span>
+                                            }
+                                        </td>
+                                        <td>
+                                            @if (!string.IsNullOrEmpty(item.Birth_Cert_Path2))
+                                            {
+                                                var extension = System.IO.Path.GetExtension(item.Birth_Cert_Path2)?.ToLower();
+                                                if (!string.IsNullOrEmpty(extension) && (extension == ".jpg" || extension == ".jpeg" || extension == ".png"))
+                                                {
+                                                    <img src="@Url.Content(item.Birth_Cert_Path2)" alt="@item.Birth_Cert2" width="50" class="img-thumbnail" />
+                                                }
+                                                else
+                                                {
+                                                    <span class="badge bg-secondary">Document</span>
+                                                }
+                                            }
+                                            else
+                                            {
+                                                <span class="text-muted">None</span>
+                                            }
+                                        </td>
+                                        <td>
+                                            @if (!string.IsNullOrEmpty(item.Valid_ID_Path2))
+                                            {
+                                                var extension = System.IO.Path.GetExtension(item.Valid_ID_Path2)?.ToLower();
+                                                if (!string.IsNullOrEmpty(extension) && (extension == ".jpg" || extension == ".jpeg" || extension == ".png"))
+                                                {
+                                                    <img src="@Url.Content(item.Valid_ID_Path2)" alt="@item.Valid_ID2" width="50" class="img-thumbnail" />
+                                                }
+                                                else
+                                                {
+                                                    <span class="badge bg-secondary">Document</span>
+                                                }
+                                            }
+                                            else
+                                            {
+                                                <span class="text-muted">None</span>
+                                            }
+                                        </td>
+                                        <td>
+                                            @if (!string.IsNullOrEmpty(item.x1_Pic_Path2))
+                                            {
+                                                <img src="@Url.Content(item.x1_Pic_Path2)" alt="@item.x1_Pic2" width="50" class="img-thumbnail" />
+                                            }
+                                            else
+                                            {
+                                                <span class="text-muted">None</span>
+                                            }
+                                        </td>
+                                        <td>@Html.DisplayFor(modelItem => item.Consultation_Date)</td>
+                                        <td>@Html.DisplayFor(modelItem => item.Consultation_Time)</td>
+                                        <td><span class="badge bg-success rounded-pill">@Html.DisplayFor(modelItem => item.Consultation_status)</span></td>
+                                        <td>
+                                            <div class="btn-group" role="group">
+                                                <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-info btn-sm"><i class="fa fa-eye"></i></a>
+                                                <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-warning btn-sm"><i class="fa fa-edit"></i></a>
+                                            
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Denied Tab -->
+                <div class="tab-pane fade" id="denied" role="tabpanel" aria-labelledby="denied-tab">
+                    <h3>Denied Consultations</h3>
+                    <div class="table-responsive">
+                        <table id="deniedTable" class="table table-striped nowrap" style="width:100%">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Contact</th>
+                                    <th>Barangay Cert</th>
+                                    <th>Solo Parent Proof</th>
+                                    <th>Birth Cert</th>
+                                    <th>Valid ID</th>
+                                    <th>Photo</th>
+                                    <th>Date</th>
+                                    <th>Time</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model.Where(x => Enum.GetName(typeof(ActiveStatus2), x.Consultation_status) == deniedStatus))
+                                {
+                                    <tr>
+                                        <td>@Html.DisplayFor(modelItem => item.FullName)</td>
+                                        <td>@Html.DisplayFor(modelItem => item.ContactNumber2)</td>
+                                        <td>
+                                            @if (!string.IsNullOrEmpty(item.Brgy_Cert_Path2))
+                                            {
+                                                var extension = System.IO.Path.GetExtension(item.Brgy_Cert_Path2)?.ToLower();
+                                                if (!string.IsNullOrEmpty(extension) && (extension == ".jpg" || extension == ".jpeg" || extension == ".png"))
+                                                {
+                                                    <img src="@Url.Content(item.Brgy_Cert_Path2)" alt="@item.Brgy_Cert2" width="50" class="img-thumbnail" />
+                                                }
+                                                else
+                                                {
+                                                    <span class="badge bg-secondary">Document</span>
+                                                }
+                                            }
+                                            else
+                                            {
+                                                <span class="text-muted">None</span>
+                                            }
+                                        </td>
+                                        <td>
+                                            @if (!string.IsNullOrEmpty(item.Proof_SoloParent_Path2))
+                                            {
+                                                var extension = System.IO.Path.GetExtension(item.Proof_SoloParent_Path2)?.ToLower();
+                                                if (!string.IsNullOrEmpty(extension) && (extension == ".jpg" || extension == ".jpeg" || extension == ".png"))
+                                                {
+                                                    <img src="@Url.Content(item.Proof_SoloParent_Path2)" alt="@item.Proof_SoloParent2" width="50" class="img-thumbnail" />
+                                                }
+                                                else
+                                                {
+                                                    <span class="badge bg-secondary">Document</span>
+                                                }
+                                            }
+                                            else
+                                            {
+                                                <span class="text-muted">None</span>
+                                            }
+                                        </td>
+                                        <td>
+                                            @if (!string.IsNullOrEmpty(item.Birth_Cert_Path2))
+                                            {
+                                                var extension = System.IO.Path.GetExtension(item.Birth_Cert_Path2)?.ToLower();
+                                                if (!string.IsNullOrEmpty(extension) && (extension == ".jpg" || extension == ".jpeg" || extension == ".png"))
+                                                {
+                                                    <img src="@Url.Content(item.Birth_Cert_Path2)" alt="@item.Birth_Cert2" width="50" class="img-thumbnail" />
+                                                }
+                                                else
+                                                {
+                                                    <span class="badge bg-secondary">Document</span>
+                                                }
+                                            }
+                                            else
+                                            {
+                                                <span class="text-muted">None</span>
+                                            }
+                                        </td>
+                                        <td>
+                                            @if (!string.IsNullOrEmpty(item.Valid_ID_Path2))
+                                            {
+                                                var extension = System.IO.Path.GetExtension(item.Valid_ID_Path2)?.ToLower();
+                                                if (!string.IsNullOrEmpty(extension) && (extension == ".jpg" || extension == ".jpeg" || extension == ".png"))
+                                                {
+                                                    <img src="@Url.Content(item.Valid_ID_Path2)" alt="@item.Valid_ID2" width="50" class="img-thumbnail" />
+                                                }
+                                                else
+                                                {
+                                                    <span class="badge bg-secondary">Document</span>
+                                                }
+                                            }
+                                            else
+                                            {
+                                                <span class="text-muted">None</span>
+                                            }
+                                        </td>
+                                        <td>
+                                            @if (!string.IsNullOrEmpty(item.x1_Pic_Path2))
+                                            {
+                                                <img src="@Url.Content(item.x1_Pic_Path2)" alt="@item.x1_Pic2" width="50" class="img-thumbnail" />
+                                            }
+                                            else
+                                            {
+                                                <span class="text-muted">None</span>
+                                            }
+                                        </td>
+                                        <td>@Html.DisplayFor(modelItem => item.Consultation_Date)</td>
+                                        <td>@Html.DisplayFor(modelItem => item.Consultation_Time)</td>
+                                        <td><span class="badge bg-danger rounded-pill">@Html.DisplayFor(modelItem => item.Consultation_status)</span></td>
+                                        <td>
+                                            <div class="btn-group" role="group">
+                                                <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-info btn-sm"><i class="fa fa-eye"></i></a>
+                                                <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-warning btn-sm"><i class="fa fa-edit"></i></a>
+                                            
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @section Scripts {
+        @{
+            await Html.RenderPartialAsync("_ValidationScriptsPartial");
+        }
+        <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="https://cdn.datatables.net/2.1.8/js/dataTables.min.js"></script>
+        <script src="https://cdn.datatables.net/2.1.8/js/dataTables.bootstrap5.min.js"></script>
+        <script src="https://cdn.datatables.net/responsive/3.0.3/js/dataTables.responsive.min.js"></script>
+        <script src="https://cdn.datatables.net/responsive/3.0.3/js/responsive.bootstrap5.min.js"></script>
+        <script>
+            $(document).ready(function () {
+                // Ensure layout is recalculated after a short delay
+                function adjustTable(table) {
+                    setTimeout(function () {
+                        table.columns.adjust().responsive.recalc();
+                    }, 100);
+                }
+
+                // Initialize DataTable with improved responsive configuration
+                function initializeDataTable(tableId) {
+                    return $(tableId).DataTable({
+                        responsive: {
+                            details: {
+                                display: $.fn.dataTable.Responsive.display.modal({
+                                    header: function (row) {
+                                        var data = row.data();
+                                        return 'Details for ' + data[0]; // Name column
+                                    }
+                                }),
+                                renderer: $.fn.dataTable.Responsive.renderer.tableAll({
+                                    tableClass: 'table table-striped'
+                                })
+                            }
+                        },
+                        dom: '<"row"<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6"f>>rt<"row"<"col-sm-12 col-md-5"i><"col-sm-12 col-md-7"p>>',
+                        language: {
+                            search: "",
+                            searchPlaceholder: "Search...",
+                            lengthMenu: "Show _MENU_ entries",
+                            paginate: {
+                                first: "First",
+                                last: "Last",
+                                next: "Next",
+                                previous: "Previous"
+                            }
+                        },
+                        columnDefs: [
+                            { responsivePriority: 1, targets: 0 }, // Name
+                            { responsivePriority: 2, targets: -1 }, // Actions
+                            { responsivePriority: 3, targets: -2 }, // Status
+                            { responsivePriority: 4, targets: -3 }  // Time
+                        ],
+                        order: [[7, 'desc']], // Sort by Date column by default
+                        drawCallback: function () {
+                            adjustTable(this.api());
+                        }
+                    });
+                }
+
+                // Initialize the active tab's DataTable immediately
+                var pendingTable = initializeDataTable('#pendingTable');
+                adjustTable(pendingTable);
+
+                // Store references to all DataTables
+                var tables = {
+                    pending: pendingTable,
+                    process: null,
+                    approved: null,
+                    denied: null
+                };
+
+                // Initialize DataTables when tabs are shown
+                $('a[data-bs-toggle="tab"]').on('shown.bs.tab', function (e) {
+                    var target = $(e.target).attr('href'); // Get the target tab pane
+                    var tableId = target + 'Table'; // e.g., #pending -> #pendingTable
+
+                    // Initialize the DataTable for the target tab if not already initialized
+                    switch (target) {
+                        case '#process':
+                            if (tables.process === null) {
+                                tables.process = initializeDataTable('#processTable');
+                                adjustTable(tables.process);
+                            }
+                            break;
+                        case '#approved':
+                            if (tables.approved === null) {
+                                tables.approved = initializeDataTable('#approvedTable');
+                                adjustTable(tables.approved);
+                            }
+                            break;
+                        case '#denied':
+                            if (tables.denied === null) {
+                                tables.denied = initializeDataTable('#deniedTable');
+                                adjustTable(tables.denied);
+                            }
+                            break;
+                    }
+
+                    // Redraw the table to fix any rendering issues
+                    if (tables[target.substring(1)]) {
+                        adjustTable(tables[target.substring(1)]);
+                    }
+                });
+
+                // File upload display
+                document.querySelectorAll('.custom-file-upload input[type="file"]').forEach(input => {
+                    input.addEventListener('change', function () {
+                        const label = this.nextElementSibling;
+                        const fileName = this.files.length > 0 ? this.files[0].name : 'Choose File';
+                        label.innerHTML = `<i class="fas fa-upload"></i> ${fileName}`;
+                    });
+                });
+            });
+                    function handleSubmit(event) {
+            // Check if the form is valid
+            if (document.getElementById("Create").checkValidity()) {
+                // Show success alert
+                document.getElementById("successAlert").classList.remove("d-none");
+
+                // Optionally, you can hide the alert after a few seconds
+                setTimeout(function() {
+                    document.getElementById("successAlert").classList.add("d-none");
+                }, 3000);
+
+                return true; // Allow form submission
+            } else {
+                event.preventDefault(); // Prevent form submission if not valid
+                return false;
+            }
+        }
+        </script>
+    }
+
+    <style>
+        .form-select {
+            border-radius: 8px;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ced4da;
+            transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+        }
+
+            .form-select:focus {
+                border-color: #007bff;
+                box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
+                outline: none;
+            }
+
+            .form-select:hover {
+                border-color: #6c757d;
+            }
+
+        .form-group label {
+            font-weight: 500;
+            color: #343a40;
+            margin-bottom: 8px;
+        }
+
+        .form-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .form-group {
+            flex: 1;
+            min-width: 200px;
+        }
+
+            .form-group label i {
+                color: #007bff;
+                margin-right: 5px;
+            }
+
+        .custom-file-upload {
+            position: relative;
+            display: inline-block;
+            width: 100%;
+        }
+
+            .custom-file-upload input[type="file"] {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                opacity: 0;
+                cursor: pointer;
+            }
+
+        .custom-file-label {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10px 15px;
+            background-color: #f8f9fa;
+            color: #343a40;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            text-align: center;
+        }
+
+            .custom-file-label i {
+                margin-right: 8px;
+            }
+
+            .custom-file-label:hover {
+                background-color: #e9ecef;
+                box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+                transform: translateY(-1px);
+            }
+
+            .custom-file-label:active {
+                transform: translateY(1px);
+            }
+
+        .text-danger {
+            margin-top: 5px;
+            display: block;
+        }
+
+        .custom-orange {
+            background-color: #fb5607;
+        }
+    </style>

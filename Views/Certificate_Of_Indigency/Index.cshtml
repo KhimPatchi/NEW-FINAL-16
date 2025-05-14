@@ -1,0 +1,428 @@
+﻿@model IEnumerable<SocialWelfarre.Models.Certificate_Of_Indigency>
+@using System.IO
+
+@{
+    ViewData["Title"] = "Certificate of Indigency Requests";
+    Layout = "/Views/Shared/_DashboardLayout.cshtml";
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>@ViewData["Title"] - Certificate of Indigency Requests</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+    <style>
+        .form-select {
+            border-radius: 8px;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ced4da;
+            transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+        }
+
+            .form-select:focus {
+                border-color: #007bff;
+                box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
+                outline: none;
+            }
+
+            .form-select:hover {
+                border-color: #6c757d;
+            }
+
+        .form-group label {
+            font-weight: 500;
+            color: #343a40;
+            margin-bottom: 8px;
+        }
+
+        .form-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .form-group {
+            flex: 1;
+            min-width: 200px;
+        }
+
+            /* Style for the icons to make them blue */
+            .form-group label i {
+                color: #007bff;
+                margin-right: 5px;
+            }
+
+        /* Custom file input styling */
+        .custom-file-upload {
+            position: relative;
+            display: inline-block;
+            width: 100%;
+        }
+
+            .custom-file-upload input[type="file"] {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                opacity: 0;
+                cursor: pointer;
+            }
+
+        .custom-file-label {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10px 15px;
+            background-color: white;
+            color: white;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            text-align: center;
+        }
+
+            .custom-file-label i {
+                margin-right: 8px;
+            }
+
+            .custom-file-label:hover {
+                background-color: #0056b3;
+                box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+                transform: translateY(-1px);
+            }
+
+            .custom-file-label:active {
+                transform: translateY(1px);
+            }
+
+        /* Ensure validation messages align with the custom styling */
+        .text-danger {
+            margin-top: 5px;
+            display: block;
+        }
+
+        /* Style for active tab */
+        .nav-tabs .nav-link.active {
+            font-weight: bold;
+            background-color: #f8f9fa;
+            border-bottom-color: transparent;
+        }
+
+        /* Add hover effect for tabs */
+        .nav-tabs .nav-link:hover:not(.active) {
+            background-color: #f1f1f1;
+            border-color: #e9ecef #e9ecef #dee2e6;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        <div class="card-body">
+            <div class="form-section">
+                <h4><i class="fas fa-plus-circle"></i> Request Certificate of Indigency</h4>
+                <!-- Success Alert -->
+                <div id="successAlert" class="alert alert-success d-none" role="alert">
+                    Consultation submitted successfully!
+                </div>
+
+                <form asp-action="Create" method="post" enctype="multipart/form-data" id="Create" onsubmit="return handleSubmit(event)">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                    <!-- Row 1 -->
+                    <div class="form-row">
+                        <div class="form-group col-md-3">
+                            <label><i class="fas fa-user"></i> First Name *</label>
+                            <input asp-for="@(new SocialWelfarre.Models.Certificate_Of_Indigency().FirstName1)" class="form-control" placeholder="Enter First Name" required />
+                        </div>
+                        <div class="form-group col-md-3">
+                            <label><i class="fas fa-user"></i> Middle Name *</label>
+                            <input asp-for="@(new SocialWelfarre.Models.Certificate_Of_Indigency().MiddleName1)" class="form-control" placeholder="Enter Middle Name" required />
+                        </div>
+                        <div class="form-group col-md-3">
+                            <label><i class="fas fa-user"></i> Last Name *</label>
+                            <input asp-for="@(new SocialWelfarre.Models.Certificate_Of_Indigency().LastName1)" class="form-control" placeholder="Enter Last Name" required />
+                        </div>
+                        <div class="form-group col-md-3">
+                            <label><i class="fas fa-birthday-cake"></i> Age *</label>
+                            <input asp-for="@(new SocialWelfarre.Models.Certificate_Of_Indigency().Age1)" class="form-control" type="number" placeholder="Enter Age" required />
+                        </div>
+                    </div>
+
+                    <!-- Row 2 -->
+                    <div class="form-row">
+                        <div class="form-group col-md-3">
+                            <label><i class="fas fa-phone"></i> Contact Number *</label>
+                            <input asp-for="@(new SocialWelfarre.Models.Certificate_Of_Indigency().ContactNumber1)" class="form-control" placeholder="Enter Contact Number" required />
+                        </div>
+                        <div class="form-group col-md-3">
+                            <label><i class="fas fa-boxes"></i> Request *</label>
+                            <input asp-for="@(new SocialWelfarre.Models.Certificate_Of_Indigency().No_Rquested1)" class="form-control" type="number" placeholder="Enter number requested" required />
+                        </div>
+                        <div class="form-group col-md-3">
+                            <label><i class="fas fa-home"></i> Address *</label>
+                            <input asp-for="@(new SocialWelfarre.Models.Certificate_Of_Indigency().Address1)" class="form-control" placeholder="Enter Address" required />
+                        </div>
+                        <div class="form-group col-md-3">
+                            <label><i class="fas fa-map-marker-alt"></i> Barangay *</label>
+                            <select asp-for="@(new SocialWelfarre.Models.Certificate_Of_Indigency().Barangay1)" class="form-select" required>
+                                <option value="">-- Select Barangay --</option>
+                                @foreach (var barangay in Html.GetEnumSelectList<Barangay1>())
+                                {
+                                    <option value="@barangay.Value">@barangay.Text</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Row 3 -->
+                    <div class="form-row">
+                        <div class="form-group col-md-3">
+                            <label><i class="fas fa-comment"></i> Reason *</label>
+                            <select asp-for="@(new SocialWelfarre.Models.Certificate_Of_Indigency().Reason1)" class="form-select" required>
+                                <option value="">-- Select Reason --</option>
+                                @foreach (var reason in Html.GetEnumSelectList<Reason>())
+                                {
+                                    <option value="@reason.Value">@reason.Text</option>
+                                }
+                            </select>
+                        </div>
+
+                        <div class="form-group col-md-3">
+                            <label for="brgyCertFile"><i class="fas fa-file-alt"></i> Barangay Certificate *</label>
+                            <div class="custom-file-upload">
+                                <input type="file" name="brgyCertFile" id="brgyCertFile" accept=".jpg,.jpeg,.png,.pdf" required />
+                                <label for="brgyCertFile" class="custom-file-label"><i class="fas fa-upload"></i> Choose File</label>
+                            </div>
+                        </div>
+                        <div class="form-group col-md-3">
+                            <label for="validIdFile"><i class="fas fa-id-card"></i> Valid ID *</label>
+                            <div class="custom-file-upload">
+                                <input type="file" name="validIdFile" id="validIdFile" accept=".jpg,.jpeg,.png,.pdf" required />
+                                <label for="validIdFile" class="custom-file-label"><i class="fas fa-upload"></i> Choose File</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <div class="form-row">
+                        <div class="col-md-12 text-end">
+                            <button type="submit" class="btn btn-primary mt-1"><i class="fas fa-save"></i> Add Application</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+    @using Newtonsoft.Json
+    @{
+        var pendingStatus = ActiveStatus1.Pending.ToString();
+        var acceptedStatus = ActiveStatus1.Approved.ToString();
+        var rejectedStatus = ActiveStatus1.Denied.ToString();
+        var processStatus = ActiveStatus1.Process.ToString();
+        var nullStatus = "Null";
+        var statuses = new[] { pendingStatus, acceptedStatus, processStatus, rejectedStatus };
+    }
+
+    <div class="card mt-4">
+        <div class="card-body">
+            <!-- Nav Tabs -->
+            <ul class="nav nav-tabs" id="applicationTabs" role="tablist">
+                @foreach (var status in statuses)
+                {
+                    var tabId = status.ToLowerInvariant().Replace(" ", "-");
+                    var isActive = (status == pendingStatus) ? "active" : "";
+                    var tabTitle = status switch
+                    {
+                        var s when s == pendingStatus => "Pending",
+                        var s when s == acceptedStatus => "Approved",
+                        var s when s == processStatus => "In Process",
+                        var s when s == rejectedStatus => "Denied",
+                        _ => "Tab"
+                    };
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link @isActive" id="@tabId-tab" data-bs-toggle="tab" data-bs-target="#@tabId" type="button" role="tab" aria-controls="@tabId" aria-selected="@(isActive != "" ? "true" : "false")">
+                            @tabTitle
+                        </button>
+                    </li>
+                }
+            </ul>
+
+            <div class="tab-content mt-3" id="applicationTabContent">
+                @foreach (var status in statuses)
+                {
+                    var tabId = status.ToLowerInvariant().Replace(" ", "-");
+                    var isActive = (status == pendingStatus) ? "show active" : "";
+                    var tabTitle = status switch
+                    {
+                        var s when s == pendingStatus => "Pending Applications",
+                        var s when s == acceptedStatus => "Approved Applications",
+                        var s when s == processStatus => "In Process Applications",
+                        var s when s == rejectedStatus => "Denied Applications",
+                        _ => "Applications"
+                    };
+
+                    <div class="tab-pane fade @isActive" id="@tabId" role="tabpanel" aria-labelledby="@tabId-tab">
+                        <h4>@tabTitle</h4>
+                        <div class="table-responsive">
+                            <table id="@tabId-table" class="table table-striped table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>@Html.DisplayNameFor(model => model.FullName)</th>
+                                        <th>@Html.DisplayNameFor(model => model.Barangay1)</th>
+                                        <th>@Html.DisplayNameFor(model => model.No_Rquested1)</th>
+                                        <th>@Html.DisplayNameFor(model => model.Brgy_Cert_Path1)</th>
+                                        <th>@Html.DisplayNameFor(model => model.Valid_ID_Path1)</th>
+                                        <th>@Html.DisplayNameFor(model => model.Reason1)</th>
+                                        <th>@Html.DisplayNameFor(model => model.Status1)</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in Model.Where(x =>
+                                   (Enum.GetName(typeof(ActiveStatus1), x.Status1) == status) ||
+                                   (status == nullStatus && x.Status1 == null)))
+                                    {
+                                        <tr>
+                                            <td>@Html.DisplayFor(modelItem => item.FullName)</td>
+                                            <td>@Html.DisplayFor(modelItem => item.Barangay1)</td>
+                                            <td>@Html.DisplayFor(modelItem => item.No_Rquested1)</td>
+                                            <td>
+                                                @if (!string.IsNullOrEmpty(item.Brgy_Cert_Path1))
+                                                {
+                                                    var ext = System.IO.Path.GetExtension(item.Brgy_Cert_Path1)?.ToLower();
+                                                    if (ext is ".jpg" or ".jpeg" or ".png")
+                                                    {
+                                                        <img src="@Url.Content(item.Brgy_Cert_Path1)" width="100" />
+                                                    }
+                                                    else
+                                                    {
+                                                        <span>Non-image file</span>
+                                                        ;
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    <span>No file</span>
+                                                    ;
+                                                }
+                                            </td>
+                                            <td>
+                                                @if (!string.IsNullOrEmpty(item.Valid_ID_Path1))
+                                                {
+                                                    var ext = System.IO.Path.GetExtension(item.Valid_ID_Path1)?.ToLower();
+                                                    if (ext is ".jpg" or ".jpeg" or ".png")
+                                                    {
+                                                        <img src="@Url.Content(item.Valid_ID_Path1)" width="100" />
+                                                    }
+                                                    else
+                                                    {
+                                                        <span>Non-image file</span>
+                                                        ;
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    <span>No file</span>
+                                                    ;
+                                                }
+                                            </td>
+                                            <td>@Html.DisplayFor(modelItem => item.Reason1)</td>
+                                            <td>
+                                                @{
+                                                    var statusText = Enum.GetName(typeof(ActiveStatus1), item.Status1);
+                                                    string badgeClass = statusText switch
+                                                    {
+                                                        var s when s == pendingStatus => "badge bg-warning",
+                                                        var s when s == acceptedStatus => "badge bg-success",
+                                                        var s when s == processStatus => "badge bg-primary",
+                                                        var s when s == rejectedStatus => "badge bg-danger",
+                                                        _ => "badge bg-secondary"
+                                                    };
+                                                }
+                                                <span class="@badgeClass rounded-pill">@statusText</span>
+                                            </td>
+                                            <td>
+                                                @{
+                                                    bool isAdmin = User.IsInRole("Admin");
+                                                    bool isStaff1 = User.IsInRole("Staff1");
+                                                    bool isStaff2 = User.IsInRole("Staff2");
+                                                    var currentStatus = Enum.GetName(typeof(ActiveStatus1), item.Status1);
+                                                    bool showActions =
+                                                    (currentStatus == pendingStatus && (isAdmin || isStaff1)) ||
+                                                    (currentStatus == processStatus && (isAdmin || isStaff2));
+                                                }
+
+                                                @if (showActions)
+                                                {
+                                                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-warning btn-sm"><i class="fa fa-edit"></i> Edit</a>
+                                                    <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-info btn-sm"><i class="fa fa-eye"></i> View</a>
+                                                   
+                                                }
+                                                else
+                                                {
+                                                    <span class="text-muted">No actions available</span>
+                                                }
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+
+    @section Scripts {
+        <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+        <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css" />
+
+        <script>
+            $(document).ready(function () {
+                const tabIds = @Html.Raw(JsonConvert.SerializeObject(statuses.Select(s => s.ToLowerInvariant().Replace(" ", "-"))));
+                tabIds.forEach(id => {
+                    $(`#${id}-table`).DataTable({
+                        pageLength: 10,
+                        responsive: true
+                    });
+                });
+            });
+
+                         function handleSubmit(event) {
+                // Check if the form is valid
+                if (document.getElementById("Create").checkValidity()) {
+                    // Show success alert
+                    document.getElementById("successAlert").classList.remove("d-none");
+
+                    // Optionally, you can hide the alert after a few seconds
+                    setTimeout(function() {
+                        document.getElementById("successAlert").classList.add("d-none");
+                    }, 3000);
+
+                    return true; // Allow form submission
+                } else {
+                    event.preventDefault(); // Prevent form submission if not valid
+                    return false;
+                }
+            }
+        </script>
+    }
+
+
+
+</body>
+</html>

@@ -1,0 +1,44 @@
+﻿@model IEnumerable<SocialWelfarre.Models.AuditTrail>
+
+@{
+    ViewData["Title"] = "System Audit Trail";
+    Layout = "/Views/Shared/_DashboardLayout.cshtml";
+}
+
+<!-- Audit Trail Card -->
+<div class="card">
+    <div class="card-body">
+        <!-- Audit Trail Table Section -->
+        <div class="table-section">
+            <table id="example1" class="table table-striped">
+                <thead>
+                    <tr>
+                        <th><i class="fas fa-tasks"></i> @Html.DisplayNameFor(model => model.Action)</th>
+                        <th><i class="fas fa-cogs"></i> @Html.DisplayNameFor(model => model.Moduie)</th>
+                        <th><i class="fas fa-table"></i> @Html.DisplayNameFor(model => model.AffectedTable)</th>
+                        <th><i class="fas fa-clock"></i> @Html.DisplayNameFor(model => model.TimeStamp)</th>
+                        <th><i class="fas fa-network-wired"></i> @Html.DisplayNameFor(model => model.IpAddress)</th>
+                        <th><i class="fas fa-user"></i> @Html.DisplayNameFor(model => model.User.FullName)</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@Html.DisplayFor(modelItem => item.Action)</td>
+                            <td>@Html.DisplayFor(modelItem => item.Moduie)</td>
+                            <td>@Html.DisplayFor(modelItem => item.AffectedTable)</td>
+                            <td>@Html.DisplayFor(modelItem => item.TimeStamp)</td>
+                            <td>@Html.DisplayFor(modelItem => item.IpAddress)</td>
+                            <td>@Html.DisplayFor(modelItem => item.User.FullName)</td>
+                            <td>
+                                <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-primary btn-action"><i class="fa fa-eye"></i> View</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

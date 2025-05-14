@@ -1,0 +1,154 @@
+﻿@model SocialWelfarre.Models.DisasterKitTransaction
+
+@{
+    ViewData["Title"] = "Transaction Details";
+    Layout = "/Views/Shared/_DashboardLayout.cshtml";
+}
+
+<style>
+    .details-section {
+        margin-top: 20px;
+    }
+
+        .details-section h4 {
+            margin-bottom: 20px;
+            font-weight: 500;
+            color: #343a40;
+            display: flex;
+            align-items: center;
+        }
+
+            .details-section h4 i {
+                color: #007bff;
+                margin-right: 10px;
+            }
+
+        .details-section .row {
+            display: flex;
+            flex-wrap: wrap;
+        }
+
+        .details-section .card {
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            height: 100%;
+        }
+
+        .details-section .card-body {
+            padding: 15px;
+        }
+
+        .details-section h5 {
+            margin-bottom: 15px;
+            font-weight: 500;
+            color: #343a40;
+            display: flex;
+            align-items: center;
+        }
+
+            .details-section h5 i {
+                color: #007bff;
+                margin-right: 8px;
+            }
+
+        .details-section .form-group {
+            margin-bottom: 10px;
+        }
+
+        .details-section label {
+            font-weight: 500;
+            color: #343a40;
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+        }
+
+            .details-section label i {
+                color: #007bff;
+                margin-right: 5px;
+            }
+
+        .details-section input[type="text"] {
+            background-color: #f8f9fa;
+            border: 1px solid #ced4da;
+            border-radius: 8px;
+            padding: 8px;
+            width: 100%;
+            color: #495057;
+            font-size: 14px;
+        }
+
+    .action-buttons {
+        margin-top: 20px;
+        text-align: center;
+    }
+
+        .action-buttons .btn {
+            margin: 0 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+            .action-buttons .btn:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+            }
+</style>
+
+<div class="details-section">
+    <h4><i class="fas fa-info-circle"></i> Transaction Details</h4>
+
+    <div class="row">
+        <!-- Transaction Information Card -->
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <h5><i class="fas fa-info"></i> Transaction Information</h5>
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="form-group">
+                                <label><i class="fas fa-map-marker-alt"></i> @Html.DisplayNameFor(model => model.Barangay3)</label>
+                                <input type="text" value="@Model.Barangay3" readonly class="form-control" />
+                            </div>
+                            <div class="form-group">
+                                <label><i class="fas fa-comment"></i> @Html.DisplayNameFor(model => model.Reason3)</label>
+                                <input type="text" value="@Model.Reason3" readonly class="form-control" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Transaction Details Card -->
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <h5><i class="fas fa-clock"></i> Transaction Details</h5>
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="form-group">
+                                <label><i class="fas fa-calendar-alt"></i> @Html.DisplayNameFor(model => model.TransactionDate)</label>
+                                <input type="text" value="@Model.TransactionDate.ToString("yyyy-MM-dd")" readonly class="form-control" />
+                            </div>
+                            <div class="form-group">
+                                <label><i class="fas fa-clock"></i> @Html.DisplayNameFor(model => model.TransactionTime)</label>
+                                <input type="text" value="@Model.TransactionTime.ToString(@"hh\:mm\:ss")" readonly class="form-control" />
+                            </div>
+                            <div class="form-group">
+                                <label><i class="fas fa-boxes"></i> @Html.DisplayNameFor(model => model.NumberOfPacks3)</label>
+                                <input type="text" value="@Model.NumberOfPacks3" readonly class="form-control" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="action-buttons">
+        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning"><i class="fas fa-edit"></i> Edit</a>
+        <a asp-action="Index" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Back to List</a>
+    </div>
+</div>

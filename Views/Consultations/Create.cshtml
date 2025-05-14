@@ -1,0 +1,112 @@
+﻿@model SocialWelfarre.Models.Consultation
+
+@{
+    ViewData["Title"] = "Create";
+    Layout = "/Views/Shared/_DashboardLayout.cshtml";
+
+}
+
+<h1>Create</h1>
+
+<h4>Consultation</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="First_Name2" class="control-label"></label>
+                <input asp-for="First_Name2" class="form-control" />
+                <span asp-validation-for="First_Name2" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Middle_Name2" class="control-label"></label>
+                <input asp-for="Middle_Name2" class="form-control" />
+                <span asp-validation-for="Middle_Name2" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Last_Name2" class="control-label"></label>
+                <input asp-for="Last_Name2" class="form-control" />
+                <span asp-validation-for="Last_Name2" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Brgy_Cert2" class="control-label"></label>
+                <input asp-for="Brgy_Cert2" class="form-control" />
+                <span asp-validation-for="Brgy_Cert2" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Brgy_Cert_Path2" class="control-label"></label>
+                <input asp-for="Brgy_Cert_Path2" class="form-control" />
+                <span asp-validation-for="Brgy_Cert_Path2" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Proof_SoloParent2" class="control-label"></label>
+                <input asp-for="Proof_SoloParent2" class="form-control" />
+                <span asp-validation-for="Proof_SoloParent2" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Proof_SoloParent_Path2" class="control-label"></label>
+                <input asp-for="Proof_SoloParent_Path2" class="form-control" />
+                <span asp-validation-for="Proof_SoloParent_Path2" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Birth_Cert2" class="control-label"></label>
+                <input asp-for="Birth_Cert2" class="form-control" />
+                <span asp-validation-for="Birth_Cert2" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Birth_Cert_Path2" class="control-label"></label>
+                <input asp-for="Birth_Cert_Path2" class="form-control" />
+                <span asp-validation-for="Birth_Cert_Path2" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Valid_ID2" class="control-label"></label>
+                <input asp-for="Valid_ID2" class="form-control" />
+                <span asp-validation-for="Valid_ID2" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Valid_ID_Path2" class="control-label"></label>
+                <input asp-for="Valid_ID_Path2" class="form-control" />
+                <span asp-validation-for="Valid_ID_Path2" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="x1_Pic2" class="control-label"></label>
+                <input asp-for="x1_Pic2" class="form-control" />
+                <span asp-validation-for="x1_Pic2" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="x1_Pic_Path2" class="control-label"></label>
+                <input asp-for="x1_Pic_Path2" class="form-control" />
+                <span asp-validation-for="x1_Pic_Path2" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Consultation_Date" class="control-label"></label>
+                <input asp-for="Consultation_Date" class="form-control" />
+                <span asp-validation-for="Consultation_Date" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Consultation_Time" class="control-label"></label>
+                <input asp-for="Consultation_Time" class="form-control" />
+                <span asp-validation-for="Consultation_Time" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Consultation_status" class="control-label"></label>
+                <input asp-for="Consultation_status" class="form-control" />
+                <span asp-validation-for="Consultation_status" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

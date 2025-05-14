@@ -1,0 +1,467 @@
+﻿@model IEnumerable<SocialWelfarre.Models.DisasterKitInventory>
+
+@{
+    ViewData["Title"] = "Disaster Kit Inventory";
+    Layout = "/Views/Shared/_DashboardLayout.cshtml";
+
+    // Handle null Model by providing an empty collection
+    var model = Model ?? Enumerable.Empty<SocialWelfarre.Models.DisasterKitInventory>();
+
+    // Compute metrics for statistic cards
+    var totalStocks = model.Sum(x => x.TotalPacks1);
+    var stocksLeft = model.Sum(x => x.StockLeft);
+    var totalAddedStocks = model.Sum(x => x.StockInId1); // Handle null StockIn1
+    var totalTransactions = model.Count();
+
+    // Compute top 10 barangays by request frequency
+    var topBarangays = model
+        .GroupBy(x => x.Barangay3)
+        .Select(g => new { Barangay = g.Key, RequestCount = g.Count() })
+        .OrderByDescending(x => x.RequestCount)
+        .Take(10)
+        .ToList();
+
+    // Prepare data for charts
+    var barangayCounts = model
+        .GroupBy(x => x.Barangay3)
+        .Select(g => new { Barangay = g.Key, StockLeft = g.Sum(x => x.StockLeft) })
+        .ToList();
+    var barangays = barangayCounts.Select(x => x.Barangay).ToList();
+    var stockLeftData = barangayCounts.Select(x => x.StockLeft).ToList();
+    var totalStockLeft = stockLeftData.Sum() > 0 ? stockLeftData.Sum() : 1; // Avoid division by zero
+    var percentages = stockLeftData.Select(x => Math.Round((x / (double)totalStockLeft) * 100, 1)).ToList();
+}
+
+<style>
+    body {
+        background-color: #f0f4f8;
+        font-family: 'Poppins', sans-serif;
+        color: #1f2937;
+        background: linear-gradient(135deg, #f0f4f8 0%, #e6f0fa 100%);
+    }
+
+    .dashboard-container {
+        padding: 20px 10px;
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .card {
+        border: none;
+        border-radius: 15px;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+        background: linear-gradient(135deg, #ffffff, #e6f0fa);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        width: 100%;
+    }
+
+        .card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+        }
+
+    .card-header {
+        background: linear-gradient(90deg, #1e40af, #60a5fa);
+        color: #ffffff;
+        font-size: 1.6rem;
+        font-weight: 700;
+        padding: 15px;
+        border-radius: 15px 15px 0 0;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .card-body {
+        padding: 20px;
+        width: 100%;
+    }
+
+    .stat-card {
+        padding: 15px;
+        border-radius: 10px;
+        margin-bottom: 15px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+        transition: transform 0.3s ease;
+        min-height: 120px;
+    }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+        }
+
+        .stat-card:nth-child(1) {
+            background: linear-gradient(135deg, #1e40af, #60a5fa);
+        }
+
+        .stat-card:nth-child(2) {
+            background: linear-gradient(135deg, #14b8a6, #6ee7b7);
+        }
+
+        .stat-card:nth-child(3) {
+            background: linear-gradient(135deg, #7c3aed, #a78bfa);
+        }
+
+        .stat-card:nth-child(4) {
+            background: linear-gradient(135deg, #f97316, #fb923c);
+        }
+
+        .stat-card i {
+            font-size: 2rem;
+            color: #ffffff;
+            background: rgba(0, 0, 0, 0.2);
+            padding: 10px;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.3s ease;
+        }
+
+        .stat-card:hover i {
+            transform: scale(1.1);
+        }
+
+        .stat-card h5 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin: 0;
+            color: #ffffff;
+        }
+
+        .stat-card p {
+            font-size: 1rem;
+            color: rgba(255, 255, 255, 0.8);
+            margin: 0;
+        }
+
+    .chart-container {
+        background: rgba(255, 255, 255, 0.9);
+        backdrop-filter: blur(10px);
+        border-radius: 10px;
+        padding: 10px;
+        box-shadow: 0 3px 15px rgba(0, 0, 0, 0.1);
+        width: 100%;
+        height: 250px;
+        overflow-x: auto;
+        overflow-y: auto;
+    }
+
+    .line-chart-container {
+        background: rgba(255, 255, 255, 0.9);
+        backdrop-filter: blur(10px);
+        border-radius: 10px;
+        padding: 10px;
+        box-shadow: 0 3px 15px rgba(0, 0, 0, 0.1);
+        width: 100%;
+        height: 250px;
+        overflow-x: auto;
+        overflow-y: auto;
+    }
+
+    canvas#stockDistributionChart, canvas#stockTrendChart {
+        width: 100% !important;
+        max-height: 220px;
+        min-width: 0;
+    }
+
+    canvas#stockTrendChart {
+        min-width: 600px;
+    }
+
+    .table-section table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 0;
+        font-size: 1rem;
+        background: linear-gradient(135deg, #ffffff 70%, #e6f0fa 100%);
+        border-radius: 8px;
+        overflow: hidden;
+    }
+
+    .table-section th, .table-section td {
+        padding: 10px;
+        text-align: left;
+        border-bottom: 1px solid #dee2e6;
+        vertical-align: middle;
+    }
+
+    .table-section th {
+        font-weight: 700;
+        color: #ffffff;
+        background: linear-gradient(90deg, #1e40af, #60a5fa);
+        font-size: 1.2rem;
+        position: relative;
+    }
+
+        .table-section th::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.1);
+            z-index: -1;
+            border-radius: 8px 8px 0 0;
+        }
+
+    .table-section tr:nth-child(even) td {
+        background: #f9fafb;
+    }
+
+    .table-section tr:hover td {
+        background: #e6f0fa;
+        transition: background 0.3s ease;
+    }
+
+    .btn-action {
+        margin-right: 5px;
+        padding: 6px 12px;
+        font-size: 0.9rem;
+        border-radius: 8px;
+        transition: transform 0.3s ease;
+    }
+
+    .btn-primary.btn-action {
+        background-color: #1e40af;
+        border: none;
+    }
+
+        .btn-primary.btn-action:hover {
+            background-color: #1e3a8a;
+            transform: translateY(-2px);
+        }
+
+    .btn-warning.btn-action {
+        background-color: #f97316;
+        border: none;
+    }
+
+        .btn-warning.btn-action:hover {
+            background-color: #e8590c;
+            transform: translateY(-2px);
+        }
+
+    .btn-danger.btn-action {
+        background-color: #dc3545;
+        border: none;
+    }
+
+        .btn-danger.btn-action:hover {
+            background-color: #c82333;
+            transform: translateY(-2px);
+        }
+
+    .btn-success {
+        background-color: #2ecc71;
+        border: none;
+        color: #ffffff;
+        transition: transform 0.3s ease, background 0.3s ease;
+    }
+
+        .btn-success:hover {
+            background-color: #27ae60;
+            transform: translateY(-2px);
+        }
+
+    .card-header {
+        font-size: 1.4rem;
+        padding: 10px;
+    }
+
+    .card-body {
+        padding: 15px;
+    }
+
+    .stat-card {
+        padding: 10px;
+        margin-bottom: 10px;
+        min-height: 100px;
+    }
+
+        .stat-card i {
+            width: 40px;
+            height: 40px;
+            font-size: 1.5rem;
+        }
+
+        .stat-card h5 {
+            font-size: 1.5rem;
+        }
+
+        .stat-card p {
+            font-size: 0.9rem;
+        }
+
+    .chart-container, .line-chart-container {
+        padding: 8px;
+        height: 200px;
+    }
+
+    canvas#stockDistributionChart, canvas#stockTrendChart {
+        max-height: 180px;
+    }
+
+    canvas#stockTrendChart {
+        min-width: 500px;
+    }
+
+    .table-section th, .table-section td {
+        font-size: 0.9rem;
+        padding: 8px;
+    }
+
+    .btn-action {
+        font-size: 0.8rem;
+        padding: 4px 8px;
+    }
+
+    .chart-title {
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: #1f2937;
+        margin-bottom: 15px;
+        text-align: center;
+    }
+</style>
+
+<!-- Statistic Cards -->
+<div class="row">
+    <div class="col-md-3">
+        <div class="stat-card">
+            <i class="fas fa-boxes text-primary"></i>
+            <h5>@totalStocks</h5>
+            <p>Total Disaster Kits</p>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stat-card">
+            <i class="fas fa-box-open text-success"></i>
+            <h5>@stocksLeft</h5>
+            <p>Kits Left</p>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stat-card">
+            <i class="fas fa-plus-circle text-warning"></i>
+            <h5>@totalAddedStocks</h5>
+            <p>Kits Added</p>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stat-card">
+            <i class="fas fa-exchange-alt text-danger"></i>
+            <h5>@totalTransactions</h5>
+            <p>Total Transactions</p>
+        </div>
+    </div>
+</div>
+
+
+
+<!-- Top 10 Most Requested Barangays -->
+<div class="card">
+    <div class="card-header">
+        <h5><i class="fas fa-map-marker-alt"></i> Top 10 Most Requested Barangays</h5>
+    </div>
+    <div class="card-body">
+        <div class="table-section">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Barangay</th>
+                        <th>Request Count</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in topBarangays)
+                    {
+                        <tr>
+                            <td>@item.Barangay</td>
+                            <td>@item.RequestCount</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Inventory Table -->
+<div class="card">
+    <div class="card-header">
+        <h5><i class="fas fa-boxes"></i> Disaster Kit Inventory</h5>
+    </div>
+    <div class="card-body">
+
+        <div class="table-section">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th><i class="fas fa-plus-circle"></i> Kits Added</th>
+                        <th><i class="fas fa-boxes"></i> Total Kits</th>
+                        <th><i class="fas fa-box-open"></i> Kits Left</th>
+                        <th><i class="fas fa-calendar-alt"></i> Request Date</th>
+                        <th><i class="fas fa-map-marker-alt"></i> Barangay</th>
+                        <th><i class="fas fa-info-circle"></i> Reason</th>
+                        <th><i class="fas fa-calendar-day"></i> Transaction Date</th>
+                        <th><i class="fas fa-clock"></i> Transaction Time</th>
+                        <th><i class="fas fa-box"></i> Kits Requested</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in model)
+                    {
+                        <tr>
+                            <td>@Html.DisplayFor(modelItem => item.StockInId1)</td>
+                            <td>@Html.DisplayFor(modelItem => item.TotalPacks1)</td>
+                            <td>@Html.DisplayFor(modelItem => item.StockLeft)</td>
+                            <td>@Html.DisplayFor(modelItem => item.RequestDate1)</td>
+                            <td>@Html.DisplayFor(modelItem => item.Barangay3)</td>
+                            <td>@Html.DisplayFor(modelItem => item.Reason3)</td>
+                            <td>@Html.DisplayFor(modelItem => item.TransactionDate)</td>
+                            <td>@Html.DisplayFor(modelItem => item.TransactionTime)</td>
+                            <td>@Html.DisplayFor(modelItem => item.NumberOfPacks3)</td>
+                            <td>
+                                <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-warning btn-sm btn-action"><i class="fas fa-edit"></i> Edit</a>
+                                <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-primary btn-sm btn-action"><i class="fas fa-eye"></i> Details</a>
+                                <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger btn-sm btn-action"><i class="fas fa-trash"></i> Delete</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <!-- Chart.js and Data Labels Plugin -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
+    <script>
+        // Register Chart.js Data Labels plugin
+        Chart.register(ChartDataLabels);
+
+        // Pastel color palette for charts
+        const pastelColorPalette = [
+            '#a3bffa', '#f4a8a8', '#b5e4ca', '#f9d5a7', '#c3a6e4',
+            '#f5a9cb', '#9ee4f5', '#d4e4a3', '#f9c4a7', '#b5d4f5'
+        ];
+
+
+
+        // Initialize charts if data is available
+        if (@(model.Any() ? "true" : "false")) {
+            initializeCharts();
+        }
+    </script>
+}

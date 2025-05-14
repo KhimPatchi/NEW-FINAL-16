@@ -1,0 +1,51 @@
+﻿@using Microsoft.AspNetCore.Identity
+@model IEnumerable<IdentityRole>
+
+@{
+    ViewData["Title"] = "Users List";
+    Layout = "/Views/Shared/_DashboardLayout.cshtml";
+     // Add this for the ascending number
+}
+
+<!-- Users List Card -->
+<div class="card">
+    <div class="card-body">
+        <p> <a asp-action="Create" class="btn btn-primary"> Add New User</a></p>
+        <!-- Users Table Section -->
+        <div class="table-section">
+            <table id="example1" class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Role No</th> <!-- Changed this column title -->
+                        <th>Role Name</th>
+                        <th>View</th>
+                        <th>Edit</th>
+                        <th>Delete</th>
+                       
+
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@Html.DisplayFor(modelItem => item.Id)</td>
+                            <td>@Html.DisplayFor(modelItem => item.Name)</td>
+                         
+                          
+
+                            <td>
+                                <a asp-action="View" asp-route-id="@item.Id" class="btn btn-warning btn-action"><i class="fa fa-edit"></i> Details</a>
+                                <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-warning btn-action"><i class="fa fa-edit"></i> Edit</a>
+                                <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger btn-action"><i class="fa fa-trash"></i> Delete</a>
+                            </td>
+                        </tr>
+                     
+                        <!-- Increment after each loop -->
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
