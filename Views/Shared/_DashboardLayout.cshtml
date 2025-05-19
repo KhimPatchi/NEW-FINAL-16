@@ -1,454 +1,285 @@
-﻿@* @using Microsoft.AspNetCore.Identity
-
+﻿@using Microsoft.AspNetCore.Identity
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <meta name="viewport" content="width=device-width" />
-    <title>@ViewBag.Title</title>
-    <!-- Google Font: Source Sans Pro -->
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="~/AdminLTE/plugins/fontawesome-free/css/all.min.css">
-    <!-- Ionicons -->
-    <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
-    <!-- Tempusdominus Bootstrap 4 -->
-    <link rel="stylesheet" href="~/AdminLTE/plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css">
-    <!-- iCheck -->
-    <link rel="stylesheet" href="~/AdminLTE/plugins/icheck-bootstrap/icheck-bootstrap.min.css">
-    <!-- JQVMap -->
-    <link rel="stylesheet" href="~/AdminLTE/plugins/jqvmap/jqvmap.min.css">
-    <!-- Theme style -->
-    <link rel="stylesheet" href="~/AdminLTE/dist/css/adminlte.min.css">
-    <!-- overlayScrollbars -->
-    <link rel="stylesheet" href="~/AdminLTE/plugins/overlayScrollbars/css/OverlayScrollbars.min.css">
-    <!-- Daterange picker -->
-    <link rel="stylesheet" href="~/AdminLTE/plugins/daterangepicker/daterangepicker.css">
-    <!-- summernote -->
-    <link rel="stylesheet" href="~/AdminLTE/plugins/summernote/summernote-bs4.min.css">
-    <!-- DataTables -->
-    <link rel="stylesheet" href="~/AdminLTE/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">
-    <link rel="stylesheet" href="~/AdminLTE/plugins/datatables-responsive/css/responsive.bootstrap4.min.css">
-    <link rel="stylesheet" href="~/AdminLTE/plugins/datatables-buttons/css/buttons.bootstrap4.min.css">
-
-
-    <!-- Custom CSS for Sidebar -->
-    <style>
-        /* Sidebar alignment */
-        .main-sidebar .nav-sidebar .nav-item .nav-link {
-            padding: 0.5rem 1rem;
-            font-size: 0.95rem;
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <!-- Using Tailwind CSS via CDN for development; for production, install Tailwind locally as a PostCSS plugin or use Tailwind CLI -->
+    <script src="https://cdn.tailwindcss.com/3.4.16"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#4f46e5',
+                        secondary: '#6366f1'
+                    },
+                    borderRadius: {
+                        'none': '0px',
+                        'sm': '4px',
+                        DEFAULT: '8px',
+                        'md': '12px',
+                        'lg': '16px',
+                        'xl': '20px',
+                        '2xl': '24px',
+                        '3xl': '32px',
+                        'full': '9999px',
+                        'button': '8px'
+                    }
+                }
+            }
         }
-
-        /* Dropdown alignment */
-        .main-sidebar .nav-treeview .nav-link {
-            padding: 0.5rem 1rem 0.5rem 2rem;
-            font-size: 0.9rem;
-        }
-
-        /* Ensure dropdown icons align properly */
-        .main-sidebar .nav-treeview .nav-icon {
-            margin-right: 0.5rem;
-            width: 1.2rem;
-            text-align: center;
-        }
-
-        /* Fix for multi-line dropdown items */
-        .main-sidebar .nav-treeview .nav-link p {
-            display: inline;
-            margin: 0;
-        }
-
-        /* Highlight active link */
-        .main-sidebar .nav-link.active {
-            background-color: rgba(255, 255, 255, 0.1) !important;
-            color: #fff !important;
-            font-weight: bold;
-        }
-
-        /* Ensure treeview menu visibility */
-        .main-sidebar .nav-treeview {
-            display: none;
-        }
-
-        .main-sidebar .menu-open .nav-treeview {
-            display: block;
-        }
-
-        /* Sidebar and content wrapper alignment */
-        .main-sidebar {
-            width: 250px;
-        }
-
-        .content-wrapper {
-            margin-left: 250px;
-        }
-
-
-
-        .content-wrapper {
-            margin-left: 0;
-        }
-
-        }</style>
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+    <link href="~/css/DashboardLayout.css" rel="stylesheet" />
+    <link rel="icon" type="image/png" href="~/images/logo-New.png">
 </head>
-
-@functions {
-    public string IsActive(string controller = null, string action = null)
-    {
-        var routeData = ViewContext.RouteData.Values;
-        var currentController = routeData["controller"]?.ToString();
-        var currentAction = routeData["action"]?.ToString();
-
-        if (!string.IsNullOrEmpty(controller) && !string.IsNullOrEmpty(action))
-            return (controller == currentController && action == currentAction) ? "active" : "";
-        else if (!string.IsNullOrEmpty(controller))
-            return (controller == currentController) ? "active" : "";
-        else if (!string.IsNullOrEmpty(action))
-            return (action == currentAction) ? "active" : "";
-
-        return "";
-    }
-
-    public string IsTreeviewOpen(string dropdown, params string[] controllers)
-    {
-        return "";
-    }
-
-    public string IsTreeviewLinkActive(string dropdown, params string[] controllers)
-    {
-        return "";
-    }
-}
-
-<body class="hold-transition sidebar-mini layout-fixed">
-    <div class="wrapper">
-        <!-- Preloader -->
-        <div class="preloader flex-column justify-content-center align-items-center">
-            <img class="animation__shake" src="~/images/logo-New.png" alt="AdminLTELogo" height="100" width="100">
+<body class="bg-gray-50 flex h-screen">
+    <!-- Sidebar -->
+    <aside class="sidebar bg-white w-64 h-full flex flex-col shadow-lg">
+        <!-- Logo and User Info -->
+        <div class="p-6 flex flex-col items-center border-b border-gray-100">
+            <div class="w-16 h-16 flex items-center justify-center rounded-full bg-primary/5 mb-4">
+                <img src="~/images/logo-New.png" alt="CSWDO Logo" class="w-10 h-10 object-contain" />
+            </div>
+            <span class="font-semibold text-gray-800">@User.Identity?.Name</span>
+            <form asp-area="Identity" asp-page="/Account/Manage/Index" method="get" class="text-sm text-primary hover:underline flex items-center gap-1 mt-1">
+                <i class="ri-settings-3-line"></i> Manage Account
+            </form>
         </div>
 
-        <!-- Main Sidebar Container -->
-        <aside class="main-sidebar sidebar-dark-primary elevation-4 d-flex flex-column">
-            <!-- Brand Logo -->
-            <a href="/Admin/_Dashboard#" class="brand-link">
-                <img src="~/AdminLTE/dist/img/SWD.png" alt="AdminLTE Logo" class="brand-image img-circle elevation-3" style="opacity: 1.0">
-                <span class="brand-text font-weight-light text-light"><b>CSWDO System</b></span>
-            </a>
-
-            <!-- Sidebar Content -->
-            <div class="sidebar d-flex flex-column" style="height: 100%;">
-                <!-- User Panel -->
-                <div class="user-panel mt-3 pb-3 mb-3 d-flex align-items-center">
-                    <div class="image">
-                        <img src="~/AdminLTE/dist/img/user2-160x160.jpg" class="img-circle elevation-2" alt="User Image">
+        <!-- Navigation -->
+        <nav class="flex-1 overflow-y-auto py-4">
+            <ul class="px-3 space-y-1">
+                <!-- Dashboard -->
+                <li>
+                    <a asp-controller="Dashboard" asp-action="AllDashboard" class="sidebar-item active flex items-center px-4 py-3 text-gray-700 rounded">
+                        <div class="w-5 h-5 flex items-center justify-center mr-3 text-primary">
+                            <i class="ri-dashboard-line"></i>
+                        </div>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <!-- Food Pack Inventory Dashboard -->
+                <li>
+                    <a asp-controller="FoodPackInventories" asp-action="Dashboard" class="sidebar-item flex items-center px-4 py-3 text-gray-700 rounded">
+                        <div class="w-5 h-5 flex items-center justify-center mr-3 text-gray-500">
+                            <i class="ri-file-list-3-line"></i>
+                        </div>
+                        <span>Food Pack Inventory Dashboard</span>
+                    </a>
+                </li>
+                <!-- Food Pack Inventory Dashboard -->
+                <li>
+                    <a asp-controller="DisasterKitInventories" asp-action="Dashboard" class="sidebar-item flex items-center px-4 py-3 text-gray-700 rounded">
+                        <div class="w-5 h-5 flex items-center justify-center mr-3 text-gray-500">
+                            <i class="ri-file-list-3-line"></i>
+                        </div>
+                        <span>Disaster Kit Inventory Dashboard</span>
+                    </a>
+                </li>
+                <!-- Users -->
+                <li>
+                    <div class="sidebar-item dropdown-trigger flex items-center justify-between px-4 py-3 text-gray-700 rounded cursor-pointer">
+                        <div class="flex items-center">
+                            <div class="w-5 h-5 flex items-center justify-center mr-3 text-gray-500">
+                                <i class="ri-user-line"></i>
+                            </div>
+                            <span>Users</span>
+                        </div>
+                        <div class="w-5 h-5 flex items-center justify-center dropdown-icon">
+                            <i class="ri-arrow-right-s-line"></i>
+                        </div>
                     </div>
-                    <div class="info ml-2 d-flex flex-column">
-                        <span class="font-weight-bold text-white">@User.Identity?.Name</span>
-                        <a asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage" class="small" style="color: rgba(255,255,255,0.7);">
-                            <i class="fas fa-user-cog mr-1"></i> Manage Account
-                        </a>
-                    </div>
-                </div>
-
-                <!-- Sidebar Menu -->
-                <nav class="mt-2 flex-grow-1">
-                    <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
-                        <li class="nav-item has-treeview @IsTreeviewOpen("Dashboard", "Admin", "FoodPackInventories", "DisasterKitInventories")">
-                            <a href="#" class="nav-link @IsTreeviewLinkActive("Dashboard", "Admin", "FoodPackInventories", "DisasterKitInventories")">
-                                <i class="nav-icon fas fa-tachometer-alt"></i>
-                                <p>Dashboard <i class="fas fa-angle-left right"></i></p>
-                            </a>
-                            <ul class="nav nav-treeview">
-                                <li class="nav-item">
-                                    <a asp-controller="Admin" asp-action="Dashboard" asp-area="" class="nav-link @IsActive("Admin", "Dashboard")">
-                                        <i class="nav-icon fas fa-box"></i>
-                                        <p>Food Pack</p>
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a asp-controller="Admin" asp-action="CertificateOfIndigencyDashboard" asp-area="" class="nav-link @IsActive("Admin", "CertificateOfIndigencyDashboard")">
-                                        <i class="nav-icon fas fa-file-signature"></i>
-                                        <p>Certificate of Indigency</p>
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a asp-controller="Admin" asp-action="ConsultationDashboard" asp-area="" class="nav-link @IsActive("Admin", "ConsultationDashboard")">
-                                        <i class="nav-icon fas fa-chart-line"></i>
-                                        <p>Solo Parent ID</p>
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a asp-controller="FoodPackInventories" asp-action="Dashboard" asp-area="" class="nav-link @IsActive("FoodPackInventories", "Dashboard")">
-                                        <i class="nav-icon fas fa-columns"></i>
-                                        <p>Food Pack    </p>
-                                        <i class="nav-icon fas fa-empty"></i>
-                                        <p>Inventory Dashboard</p>
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a asp-controller="DisasterKitInventories" asp-action="Dashboard" asp-area="" class="nav-link @IsActive("DisasterKitInventories", "Dashboard")">
-                                        <i class="nav-icon fas fa-desktop"></i>
-                                        <p>Disaster Kit    </p>
-                                        <i class="nav-icon fas fa-empty"></i>
-                                        <p>Inventory Dashboard</p>
-                                    </a>
-                                </li>
-                            </ul>
-                        </li>
-
-                        @if (User.IsInRole("Admin"))
-                        {
-                            <li class="nav-item has-treeview @IsTreeviewOpen("Users", "Users")">
-                                <a href="#" class="nav-link @IsTreeviewLinkActive("Users", "Users")">
-                                    <i class="nav-icon fas fa-user-friends"></i>
-                                    <p>Users <i class="fas fa-angle-left right"></i></p>
-                                </a>
-                                <ul class="nav nav-treeview">
-                                    <li class="nav-item">
-                                        <a asp-controller="Users" asp-action="ViewCreate" asp-area="" class="nav-link @IsActive("Users", "ViewCreate")">
-                                            <i class="nav-icon fas fa-users-cog"></i>
-                                            <p>List of Users</p>
-                                        </a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a asp-controller="Users" asp-action="CreateUsers" asp-area="" class="nav-link @IsActive("Users", "CreateUsers")">
-                                            <i class="nav-icon fas fa-plus"></i>
-                                            <p>Create User</p>
-                                        </a>
-                                    </li>
-                                </ul>
-                            </li>
-                        }
-
-                        <li class="nav-item has-treeview @IsTreeviewOpen("FoodPack", "ApplicationFoodPacks", "FoodPackInventories")">
-                            <a href="#" class="nav-link @IsTreeviewLinkActive("FoodPack", "ApplicationFoodPacks", "FoodPackInventories")">
-                                <i class="nav-icon fas fa-box"></i>
-                                <p>Food Pack <i class="fas fa-angle-left right"></i></p>
-                            </a>
-                            <ul class="nav nav-treeview">
-                                <li class="nav-item">
-                                    <a asp-controller="ApplicationFoodPacks" asp-action="Index" asp-area="" class="nav-link @IsActive("ApplicationFoodPacks", "Index")">
-                                        <i class="nav-icon fas fa-box-open"></i>
-                                        <p>Transaction</p>
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a asp-controller="FoodPackInventories" asp-action="Index" asp-area="" class="nav-link @IsActive("FoodPackInventories", "Index")">
-                                        <i class="nav-icon fas fa-shopping-cart"></i>
-                                        <p>Inventory</p>
-                                    </a>
-                                </li>
-                            </ul>
-                        </li>
-
-                        <li class="nav-item">
-                            <a asp-controller="Certificate_Of_Indigency" asp-action="Index" asp-area="" class="nav-link @IsActive("Certificate_Of_Indigency", "Index")">
-                                <i class="nav-icon fas fa-certificate"></i>
-                                <p>Certificate of Indigency</p>
+                    <ul class="dropdown-content ml-7 pl-4 border-l border-gray-100">
+                        <li>
+                            <a asp-controller="Users" asp-action="ViewCreate" class="flex items-center px-4 py-2 text-sm text-gray-600 rounded hover:text-primary">
+                                <div class="w-4 h-4 flex items-center justify-center mr-2">
+                                    <i class="ri-list-check"></i>
+                                </div>
+                                <span>List of Users</span>
                             </a>
                         </li>
-
-                        <li class="nav-item">
-                            <a asp-controller="Consultations" asp-action="Index" asp-area="" class="nav-link @IsActive("Consultations", "Index")">
-                                <i class="nav-icon fas fa-comments"></i>
-                                <p>Solo Parent ID</p>
-                            </a>
-                        </li>
-
-                        <li class="nav-item has-treeview @IsTreeviewOpen("DisasterKit", "DisasterKitTransactions", "DisasterKitInventories")">
-                            <a href="#" class="nav-link @IsTreeviewLinkActive("DisasterKit", "DisasterKitTransactions", "DisasterKitInventories")">
-                                <i class="nav-icon fas fa-toolbox"></i>
-                                <p>Disaster Kit <i class="fas fa-angle-left right"></i></p>
-                            </a>
-                            <ul class="nav nav-treeview">
-                                <li class="nav-item">
-                                    <a asp-controller="DisasterKitTransactions" asp-action="Index" asp-area="" class="nav-link @IsActive("DisasterKitTransactions", "Index")">
-                                        <i class="nav-icon fas fa-box-open"></i>
-                                        <p>Transaction</p>
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a asp-controller="DisasterKitInventories" asp-action="Index" asp-area="" class="nav-link @IsActive("DisasterKitInventories", "Index")">
-                                        <i class="nav-icon fas fa-first-aid"></i>
-                                        <p>Inventory</p>
-                                    </a>
-                                </li>
-                            </ul>
-                        </li>
-
-                        <li class="nav-item">
-                            <a asp-controller="AuditTrails" asp-action="Index" asp-area="" class="nav-link @IsActive("AuditTrails", "Index")">
-                                <i class="nav-icon fas fa-clipboard-list"></i>
-                                <p>Audit Trails</p>
-                            </a>
-                        </li>
-
-                        <li class="nav-item">
-                            <a asp-controller="Reports" asp-action="Index" asp-area="" class="nav-link @IsActive("Reports", "Index")">
-                                <i class="nav-icon fas fa-sync-alt"></i>
-                                <p>Reports</p>
+                        <li>
+                            <a asp-controller="Users" asp-action="CreateUsers" class="flex items-center px-4 py-2 text-sm text-gray-600 rounded hover:text-primary">
+                                <div class="w-4 h-4 flex items-center justify-center mr-2">
+                                    <i class="ri-user-add-line"></i>
+                                </div>
+                                <span>Create User</span>
                             </a>
                         </li>
                     </ul>
-                </nav>
+                </li>
 
-                <!-- Separator and Logout Footer -->
-                <hr class="border-secondary" style="margin: 10px 0;">
-                <ul class="nav nav-pills nav-sidebar flex-column">
-                    <li class="nav-item">
-                        <form class="form-inline" asp-area="Identity" asp-page="/Account/Logout"
-                              asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
-                            <button type="submit" class="nav-link btn btn-link text-left text-light p-0 w-100">
-                                <i class="nav-icon fas fa-sign-out-alt"></i>
-                                <p class="d-inline mr-1">Logout</p>
-                            </button>
-                        </form>
-                    </li>
-                </ul>
-                <hr class="border-secondary" style="margin: 10px 0;">
-            </div>
-        </aside>
+                <!-- Food Pack -->
+                <li>
+                    <div class="sidebar-item dropdown-trigger flex items-center justify-between px-4 py-3 text-gray-700 rounded cursor-pointer">
+                        <div class="flex items-center">
+                            <div class="w-5 h-5 flex items-center justify-center mr-3 text-gray-500">
+                                <i class="ri-shopping-basket-line"></i>
+                            </div>
+                            <span>Food Pack</span>
+                        </div>
+                        <div class="w-5 h-5 flex items-center justify-center dropdown-icon">
+                            <i class="ri-arrow-right-s-line"></i>
+                        </div>
+                    </div>
+                    <ul class="dropdown-content ml-7 pl-4 border-l border-gray-100">
+                        <li>
+                            <a asp-controller="ApplicationFoodPacks" asp-action="Index" class="flex items-center px-4 py-2 text-sm text-gray-600 rounded hover:text-primary">
+                                <div class="w-4 h-4 flex items-center justify-center mr-2">
+                                    <i class="ri-exchange-line"></i>
+                                </div>
+                                <span>Transaction</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a asp-controller="FoodPackInventories" asp-action="Index" class="flex items-center px-4 py-2 text-sm text-gray-600 rounded hover:text-primary">
+                                <div class="w-4 h-4 flex items-center justify-center mr-2">
+                                    <i class="ri-store-line"></i>
+                                </div>
+                                <span>Inventory</span>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
 
-        <!-- Main Content Wrapper -->
-        <div class="content-wrapper">
-            @RenderBody()
+                <!-- Certificate of Indigency -->
+                <li>
+                    <a asp-controller="Certificate_Of_Indigency" asp-action="Index" class="sidebar-item flex items-center px-4 py-3 text-gray-700 rounded">
+                        <div class="w-5 h-5 flex items-center justify-center mr-3 text-gray-500">
+                            <i class="ri-file-list-3-line"></i>
+                        </div>
+                        <span>Certificate of Indigency</span>
+                    </a>
+                </li>
+
+                <!-- Solo Parent -->
+                <li>
+                    <a asp-controller="Consultations" asp-action="Index" class="sidebar-item flex items-center px-4 py-3 text-gray-700 rounded">
+                        <div class="w-5 h-5 flex items-center justify-center mr-3 text-gray-500">
+                            <i class="ri-parent-line"></i>
+                        </div>
+                        <span>Solo Parent ID</span>
+                    </a>
+                </li>
+
+                <!-- Disaster Kit -->
+                <li>
+                    <div class="sidebar-item dropdown-trigger flex items-center justify-between px-4 py-3 text-gray-700 rounded cursor-pointer">
+                        <div class="flex items-center">
+                            <div class="w-5 h-5 flex items-center justify-center mr-3 text-gray-500">
+                                <i class="ri-first-aid-kit-line"></i>
+                            </div>
+                            <span>Disaster Kit</span>
+                        </div>
+                        <div class="w-5 h-5 flex items-center justify-center dropdown-icon">
+                            <i class="ri-arrow-right-s-line"></i>
+                        </div>
+                    </div>
+                    <ul class="dropdown-content ml-7 pl-4 border-l border-gray-100">
+                        <li>
+                            <a asp-controller="DisasterKitTransactions" asp-action="Index" class="flex items-center px-4 py-2 text-sm text-gray-600 rounded hover:text-primary">
+                                <div class="w-4 h-4 flex items-center justify-center mr-2">
+                                    <i class="ri-exchange-line"></i>
+                                </div>
+                                <span>Transaction</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a asp-controller="DisasterKitInventories" asp-action="Index" class="flex items-center px-4 py-2 text-sm text-gray-600 rounded hover:text-primary">
+                                <div class="w-4 h-4 flex items-center justify-center mr-2">
+                                    <i class="ri-store-line"></i>
+                                </div>
+                                <span>Inventory</span>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+
+                <!-- Audit Trails -->
+                <li>
+                    <a asp-controller="AuditTrails" asp-action="Index" class="sidebar-item flex items-center px-4 py-3 text-gray-700 rounded">
+                        <div class="w-5 h-5 flex items-center justify-center mr-3 text-gray-500">
+                            <i class="ri-history-line"></i>
+                        </div>
+                        <span>Audit Trails</span>
+                    </a>
+                </li>
+
+                <!-- Reports -->
+                <li>
+                    <a asp-controller="Reports" asp-action="Index" class="sidebar-item flex items-center px-4 py-3 text-gray-700 rounded">
+                        <div class="w-5 h-5 flex items-center justify-center mr-3 text-gray-500">
+                            <i class="ri-file-chart-line"></i>
+                        </div>
+                        <span>Reports</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+
+        <!-- Logout -->
+        <div class="p-4 border-t border-gray-100">
+            <form asp-area="Identity" asp-page="/Account/Logout" method="post">
+                <button type="submit" class="!rounded-button w-full flex items-center justify-center gap-2 px-4 py-2.5 text-white bg-primary hover:bg-primary/90 transition-colors">
+                    <div class="w-5 h-5 flex items-center justify-center">
+                        <i class="ri-logout-box-line"></i>
+                    </div>
+                    <span class="whitespace-nowrap">Logout</span>
+                </button>
+            </form>
         </div>
-    </div>
+    </aside>
 
-    <!-- Scripts -->
-    <script src="~/AdminLTE/plugins/jquery/jquery.min.js"></script>
-    <script src="~/AdminLTE/plugins/jquery-ui/jquery-ui.min.js"></script>
-    <script>$.widget.bridge('uibutton', $.ui.button)</script>
-    <script src="~/AdminLTE/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
-    <script src="~/AdminLTE/plugins/chart.js/Chart.min.js"></script>
-    <script src="~/AdminLTE/plugins/sparklines/sparkline.js"></script>
-    <script src="~/AdminLTE/plugins/jqvmap/jquery.vmap.min.js"></script>
-    <script src="~/AdminLTE/plugins/jqvmap/maps/jquery.vmap.usa.js"></script>
-    <script src="~/AdminLTE/plugins/jquery-knob/jquery.knob.min.js"></script>
-    <script src="~/AdminLTE/plugins/moment/moment.min.js"></script>
-    <script src="~/AdminLTE/plugins/daterangepicker/daterangepicker.js"></script>
-    <script src="~/AdminLTE/plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js"></script>
-    <script src="~/AdminLTE/plugins/summernote/summernote-bs4.min.js"></script>
-    <script src="~/AdminLTE/plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js"></script>
-    <script src="~/AdminLTE/dist/js/adminlte.js"></script>
-    <script src="~/AdminLTE/dist/js/pages/dashboard.js"></script>
+    <!-- Main Content -->
+    <main class="flex-1 p-6 overflow-y-auto">
+        @RenderBody()
+    </main>
 
-    <!-- DataTables & Plugins -->
-    <script src="~/AdminLTE/plugins/datatables/jquery.dataTables.min.js"></script>
-    <script src="~/AdminLTE/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
-    <script src="~/AdminLTE/plugins/datatables-responsive/js/dataTables.responsive.min.js"></script>
-    <script src="~/AdminLTE/plugins/datatables-responsive/js/responsive.bootstrap4.min.js"></script>
-    <script src="~/AdminLTE/plugins/datatables-buttons/js/dataTables.buttons.min.js"></script>
-    <script src="~/AdminLTE/plugins/datatables-buttons/js/buttons.bootstrap4.min.js"></script>
-    <script src="~/AdminLTE/plugins/jszip/jszip.min.js"></script>
-    <script src="~/AdminLTE/plugins/pdfmake/pdfmake.min.js"></script>
-    <script src="~/AdminLTE/plugins/pdfmake/vfs_fonts.js"></script>
-    <script src="~/AdminLTE/plugins/datatables-buttons/js/buttons.html5.min.js"></script>
-    <script src="~/AdminLTE/plugins/datatables-buttons/js/buttons.print.min.js"></script>
-    <script src="~/AdminLTE/plugins/datatables-buttons/js/buttons.colVis.min.js"></script>
-    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
-    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
-
-    <!-- Custom Sidebar Script -->
+    <!-- Include jQuery before validation scripts -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
-        $(document).ready(function () {
-            console.log("Sidebar script initialized");
+        document.addEventListener('DOMContentLoaded', function() {
+            // Handle dropdown toggles
+            const dropdownTriggers = document.querySelectorAll('.dropdown-trigger');
 
-            // Prevent AdminLTE default treeview behavior
-            $('[data-widget="treeview"]').off('click');
+            dropdownTriggers.forEach(trigger => {
+                trigger.addEventListener('click', function() {
+                    const dropdownContent = this.nextElementSibling;
+                    const dropdownIcon = this.querySelector('.dropdown-icon');
 
-            // Handle child link clicks to prevent dropdown closure
-            $('.nav-treeview .nav-link').on('click', function (e) {
-                e.stopPropagation(); // Prevent the click from bubbling to the parent
-                console.log("Treeview item clicked:", $(this).text());
-
-                // Highlight the clicked link
-                $('.nav-link').removeClass('active');
-                $(this).addClass('active');
-
-                // If the clicked link is under "Dashboard", ensure the dropdown state is saved
-                const $parentTreeview = $(this).closest('.nav-item.has-treeview');
-                const parentText = $parentTreeview.find('> a.nav-link p').text().trim();
-                if (parentText === "Dashboard" && $parentTreeview.hasClass('menu-open')) {
-                    localStorage.setItem('dashboardDropdownOpen', 'true');
-                }
+                    dropdownContent.classList.toggle('open');
+                    dropdownIcon.classList.toggle('open');
+                });
             });
 
-            // Handle dropdown toggle only for parent links
-            $('.nav-item.has-treeview > a.nav-link').on('click', function (e) {
-                e.preventDefault();
-                e.stopPropagation();
-                const $parent = $(this).parent('.nav-item');
-                const isOpen = $parent.hasClass('menu-open');
-                const parentText = $parent.find('p').first().text().trim();
+            // Mobile sidebar toggle
+            const sidebarToggle = document.createElement('button');
+            sidebarToggle.classList.add('sidebar-toggle', 'fixed', 'top-4', 'left-4', 'p-2', 'bg-primary', 'text-white', 'rounded', 'lg:hidden');
+            sidebarToggle.innerHTML = '<i class="ri-menu-line"></i>';
+            document.body.appendChild(sidebarToggle);
 
-                console.log("Dropdown clicked:", parentText, "Is open:", isOpen);
-
-                // Close all other dropdowns
-                $('.nav-item.has-treeview').not($parent).removeClass('menu-open');
-                $('.nav-item.has-treeview').not($parent).find('.nav-treeview').slideUp(200);
-
-                // Toggle current dropdown
-                if (!isOpen) {
-                    $parent.addClass('menu-open');
-                    $parent.find('.nav-treeview').slideDown(200);
-                    // Save state for "Dashboard"
-                    if (parentText === "Dashboard") {
-                        localStorage.setItem('dashboardDropdownOpen', 'true');
-                    }
-                } else {
-                    $parent.removeClass('menu-open');
-                    $parent.find('.nav-treeview').slideUp(200);
-                    // Clear state for "Dashboard"
-                    if (parentText === "Dashboard") {
-                        localStorage.setItem('dashboardDropdownOpen', 'false');
-                    }
-                }
+            sidebarToggle.addEventListener('click', function() {
+                const sidebar = document.querySelector('.sidebar');
+                sidebar.classList.toggle('open');
             });
 
-            // Restore "Dashboard" dropdown state from localStorage
-            const dashboardDropdownState = localStorage.getItem('dashboardDropdownOpen');
-            if (dashboardDropdownState === 'true') {
-                const $dashboardTreeview = $('.nav-item.has-treeview').has('a.nav-link:contains("Dashboard")');
-                if ($dashboardTreeview.length) {
-                    console.log("Restoring Dashboard dropdown state: open");
-                    $dashboardTreeview.addClass('menu-open');
-                    $dashboardTreeview.find('.nav-treeview').show();
-                }
-            }
+            // Set first dropdown open by default
+            const firstDropdown = document.querySelector('.dropdown-trigger');
+            const firstDropdownContent = firstDropdown.nextElementSibling;
+            const firstDropdownIcon = firstDropdown.querySelector('.dropdown-icon');
 
-            // Open the dropdown if a child link is active on page load, except for "Dashboard"
-            const activeChildLink = $('.nav-treeview .nav-link.active');
-            if (activeChildLink.length) {
-                const $parentTreeview = activeChildLink.closest('.nav-item.has-treeview');
-                const parentText = $parentTreeview.find('> a.nav-link p').text().trim();
-                if ($parentTreeview.length && parentText !== "Dashboard") {
-                    console.log("Opening dropdown for active child:", activeChildLink.text());
-                    $parentTreeview.addClass('menu-open');
-                    $parentTreeview.find('.nav-treeview').show();
-                }
-            }
-
-            // Highlight the active link
-            const activeLink = $('.nav-link.active');
-            if (activeLink.length) {
-                console.log("Active link found:", activeLink.text());
-                activeLink.addClass('active');
-            }
+            firstDropdownContent.classList.add('open');
+            firstDropdownIcon.classList.add('open');
         });
     </script>
 
-    <!-- Initialize DataTable -->
-    <script>
-        $(function () {
-            $("#example1").DataTable({
-                "responsive": true,
-                "lengthChange": false,
-                "autoWidth": false,
-                "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
-            }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
-        });
-    </script>
-    @await RenderSectionAsync("Scripts", required: false)
+    @RenderSection("Scripts", required: false)
 </body>
-</html> *@
+</html>

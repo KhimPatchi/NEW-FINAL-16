@@ -24,6 +24,80 @@ namespace SocialWelfarre.Controllers
             return View(await _context.DisasterKitTransactions.ToListAsync());
         }
 
+        // POST: DisasterKitTransactions/CreateFromIndex
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CreateFromIndex([Bind("Id,Barangay3,Reason3,TransactionDate,TransactionTime,NumberOfPacks3")] DisasterKitTransaction disasterKitTransaction)
+        {
+            // Calculate TotalPacks1 based on all stock entries
+            var allStocks = await _context.StockIn_DisasterKit.OrderBy(s => s.Id).ToListAsync();
+            var latestInventory = await _context.DisasterKitInventories.OrderByDescending(i => i.RequestDate1).FirstOrDefaultAsync();
+            int totalPacks = 0;
+
+            if (allStocks.Any())
+            {
+                totalPacks = allStocks.Sum(s => s.Add_Stock1); // Sum all stock entries
+                if (latestInventory != null)
+                {
+                    totalPacks = latestInventory.StockLeft; // Use the latest StockLeft if inventory exists
+                }
+            }
+            else
+            {
+                TempData["ErrorMessage"] = "No stock available. Please add stock first.";
+                return RedirectToAction(nameof(Index));
+            }
+
+            if (totalPacks < disasterKitTransaction.NumberOfPacks3)
+            {
+                TempData["ErrorMessage"] = $"Insufficient stock available. Available stock: {totalPacks}, Requested: {disasterKitTransaction.NumberOfPacks3}";
+                return RedirectToAction(nameof(Index));
+            }
+
+            if (!ModelState.IsValid)
+            {
+                // Return to Index view with validation errors
+                return View("Index", await _context.DisasterKitTransactions.ToListAsync());
+            }
+
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var latestStock = allStocks.LastOrDefault();
+
+            _context.Add(disasterKitTransaction);
+            await _context.SaveChangesAsync();
+
+            // Create DisasterKitInventory record
+            var inventory = new DisasterKitInventory
+            {
+                StockInId1 = latestStock?.Id ?? 0,
+                TotalPacks1 = totalPacks,
+                StockLeft = totalPacks - disasterKitTransaction.NumberOfPacks3, // Update StockLeft
+                RequestDate1 = DateTime.Now,
+                Barangay3 = disasterKitTransaction.Barangay3,
+                Reason3 = disasterKitTransaction.Reason3,
+                TransactionDate = disasterKitTransaction.TransactionDate,
+                TransactionTime = disasterKitTransaction.TransactionTime,
+                NumberOfPacks3 = disasterKitTransaction.NumberOfPacks3
+            };
+            _context.DisasterKitInventories.Add(inventory);
+            await _context.SaveChangesAsync();
+
+            // Log audit trail
+            var activity = new AuditTrail
+            {
+                Action = "Create",
+                TimeStamp = DateTime.Now,
+                IpAddress = HttpContext.Connection.RemoteIpAddress?.ToString(),
+                UserId = userId,
+                Moduie = "Disaster Kit",
+                AffectedTable = "Disaster Kit"
+            };
+            _context.Add(activity);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction(nameof(Index));
+        }
+
         // GET: DisasterKitTransactions/Details/5
         public async Task<IActionResult> Details(int? id)
         {
@@ -88,6 +162,7 @@ namespace SocialWelfarre.Controllers
             {
                 StockInId1 = latestStock?.Id ?? 0,
                 TotalPacks1 = totalPacks,
+                StockLeft = totalPacks - disasterKitTransaction.NumberOfPacks3, // Update StockLeft
                 RequestDate1 = DateTime.Now,
                 Barangay3 = disasterKitTransaction.Barangay3,
                 Reason3 = disasterKitTransaction.Reason3,
@@ -199,6 +274,7 @@ namespace SocialWelfarre.Controllers
                 {
                     inventory.StockInId1 = latestStock?.Id ?? 0;
                     inventory.TotalPacks1 = totalPacks;
+                    inventory.StockLeft = totalPacks - existingTransaction.NumberOfPacks3;
                     inventory.RequestDate1 = DateTime.Now;
                     inventory.Barangay3 = existingTransaction.Barangay3;
                     inventory.Reason3 = existingTransaction.Reason3;
@@ -213,6 +289,7 @@ namespace SocialWelfarre.Controllers
                     {
                         StockInId1 = latestStock?.Id ?? 0,
                         TotalPacks1 = totalPacks,
+                        StockLeft = totalPacks - existingTransaction.NumberOfPacks3,
                         RequestDate1 = DateTime.Now,
                         Barangay3 = existingTransaction.Barangay3,
                         Reason3 = existingTransaction.Reason3,
@@ -234,6 +311,7 @@ namespace SocialWelfarre.Controllers
                 foreach (var subsequent in subsequentInventories)
                 {
                     subsequent.TotalPacks1 = runningTotal;
+                    subsequent.StockLeft = runningTotal - subsequent.NumberOfPacks3;
                     runningTotal = subsequent.StockLeft;
                 }
                 await _context.SaveChangesAsync();
@@ -313,6 +391,7 @@ namespace SocialWelfarre.Controllers
                 foreach (var inv in remainingInventories)
                 {
                     inv.TotalPacks1 = runningTotal;
+                    inv.StockLeft = runningTotal - inv.NumberOfPacks3;
                     runningTotal = inv.StockLeft;
                 }
                 await _context.SaveChangesAsync();
@@ -360,6 +439,7 @@ namespace SocialWelfarre.Controllers
             foreach (var inventory in inventories)
             {
                 inventory.TotalPacks1 = runningTotal;
+                inventory.StockLeft = runningTotal - inventory.NumberOfPacks3;
                 runningTotal = inventory.StockLeft;
             }
 

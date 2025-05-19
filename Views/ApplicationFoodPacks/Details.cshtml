@@ -1,358 +1,402 @@
-﻿
-@model SocialWelfarre.Models.ApplicationFoodPack
+﻿@model SocialWelfarre.Models.ApplicationFoodPack
 
 @{
     ViewData["Title"] = "Application Details";
     Layout = "/Views/Shared/_DashboardLayout.cshtml";
 }
 
-<style>
-    /* Blue Theme Design */
-    body {
-        background-color: #f0f4f8;
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    }
-
-    .details-section {
-        margin-top: 40px;
-    }
-
-        .details-section h4 {
-            color: #1a5f7a;
-            font-weight: 600;
-            border-bottom: 3px solid #1a5f7a;
-            padding-bottom: 10px;
-            margin-bottom: 30px;
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Application Details</title>
+    <script src="https://cdn.tailwindcss.com/3.4.16"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: { primary: "#4263eb", secondary: "#829af1" },
+                    borderRadius: {
+                        none: "0px",
+                        sm: "4px",
+                        DEFAULT: "8px",
+                        md: "12px",
+                        lg: "16px",
+                        xl: "20px",
+                        "2xl": "24px",
+                        "3xl": "32px",
+                        full: "9999px",
+                        button: "8px",
+                    },
+                },
+            },
+        };
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
         }
 
-    /* Card Styling */
-    .card {
-        border: none;
-        border-radius: 12px;
-        box-shadow: 0 6px 15px rgba(26, 95, 122, 0.1);
-        margin-bottom: 25px;
-        transition: all 0.3s ease;
-    }
-
-        .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(26, 95, 122, 0.15);
-        }
-
-    .card-body {
-        padding: 25px;
-    }
-
-    .card-header {
-        background-color: #1a5f7a;
-        color: white;
-        border-top-left-radius: 12px;
-        border-top-right-radius: 12px;
-        padding: 15px 25px;
-    }
-
-    .card-title {
-        color: #1a5f7a;
-        font-weight: 600;
-        margin-bottom: 20px;
-    }
-
-    /* Form Fields */
-    .form-group {
-        margin-bottom: 20px;
-    }
-
-    .form-control {
-        background-color: #e6f2f7;
-        border: 1px solid #8bc6db;
-        color: #1a5f7a;
-        border-radius: 8px;
-        padding: 12px;
-        transition: all 0.3s ease;
-    }
-
-        .form-control:focus {
-            background-color: #d1eaf3;
-            border-color: #1a5f7a;
-            box-shadow: 0 0 0 0.2rem rgba(26, 95, 122, 0.25);
-        }
-
-        .form-control[readonly] {
-            background-color: #f0f8fa;
-            cursor: default;
-        }
-
-    label {
-        color: #1a5f7a;
-        font-weight: 600;
-        margin-bottom: 8px;
-    }
-
-    /* Image Styling */
-    .details-section img {
-        border-radius: 12px;
-        box-shadow: 0 6px 15px rgba(26, 95, 122, 0.1);
-        transition: all 0.3s ease;
-        max-width: 100%;
-        height: auto;
-    }
-
-        .details-section img:hover {
-            transform: scale(1.05);
-            box-shadow: 0 10px 20px rgba(26, 95, 122, 0.15);
-        }
-
-    /* Action Buttons */
-    .action-buttons {
-        margin-top: 30px;
-        text-align: center;
-    }
-
-        .action-buttons .btn {
-            margin: 0 10px;
+        .form-control {
+            background-color: #f9fafb;
+            border: 1px solid #e5e7eb;
+            color: #374151;
             border-radius: 8px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
+            padding: 10px 12px;
             transition: all 0.3s ease;
         }
 
-    .btn-warning {
-        background-color: #ffc107;
-        border-color: #ffc107;
-        color: #1a5f7a;
-    }
+            .form-control:focus {
+                outline: none;
+                border-color: #4263eb;
+                box-shadow: 0 0 0 3px rgba(66, 99, 235, 0.2);
+            }
 
-        .btn-warning:hover {
-            background-color: #1a5f7a;
-            color: white;
+            .form-control[readonly] {
+                background-color: #f3f4f6;
+                cursor: default;
+            }
+
+        .document-preview {
+            color: #4263eb;
+            cursor: pointer;
+            transition: color 0.2s;
         }
 
-    .btn-secondary {
-        background-color: #6c757d;
-        border-color: #6c757d;
-    }
+            .document-preview:hover {
+                color: #2563eb;
+            }
 
-    .btn-success {
-        background-color: #28a745;
-        border-color: #28a745;
-    }
+        .card {
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            transition: all 0.3s ease;
+        }
 
-    .btn-danger {
-        background-color: #dc3545;
-        border-color: #dc3545;
-    }
+            .card:hover {
+                transform: translateY(-4px);
+                box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            }
 
-    .btn:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
-    }
+        #documentImage {
+            max-width: 100%;
+            max-height: 70vh;
+            object-fit: contain;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <div class="container mx-auto px-4 py-8">
+        <div class="flex items-center gap-3 mb-6">
+            <div class="w-10 h-10 flex items-center justify-center bg-primary/10 text-primary rounded-full">
+                <i class="ri-file-info-line text-xl"></i>
+            </div>
+            <h1 class="text-2xl font-semibold text-gray-800">Application Details</h1>
+        </div>
 
-    /* Icons */
-    .details-section i {
-        color: #1a5f7a;
-        margin-right: 10px;
-    }
-</style>
-
-<div class="details-section container">
-    <h4><i class="fas fa-info-circle"></i> Application Details</h4>
-
-    <div class="row">
-        <!-- Personal Information Card -->
-        <div class="col-md-4">
-            <div class="card">
-                <div class="card-header">
-                    <h5 class="card-title text-white mb-0"><i class="fas fa-user"></i> Personal Information</h5>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <!-- Personal Information Card -->
+            <div class="card bg-white rounded-lg">
+                <div class="bg-primary text-white px-6 py-4 rounded-t-lg">
+                    <h5 class="text-lg font-medium flex items-center">
+                        <i class="ri-user-line mr-2"></i> Personal Information
+                    </h5>
                 </div>
-                <div class="card-body">
-                    <div class="form-group">
-                        <label><i class="fas fa-user"></i> @Html.DisplayNameFor(model => model.FirstName)</label>
-                        <input type="text" value="@Model.FirstName" readonly class="form-control" />
+                <div class="p-6">
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-700 mb-1 flex items-center">
+                            <i class="ri-user-line text-gray-500 mr-1"></i> @Html.DisplayNameFor(model => model.FirstName)
+                        </label>
+                        <input type="text" value="@Model.FirstName" readonly class="form-control w-full" />
                     </div>
-                    <div class="form-group">
-                        <label><i class="fas fa-user"></i> @Html.DisplayNameFor(model => model.MiddleName)</label>
-                        <input type="text" value="@Model.MiddleName" readonly class="form-control" />
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-700 mb-1 flex items-center">
+                            <i class="ri-user-line text-gray-500 mr-1"></i> @Html.DisplayNameFor(model => model.MiddleName)
+                        </label>
+                        <input type="text" value="@Model.MiddleName" readonly class="form-control w-full" />
                     </div>
-                    <div class="form-group">
-                        <label><i class="fas fa-user"></i> @Html.DisplayNameFor(model => model.LastName)</label>
-                        <input type="text" value="@Model.LastName" readonly class="form-control" />
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-700 mb-1 flex items-center">
+                            <i class="ri-user-line text-gray-500 mr-1"></i> @Html.DisplayNameFor(model => model.LastName)
+                        </label>
+                        <input type="text" value="@Model.LastName" readonly class="form-control w-full" />
                     </div>
-                    <div class="form-group">
-                        <label><i class="fas fa-birthday-cake"></i> @Html.DisplayNameFor(model => model.Age)</label>
-                        <input type="text" value="@Model.Age" readonly class="form-control" />
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-700 mb-1 flex items-center">
+                            <i class="ri-calendar-line text-gray-500 mr-1"></i> @Html.DisplayNameFor(model => model.Age)
+                        </label>
+                        <input type="text" value="@Model.Age" readonly class="form-control w-full" />
                     </div>
-                    <div class="form-group">
-                        <label><i class="fas fa-phone"></i> @Html.DisplayNameFor(model => model.ContactNumber)</label>
-                        <input type="text" value="@Model.ContactNumber" readonly class="form-control" />
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-700 mb-1 flex items-center">
+                            <i class="ri-phone-line text-gray-500 mr-1"></i> @Html.DisplayNameFor(model => model.ContactNumber)
+                        </label>
+                        <input type="text" value="@Model.ContactNumber" readonly class="form-control w-full" />
                     </div>
-                    <div class="form-group">
-                        <label><i class="fas fa-home"></i> @Html.DisplayNameFor(model => model.Address)</label>
-                        <input type="text" value="@Model.Address" readonly class="form-control" />
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-700 mb-1 flex items-center">
+                            <i class="ri-map-pin-line text-gray-500 mr-1"></i> @Html.DisplayNameFor(model => model.Address)
+                        </label>
+                        <input type="text" value="@Model.Address" readonly class="form-control w-full" />
                     </div>
                 </div>
             </div>
-        </div>
 
-        <!-- Application Details Card -->
-        <div class="col-md-4">
-            <div class="card">
-                <div class="card-header">
-                    <h5 class="card-title text-white mb-0"><i class="fas fa-boxes"></i> Application Details</h5>
+            <!-- Application Details Card -->
+            <div class="card bg-white rounded-lg">
+                <div class="bg-primary text-white px-6 py-4 rounded-t-lg">
+                    <h5 class="text-lg font-medium flex items-center">
+                        <i class="ri-list-check-2 mr-2"></i> Application Details
+                    </h5>
                 </div>
-                <div class="card-body">
-                    <div class="form-group">
-                        <label><i class="fas fa-boxes"></i> @Html.DisplayNameFor(model => model.Packs)</label>
-                        <input type="text" value="@Model.Packs" readonly class="form-control" />
+                <div class="p-6">
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-700 mb-1 flex items-center">
+                            <i class="ri-group-line text-gray-500 mr-1"></i> @Html.DisplayNameFor(model => model.Packs)
+                        </label>
+                        <input type="text" value="@Model.Packs" readonly class="form-control w-full" />
                     </div>
-                    <div class="form-group">
-                        <label><i class="fas fa-map-marker-alt"></i> @Html.DisplayNameFor(model => model.Barangay)</label>
-                        <input type="text" value="@Model.Barangay" readonly class="form-control" />
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-700 mb-1 flex items-center">
+                            <i class="ri-building-line text-gray-500 mr-1"></i> @Html.DisplayNameFor(model => model.Barangay)
+                        </label>
+                        <input type="text" value="@Model.Barangay" readonly class="form-control w-full" />
                     </div>
-                    <div class="form-group">
-                        <label><i class="fas fa-comment"></i> @Html.DisplayNameFor(model => model.Reason)</label>
-                        <input type="text" value="@Model.Reason" readonly class="form-control" />
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-700 mb-1 flex items-center">
+                            <i class="ri-question-line text-gray-500 mr-1"></i> @Html.DisplayNameFor(model => model.Reason)
+                        </label>
+                        <input type="text" value="@Model.Reason" readonly class="form-control w-full" />
                     </div>
-                    <div class="form-group">
-                        <label><i class="fas fa-info-circle"></i> @Html.DisplayNameFor(model => model.Status)</label>
-                        <input type="text" value="@Model.Status" readonly class="form-control" />
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-700 mb-1 flex items-center">
+                            <i class="ri-information-line text-gray-500 mr-1"></i> @Html.DisplayNameFor(model => model.Status)
+                        </label>
+                        <input type="text" value="@Model.Status" readonly class="form-control w-full" />
                     </div>
                 </div>
             </div>
-        </div>
 
-        <!-- Uploaded Documents Card -->
-        <div class="col-md-4">
-            <div class="card">
-                <div class="card-header">
-                    <h5 class="card-title text-white mb-0"><i class="fas fa-file-alt"></i> Uploaded Documents</h5>
+            <!-- Uploaded Documents Card -->
+            <div class="card bg-white rounded-lg">
+                <div class="bg-primary text-white px-6 py-4 rounded-t-lg">
+                    <h5 class="text-lg font-medium flex items-center">
+                        <i class="ri-file-text-line mr-2"></i> Uploaded Documents
+                    </h5>
                 </div>
-                <div class="card-body">
-                    <div class="form-group">
-                        <label><i class="fas fa-file-alt"></i> Barangay Certificate</label>
+                <div class="p-6">
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-700 mb-1 flex items-center">
+                            <i class="ri-file-certificate-line text-gray-500 mr-1"></i> Barangay Certificate
+                        </label>
                         @if (!string.IsNullOrEmpty(Model.Brgy_Cert_Path))
                         {
-                            var extension = System.IO.Path.GetExtension(Model.Brgy_Cert_Path)?.ToLower();
-                            if (!string.IsNullOrEmpty(extension) && (extension == ".jpg" || extension == ".jpeg" || extension == ".png"))
-                            {
-                                <img src="@Url.Content(Model.Brgy_Cert_Path)" alt="@Model.Brgy_Cert" class="img-fluid" />
-                            }
-                            else
-                            {
-                                <input type="text" value="Non-image file: @Model.Brgy_Cert" readonly class="form-control" />
-                            }
+                            <i class="ri-file-text-line document-preview text-lg" onclick="showDocument('@Url.Content(Model.Brgy_Cert_Path)')"></i>
                         }
                         else
                         {
-                            <input type="text" value="No file uploaded" readonly class="form-control" />
+                            <input type="text" value="No file uploaded" readonly class="form-control w-full" />
                         }
                     </div>
-                    <div class="form-group">
-                        <label><i class="fas fa-id-card"></i> Valid ID</label>
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-700 mb-1 flex items-center">
+                            <i class="ri-id-card-line text-gray-500 mr-1"></i> Valid ID
+                        </label>
                         @if (!string.IsNullOrEmpty(Model.Valid_ID_Path))
                         {
-                            var extension = System.IO.Path.GetExtension(Model.Valid_ID_Path)?.ToLower();
-                            if (!string.IsNullOrEmpty(extension) && (extension == ".jpg" || extension == ".jpeg" || extension == ".png"))
-                            {
-                                <img src="@Url.Content(Model.Valid_ID_Path)" alt="@Model.Valid_ID" class="img-fluid" />
-                            }
-                            else
-                            {
-                                <input type="text" value="Non-image file: @Model.Valid_ID" readonly class="form-control" />
-                            }
+                            <i class="ri-file-text-line document-preview text-lg" onclick="showDocument('@Url.Content(Model.Valid_ID_Path)')"></i>
                         }
                         else
                         {
-                            <input type="text" value="No file uploaded" readonly class="form-control" />
+                            <input type="text" value="No file uploaded" readonly class="form-control w-full" />
                         }
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="flex justify-center gap-4 mt-6">
+            <a asp-action="Edit" asp-route-id="@Model.Id" class="px-6 py-2.5 bg-yellow-500 text-white font-medium rounded-button flex items-center hover:bg-yellow-600 transition">
+                <i class="ri-edit-line mr-1"></i> Edit
+            </a>
+            <a asp-action="Index" class="px-6 py-2.5 bg-gray-500 text-white font-medium rounded-button flex items-center hover:bg-gray-600 transition">
+                <i class="ri-arrow-left-line mr-1"></i> Back to List
+            </a>
+        </div>
+
+        <!-- Process Application Card (Staff1 or Admin) -->
+        @if (User.IsInRole("Staff1") || User.IsInRole("Admin"))
+        {
+            <div class="card bg-white rounded-lg mt-6">
+                <div class="bg-primary text-white px-6 py-4 rounded-t-lg">
+                    <h5 class="text-lg font-medium flex items-center">
+                        <i class="ri-checkbox-circle-line mr-2"></i> Process Application
+                    </h5>
+                </div>
+                <div class="p-6">
+                    <div id="successAlert-Process" class="hidden bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4" role="alert">
+                        <strong class="font-bold">Success!</strong>
+                        <span class="block sm:inline">Application status updated successfully!</span>
+                    </div>
+                    <form asp-action="UpdateStatus" method="post" class="flex justify-center gap-4" id="UpdateStatus" onsubmit="return handleSubmit(event, 'UpdateStatus')">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="id" value="@Model.Id" />
+                        <button type="submit" name="status" value="Process" class="px-6 py-2.5 bg-green-500 text-white font-medium rounded-button flex items-center hover:bg-green-600 transition">
+                            <i class="ri-check-line mr-1"></i> Accept
+                        </button>
+                        <button type="submit" name="status" value="Rejected" class="px-6 py-2.5 bg-red-500 text-white font-medium rounded-button flex items-center hover:bg-red-600 transition">
+                            <i class="ri-close-line mr-1"></i> Reject
+                        </button>
+                    </form>
+                </div>
+            </div>
+        }
+
+        <!-- Accept Application Card (Staff2 or Admin) -->
+        @if (User.IsInRole("Staff2") || User.IsInRole("Admin"))
+        {
+            <div class="card bg-white rounded-lg mt-6">
+                <div class="bg-primary text-white px-6 py-4 rounded-t-lg">
+                    <h5 class="text-lg font-medium flex items-center">
+                        <i class="ri-checkbox-circle-line mr-2"></i> Accept Application
+                    </h5>
+                </div>
+                <div class="p-6">
+                    <div id="successAlert-Accept" class="hidden bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4" role="alert">
+                        <strong class="font-bold">Success!</strong>
+                        <span class="block sm:inline">Application status updated successfully!</span>
+                    </div>
+                    <form asp-action="UpdateStatus1" method="post" class="flex justify-center gap-4" id="UpdateStatus1" onsubmit="return handleSubmit(event, 'UpdateStatus1')">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="id" value="@Model.Id" />
+                        <button type="submit" name="status" value="Accepted" class="px-6 py-2.5 bg-green-500 text-white font-medium rounded-button flex items-center hover:bg-green-600 transition">
+                            <i class="ri-check-line mr-1"></i> Accept
+                        </button>
+                        <button type="submit" name="status" value="Rejected" class="px-6 py-2.5 bg-red-500 text-white font-medium rounded-button flex items-center hover:bg-red-600 transition">
+                            <i class="ri-close-line mr-1"></i> Reject
+                        </button>
+                    </form>
+                </div>
+            </div>
+        }
+
+        <!-- Document Preview Modal -->
+        <div id="documentModal" class="fixed inset-0 z-50 hidden overflow-y-auto">
+            <div class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+                <div class="fixed inset-0 transition-opacity" aria-hidden="true">
+                    <div class="absolute inset-0 bg-gray-500 opacity-75"></div>
+                </div>
+                <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true"></span>
+                <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-4xl sm:w-full">
+                    <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                        <div class="sm:flex sm:items-start">
+                            <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left w-full">
+                                <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4" id="modalTitle">Document Preview</h3>
+                                <div class="mt-2">
+                                    <img id="documentImage" src="" alt="Document Preview" class="mx-auto max-w-full max-h-[70vh] hidden">
+                                    <iframe id="documentPdf" src="" class="w-full h-[70vh] hidden"></iframe>
+                                    <div id="unsupportedDocument" class="text-center py-10 hidden">
+                                        <i class="ri-file-unknow-line text-4xl text-gray-400 mb-2"></i>
+                                        <p class="text-gray-600">Document preview is not available for this file type.</p>
+                                        <a id="downloadDocument" href="#" class="text-primary hover:underline mt-2 inline-block">Download Document</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                        <button type="button" onclick="closeModal()" class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
+                            Close
+                        </button>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Action Buttons -->
-    <div class="action-buttons">
-        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning"><i class="fas fa-edit"></i> Edit</a>
-        <a asp-action="Index" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Back to List</a>
-    </div>
-
-    @if (User.IsInRole("Staff1") || User.IsInRole("Admin"))
-    {
-        <div class="card mt-4">
-            <div class="card-header bg-primary text-white">
-                <h5 class="card-title mb-0">Process Application</h5>
-                <!-- Success Alert -->
-                <div id="successAlert" class="alert alert-success d-none" role="alert">
-                    Consultation submitted successfully!
-                </div>
-            </div>
-            <div class="card-body">
-                <form asp-action="UpdateStatus" method="post" class="text-center" id="UpdateStatus" onsubmit="return handleSubmit(event)">
-                    @Html.AntiForgeryToken()
-                    <input type="hidden" name="id" value="@Model.Id" />
-                    <button type="submit" name="status" value="Process" class="btn btn-success mr-3"><i class="fas fa-check"></i> Accept</button>
-                    <button type="submit" name="status" value="Rejected" class="btn btn-danger"><i class="fas fa-times"></i> Reject</button>
-                </form>
-            </div>
-        </div>
-    }
-
-    @if (User.IsInRole("Staff2") || User.IsInRole("Admin"))
-    {
-        <div class="card mt-4">
-            <div class="card-header bg-primary text-white">
-                <h5 class="card-title mb-0">Accept Application</h5>
-                <!-- Success Alert -->
-                <div id="successAlert" class="alert alert-success d-none" role="alert">
-                    Consultation submitted successfully!
-                </div>
-            </div>
-            <div class="card-body">
-                <form asp-action="UpdateStatus1" method="post" class="text-center" id="UpdateStatus1" onsubmit="return handleSubmit(event)">
-                    <input type="hidden" name="id" value="@Model.Id" />
-                    <button type="submit" name="status" value="Accepted" class="btn btn-success mr-3"><i class="fas fa-check"></i> Accept</button>
-                    <button type="submit" name="status" value="Rejected" class="btn btn-danger"><i class="fas fa-times"></i> Reject</button>
-                </form>
-            </div>
-        </div>
-    }
-</div>
-@section Scripts {
-    <script>
-               function handleSubmit(event) {
-            // Check if the form is valid
-            if (document.getElementById("UpdateStatus").checkValidity()) {
-                // Show success alert
-                document.getElementById("successAlert").classList.remove("d-none");
-
-                // Optionally, you can hide the alert after a few seconds
-                setTimeout(function() {
-                    document.getElementById("successAlert").classList.add("d-none");
-                }, 3000);
-
-                return true; // Allow form submission
-            } else {
-                event.preventDefault(); // Prevent form submission if not valid
-                return false;
-            }
+    @section Scripts {
+        @{
+            await Html.RenderPartialAsync("_ValidationScriptsPartial");
         }
+        <script>
+            function showDocument(documentUrl) {
+                const modal = document.getElementById('documentModal');
+                const imageElement = document.getElementById('documentImage');
+                const pdfElement = document.getElementById('documentPdf');
+                const unsupportedElement = document.getElementById('unsupportedDocument');
+                const downloadLink = document.getElementById('downloadDocument');
 
-         function handleSubmit(event) {
-            // Check if the form is valid
-            if (document.getElementById("UpdateStatus1").checkValidity()) {
-                // Show success alert
-                document.getElementById("successAlert").classList.remove("d-none");
+                console.log('Attempting to load document:', documentUrl);
 
-                // Optionally, you can hide the alert after a few seconds
-                setTimeout(function() {
-                    document.getElementById("successAlert").classList.add("d-none");
-                }, 3000);
+                // Hide all elements initially
+                imageElement.classList.add('hidden');
+                pdfElement.classList.add('hidden');
+                unsupportedElement.classList.add('hidden');
 
-                return true; // Allow form submission
-            } else {
-                event.preventDefault(); // Prevent form submission if not valid
-                return false;
+                // Reset image source to prevent stale content
+                imageElement.src = '';
+                pdfElement.src = '';
+
+                const extension = documentUrl.split('.').pop().toLowerCase();
+                console.log('File extension:', extension);
+
+                if (['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp'].includes(extension)) {
+                    imageElement.src = documentUrl;
+                    imageElement.onload = () => {
+                        console.log('Image loaded successfully');
+                        imageElement.classList.remove('hidden');
+                    };
+                    imageElement.onerror = () => {
+                        console.error('Image failed to load:', documentUrl);
+                        unsupportedElement.classList.remove('hidden');
+                        downloadLink.href = documentUrl;
+                    };
+                } else if (extension === 'pdf') {
+                    pdfElement.src = documentUrl;
+                    pdfElement.classList.remove('hidden');
+                } else {
+                    console.log('Unsupported file type');
+                    unsupportedElement.classList.remove('hidden');
+                    downloadLink.href = documentUrl;
+                }
+
+                modal.classList.remove('hidden');
             }
-        }
-    </script>
-}
+
+            function closeModal() {
+                const modal = document.getElementById('documentModal');
+                const imageElement = document.getElementById('documentImage');
+                const pdfElement = document.getElementById('documentPdf');
+                const unsupportedElement = document.getElementById('unsupportedDocument');
+
+                imageElement.classList.add('hidden');
+                pdfElement.classList.add('hidden');
+                unsupportedElement.classList.add('hidden');
+                imageElement.src = ''; // Clear image source
+                pdfElement.src = ''; // Clear PDF source
+                modal.classList.add('hidden');
+            }
+
+            function handleSubmit(event, formId) {
+                const form = document.getElementById(formId);
+                if (form.checkValidity()) {
+                    const alert = document.getElementById(`successAlert-${formId === 'UpdateStatus' ? 'Process' : 'Accept'}`);
+                    alert.classList.remove('hidden');
+                    setTimeout(() => {
+                        alert.classList.add('hidden');
+                    }, 3000);
+                    return true;
+                } else {
+                    event.preventDefault();
+                    return false;
+                }
+            }
+        </script>
+    }
+</body>
+</html>

@@ -6,348 +6,14 @@
     Layout = "/Views/Shared/_DashboardLayout.cshtml";
 }
 
-<style>
-    /* Base Typography */
-    body {
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        color: #333;
-        line-height: 1.6;
-        background-color: #f8f9fa;
-    }
+<!-- Add Bootstrap and Font Awesome CSS -->
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+<!-- Add DataTables CSS -->
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.css">
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/buttons/2.2.2/css/buttons.dataTables.min.css">
 
-    h2 {
-        font-weight: 600;
-        color: #2c3e50;
-        margin-bottom: 1rem;
-    }
-
-    h4 {
-        font-weight: 500;
-        color: #34495e;
-        margin-bottom: 1.5rem;
-        padding-bottom: 0.5rem;
-        border-bottom: 1px solid #eee;
-    }
-
-    .text-muted {
-        color: #7f8c8d !important;
-        margin-bottom: 2rem;
-    }
-
-    /* Card Styling */
-    .card {
-        transition: all 0.3s ease;
-        border: none;
-        border-radius: 8px;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-        margin-bottom: 1.5rem;
-        border-left: 4px solid transparent;
-    }
-
-        .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-        }
-
-    .card-body {
-        padding: 1.5rem;
-    }
-
-    .card-title {
-        font-weight: 600;
-        margin-bottom: 0.75rem;
-    }
-
-    .card-value {
-        font-size: 2rem;
-        font-weight: 700;
-        line-height: 1.2;
-    }
-
-    /* DataTables Styling */
-    .dataTables_wrapper {
-        padding: 0;
-    }
-
-    .dataTables_filter input {
-        border-radius: 4px;
-        border: 1px solid #ddd;
-        padding: 5px 10px;
-        margin-left: 10px;
-    }
-
-    .dataTables_length select {
-        border-radius: 4px;
-        border: 1px solid #ddd;
-        padding: 5px;
-    }
-
-    .dataTables_info, .dataTables_length {
-        color: #6c757d;
-        padding-top: 0.755em;
-    }
-
-    .dataTables_paginate .paginate_button {
-        padding: 0.5em 1em;
-        margin-left: 2px;
-        border: 1px solid transparent;
-        border-radius: 4px;
-    }
-
-        .dataTables_paginate .paginate_button:hover {
-            background: #e9ecef;
-            border: 1px solid #dee2e6;
-        }
-
-        .dataTables_paginate .paginate_button.current {
-            background: #007bff;
-            color: white !important;
-            border: 1px solid #007bff;
-        }
-
-    /* Tab Styling */
-    .nav-tabs {
-        border-bottom: 2px solid #dee2e6;
-    }
-
-        .nav-tabs .nav-link {
-            color: #7f8c8d;
-            font-weight: 500;
-            border: none;
-            padding: 0.75rem 1.5rem;
-            margin-right: 0.25rem;
-            transition: all 0.2s;
-        }
-
-            .nav-tabs .nav-link.active {
-                color: #3498db;
-                background-color: transparent;
-                border-bottom: 3px solid #3498db;
-            }
-
-            .nav-tabs .nav-link:hover:not(.active) {
-                color: #3498db;
-                border-bottom: 3px solid rgba(52, 152, 219, 0.3);
-            }
-
-    .tab-content {
-        padding: 1.5rem;
-        background: #fff;
-        border-radius: 0 0 8px 8px;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-    }
-
-    /* Alert Styling */
-    .alert {
-        border-radius: 6px;
-        padding: 1rem 1.5rem;
-        border: none;
-    }
-
-    /* Button Styling */
-    .btn {
-        font-weight: 500;
-        padding: 0.5rem 1.25rem;
-        border-radius: 6px;
-        box-shadow: none !important;
-        transition: all 0.2s;
-    }
-
-        .btn i {
-            margin-right: 0.5rem;
-        }
-
-    .btn-group-export {
-        display: flex;
-        gap: 0.75rem;
-        flex-wrap: wrap;
-    }
-
-    /* Badge Styling */
-    .badge {
-        font-size: 85%;
-        padding: 0.35em 0.65em;
-        font-weight: 500;
-        letter-spacing: 0.5px;
-    }
-
-    /* Utility Classes */
-    .bg-opacity-10 {
-        opacity: 0.1;
-    }
-
-    .rounded-icon {
-        width: 50px;
-        height: 50px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        border-radius: 50%;
-    }
-
-    /* Date Filter Styling */
-    .date-filter-container {
-        background: #f8f9fa;
-        padding: 1rem;
-        border-radius: 8px;
-        margin-bottom: 1.5rem;
-        border: 1px solid #dee2e6;
-    }
-
-    .date-filter-title {
-        font-weight: 600;
-        margin-bottom: 1rem;
-        color: #2c3e50;
-    }
-
-    .date-filter-group {
-        display: flex;
-        gap: 1rem;
-        align-items: center;
-        flex-wrap: wrap;
-    }
-
-    .date-filter-input {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-    }
-
-    .date-filter-label {
-        font-weight: 500;
-        min-width: 60px;
-    }
-
-    .date-filter-btn {
-        margin-left: auto;
-    }
-
-    /* Print-specific styles */
-    @@media print {
-        body * {
-            visibility: hidden;
-        }
-
-        .print-section, .print-section * {
-            visibility: visible;
-        }
-
-        .print-section {
-            position: absolute;
-            left: 0;
-            top: 0;
-            width: 100%;
-            padding: 10mm;
-        }
-
-        .report-header {
-            text-align: center;
-            margin-bottom: 10mm;
-        }
-
-        .report-title {
-            font-size: 16pt;
-            font-weight: bold;
-            margin-bottom: 5mm;
-        }
-
-        .report-subtitle {
-            font-size: 14pt;
-            margin-bottom: 5mm;
-        }
-
-        .report-date {
-            font-size: 10pt;
-            margin-bottom: 10mm;
-        }
-
-        .report-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 10mm;
-            page-break-inside: avoid;
-        }
-
-            .report-table th {
-                background-color: #f2f2f2 !important;
-                color: #000 !important;
-                border: 1px solid #ddd !important;
-                padding: 6pt !important;
-                font-size: 10pt !important;
-                font-weight: bold !important;
-                text-align: left !important;
-            }
-
-            .report-table td {
-                border: 1px solid #ddd !important;
-                padding: 5pt !important;
-                font-size: 10pt !important;
-                page-break-inside: avoid;
-                page-break-after: auto;
-            }
-
-        .report-summary {
-            margin-top: 10mm;
-            font-size: 10pt;
-            text-align: right;
-        }
-
-        .no-print {
-            display: none !important;
-        }
-
-        @@page {
-            size: A4;
-            margin: 15mm;
-        }
-    }
-
-    /* Responsive Adjustments */
-    @@media (max-width: 768px) {
-        .dataTables_wrapper .dataTables_length,
-        .dataTables_wrapper .dataTables_filter {
-            float: none;
-            text-align: left;
-        }
-
-        .dataTables_wrapper .dataTables_filter {
-            margin-top: 0.5em;
-        }
-
-        .nav-tabs .nav-link {
-            padding: 0.5rem 1rem;
-            font-size: 0.9rem;
-        }
-
-        .card-body {
-            padding: 1rem;
-        }
-
-        .card-value {
-            font-size: 1.75rem;
-        }
-
-        .btn-group-export {
-            flex-direction: column;
-            width: 100%;
-        }
-
-            .btn-group-export .btn {
-                width: 100%;
-                margin-bottom: 0.5rem;
-            }
-
-        .date-filter-group {
-            flex-direction: column;
-            align-items: flex-start;
-        }
-
-        .date-filter-btn {
-            margin-left: 0;
-            width: 100%;
-        }
-    }
-</style>
+<link href="~/css/Reports.css" rel="stylesheet" />
 
 <div class="container-fluid py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
@@ -357,26 +23,25 @@
         </div>
     </div>
 
-  
-    <!-- Tabbed Reports -->
-            <ul class="nav nav-tabs card-header-tabs" id="reportTabs" role="tablist">
-                <li class="nav-item">
-                    <a class="nav-link active" id="foodpack-tab" data-toggle="tab" href="#foodpack" role="tab">
-                        <i class="fas fa-utensils mr-2"></i>Food Packs
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" id="indigency-tab" data-toggle="tab" href="#indigency" role="tab">
-                        <i class="fas fa-file-certificate mr-2"></i>Indigency Certificates
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" id="consultation-tab" data-toggle="tab" href="#consultation" role="tab">
-                        <i class="fas fa-comment-medical mr-2"></i>Consultations
-                    </a>
-                </li>
-            </ul>
-        </div>
+    <div class="card">
+        <!-- Tabbed Reports -->
+        <ul class="nav nav-tabs card-header-tabs" id="reportTabs" role="tablist">
+            <li class="nav-item">
+                <a class="nav-link active" id="foodpack-tab" data-toggle="tab" href="#foodpack" role="tab">
+                    <i class="fas fa-utensils mr-2"></i>Food Packs
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" id="indigency-tab" data-toggle="tab" href="#indigency" role="tab">
+                    <i class="fas fa-file-certificate mr-2"></i>Indigency Certificates
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" id="consultation-tab" data-toggle="tab" href="#consultation" role="tab">
+                    <i class="fas fa-comment-medical mr-2"></i>Consultations
+                </a>
+            </li>
+        </ul>
 
         <div class="card-body p-0">
             <div class="tab-content">
@@ -393,7 +58,7 @@
                             <div class="date-filter-group">
                                 <div class="date-filter-input">
                                     <span class="date-filter-label">From:</span>
-                                    <input type="date" id="Ascendancy id="foodpack-date-from" class="form-control" />
+                                    <input type="date" id="foodpack-date-from" class="form-control" />
                                 </div>
                                 <div class="date-filter-input">
                                     <span class="date-filter-label">To:</span>
@@ -431,12 +96,12 @@
                                         {
                                             <tr>
                                                 <td>@item.Id</td>
-                                                <td>@item.FullName</td>
+                                                <td>@Html.Encode(item.FullName)</td>
                                                 <td>@item.Age</td>
-                                                <td>@item.Barangay</td>
+                                                <td>@Html.Encode(item.Barangay)</td>
                                                 <td>@item.Packs</td>
-                                                <td>@item.Reason</td>
-                                                <td>@(item.ApprovedBy?.FullName ?? "N/A")</td>
+                                                <td>@Html.Encode(item.Reason)</td>
+                                                <td>@Html.Encode(item.ApprovedBy?.FullName ?? "N/A")</td>
                                                 <td>@item.RequestDate.ToString("yyyy-MM-dd")</td>
                                             </tr>
                                         }
@@ -503,11 +168,11 @@
                                         {
                                             <tr>
                                                 <td>@item.Id</td>
-                                                <td>@item.FullName</td>
+                                                <td>@Html.Encode(item.FullName)</td>
                                                 <td>@item.Age1</td>
-                                                <td>@item.Barangay1</td>
-                                                <td>@item.Reason1</td>
-                                                <td>@(item.ApprovedBy?.FullName ?? "N/A")</td>
+                                                <td>@Html.Encode(item.Barangay1)</td>
+                                                <td>@Html.Encode(item.Reason1)</td>
+                                                <td>@Html.Encode(item.ApprovedBy?.FullName ?? "N/A")</td>
                                                 <td>@item.RequestDate1.ToString("yyyy-MM-dd")</td>
                                             </tr>
                                         }
@@ -574,11 +239,11 @@
                                         {
                                             <tr>
                                                 <td>@item.Id</td>
-                                                <td>@item.FullName</td>
-                                                <td>@item.ContactNumber2</td>
+                                                <td>@Html.Encode(item.FullName)</td>
+                                                <td>@Html.Encode(item.ContactNumber2)</td>
                                                 <td>@item.Consultation_Date.ToString("yyyy-MM-dd")</td>
                                                 <td>@item.Consultation_Time.ToString("hh:mm tt")</td>
-                                                <td>@(item.ApprovedBy?.FullName ?? "N/A")</td>
+                                                <td>@Html.Encode(item.ApprovedBy?.FullName ?? "N/A")</td>
                                                 <td>@item.RequestDate.ToString("yyyy-MM-dd")</td>
                                             </tr>
                                         }
@@ -614,41 +279,22 @@
     </div>
 </div>
 
-<!-- Hidden print sections -->
+<!-- Hidden print sections with dynamic filtering -->
 <div id="foodpack-print" class="print-section" style="display:none;">
     <div class="report-header">
         <div class="report-title">SOCIAL WELFARE DEPARTMENT</div>
         <div class="report-subtitle">APPROVED FOOD PACK DISTRIBUTION REPORT</div>
-        <div class="report-date">As of @DateTime.Now.ToString("MMMM dd, yyyy hh:mm tt")</div>
+        <div class="report-date">As of @DateTime.Now.ToString("yyyy-MM-dd HH:mm")</div>
         <div class="report-date" id="foodpack-date-range"></div>
     </div>
-    <table class="report-table" style="width: 100%; border-collapse: collapse; margin-top: 20px; border: 1px solid #000;">
+    <table class="report-table">
         <thead>
             <tr>
-                <th style="border: 1px solid #000; padding: 5px; font-weight: bold; text-align: left;"># FULL NAME</th>
-                <th style="border: 1px solid #000; padding: 5px; font-weight: bold; text-align: left;">OF PACKS, REASON, APPROVED BY, REQUEST DATE</th>
+                <th># FULL NAME</th>
+                <th>OF PACKS, REASON, APPROVED BY, REQUEST DATE</th>
             </tr>
         </thead>
-        <tbody>
-            @{
-                int foodPackCounter = 1;
-                foreach (var item in Model.FoodPacks.Where(f => f.Status == ActiveStatus.Approved))
-                {
-                    <tr>
-                        <td style="border: 1px solid #000; padding: 5px;">@foodPackCounter FN: @item.FullName</td>
-                        <td style="border: 1px solid #000; padding: 5px;">
-                            @item.Packs, @item.Reason, @(item.ApprovedBy?.FullName ?? "N/A"), @item.RequestDate.ToString("MMMM dd, yyyy")
-                        </td>
-                    </tr>
-                    foodPackCounter++;
-                }
-            }
-            <tr>
-                <td colspan="2" style="border: 1px solid #000; padding: 5px; font-weight: bold;">
-                    Total Approved Food Packs: @Model.FoodPacks.Count(f => f.Status == ActiveStatus.Approved)
-                </td>
-            </tr>
-        </tbody>
+        <tbody id="foodpack-print-body"></tbody>
     </table>
 </div>
 
@@ -656,36 +302,17 @@
     <div class="report-header">
         <div class="report-title">SOCIAL WELFARE DEPARTMENT</div>
         <div class="report-subtitle">APPROVED CERTIFICATES OF INDIGENCY REPORT</div>
-        <div class="report-date">As of @DateTime.Now.ToString("MMMM dd, yyyy hh:mm tt")</div>
+        <div class="report-date">As of @DateTime.Now.ToString("yyyy-MM-dd HH:mm")</div>
         <div class="report-date" id="indigency-date-range"></div>
     </div>
-    <table class="report-table" style="width: 100%; border-collapse: collapse; margin-top: 20px; border: 1px solid #000;">
+    <table class="report-table">
         <thead>
             <tr>
-                <th style="border: 1px solid #000; padding: 5px; font-weight: bold;"># FULL NAME</th>
-                <th style="border: 1px solid #000; padding: 5px; font-weight: bold;">AGE, BARANGAY, REASON, APPROVED BY, REQUEST DATE</th>
+                <th># FULL NAME</th>
+                <th>AGE, BARANGAY, REASON, APPROVED BY, REQUEST DATE</th>
             </tr>
         </thead>
-        <tbody>
-            @{
-                int indigencyCounter = 1;
-                foreach (var item in Model.Indigencies.Where(i => i.Status1 == ActiveStatus1.Approved))
-                {
-                    <tr>
-                        <td style="border: 1px solid #000; padding: 5px;">@indigencyCounter FN: @item.FullName</td>
-                        <td style="border: 1px solid #000; padding: 5px;">
-                            @item.Age1 y/o, @item.Barangay1, @item.Reason1, @(item.ApprovedBy?.FullName ?? "N/A"), @item.RequestDate1.ToString("MMMM dd, yyyy")
-                        </td>
-                    </tr>
-                    indigencyCounter++;
-                }
-            }
-            <tr>
-                <td colspan="2" style="border: 1px solid #000; padding: 5px; font-weight: bold;">
-                    Total Approved Indigency Certificates: @Model.Indigencies.Count(i => i.Status1 == ActiveStatus1.Approved)
-                </td>
-            </tr>
-        </tbody>
+        <tbody id="indigency-print-body"></tbody>
     </table>
 </div>
 
@@ -693,94 +320,45 @@
     <div class="report-header">
         <div class="report-title">SOCIAL WELFARE DEPARTMENT</div>
         <div class="report-subtitle">APPROVED CONSULTATIONS REPORT</div>
-        <div class="report-date">As of @DateTime.Now.ToString("MMMM dd, yyyy hh:mm tt")</div>
+        <div class="report-date">As of @DateTime.Now.ToString("yyyy-MM-dd HH:mm")</div>
         <div class="report-date" id="consultation-date-range"></div>
     </div>
-    <table class="report-table" style="width: 100%; border-collapse: collapse; margin-top: 20px; border: 1px solid #000;">
+    <table class="report-table">
         <thead>
             <tr>
-                <th style="border: 1px solid #000; padding: 5px; font-weight: bold;"># FULL NAME</th>
-                <th style="border: 1px solid #000; padding: 5px; font-weight: bold;">CONTACT, DATE, TIME, APPROVED BY, REQUEST DATE</th>
+                <th># FULL NAME</th>
+                <th>CONTACT, DATE, TIME, APPROVED BY, REQUEST DATE</th>
             </tr>
         </thead>
-        <tbody>
-            @{
-                int consultationCounter = 1;
-                foreach (var item in Model.Consultations.Where(c => c.Consultation_status == ActiveStatus2.Approved))
-                {
-                    <tr>
-                        <td style="border: 1px solid #000; padding: 5px;">@consultationCounter FN: @item.FullName</td>
-                        <td style="border: 1px solid #000; padding: 5px;">
-                            @item.ContactNumber2, @item.Consultation_Date.ToString("MMMM dd, yyyy"),
-                            @item.Consultation_Time.ToString("hh:mm tt"),
-                            @(item.ApprovedBy?.FullName ?? "N/A"),
-                            @item.RequestDate.ToString("MMMM dd, yyyy")
-                        </td>
-                    </tr>
-                    consultationCounter++;
-                }
-            }
-            <tr>
-                <td colspan="2" style="border: 1px solid #000; padding: 5px; font-weight: bold;">
-                    Total Approved Consultations: @Model.Consultations.Count(c => c.Consultation_status == ActiveStatus2.Approved)
-                </td>
-            </tr>
-        </tbody>
+        <tbody id="consultation-print-body"></tbody>
     </table>
 </div>
 
 @functions {
-    string GetStatusBadgeClass(ActiveStatus? status)
+    string GetStatusBadgeClass(object status)
     {
-        if (!status.HasValue) return "badge-secondary";
-        return status.Value switch
+        if (status == null) return "badge-secondary";
+        string statusStr = status.ToString();
+        return statusStr switch
         {
-            ActiveStatus.Approved => "badge-success",
-            ActiveStatus.Denied => "badge-danger",
-            ActiveStatus.Pending => "badge-warning",
-            ActiveStatus.Process => "badge-info",
-            _ => "badge-secondary"
-        };
-    }
-
-    string GetStatusBadgeClass(ActiveStatus1? status)
-    {
-        if (!status.HasValue) return "badge-secondary";
-        return status.Value switch
-        {
-            ActiveStatus1.Approved => "badge-success",
-            ActiveStatus1.Denied => "badge-danger",
-            ActiveStatus1.Pending => "badge-warning",
-            ActiveStatus1.Process => "badge-info",
-            _ => "badge-secondary"
-        };
-    }
-
-    string GetStatusBadgeClass(ActiveStatus2? status)
-    {
-        if (!status.HasValue) return "badge-secondary";
-        return status.Value switch
-        {
-            ActiveStatus2.Approved => "badge-success",
-            ActiveStatus2.Denied => "badge-danger",
-            ActiveStatus2.Pending => "badge-warning",
-            ActiveStatus2.Process => "badge-info",
+            "Approved" => "badge-success",
+            "Denied" => "badge-danger",
+            "Pending" => "badge-warning",
+            "Process" => "badge-info",
             _ => "badge-secondary"
         };
     }
 }
 
-<!-- Add DataTables CSS -->
-<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.css">
-<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/buttons/2.2.2/css/buttons.dataTables.min.css">
-
-<script src="~/lib/jquery/dist/jquery.min.js"></script>
-<!-- Add DataTables JS -->
-<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.js"></script>
-<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/buttons/2.2. Sabrina Carpenter - Escapism
-<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/buttons/2.2.2/js/dataTables.buttons.min.js"></script>
-<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/buttons/2.2.2/js/buttons.html5.min.js"></script>
+<!-- JavaScript Dependencies -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.2.2/js/dataTables.buttons.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.2.2/js/buttons.html5.min.js"></script>
 <script src="https://cdn.sheetjs.com/xlsx-0.19.3/package/dist/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/jquery.validate.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/additional-methods.min.js"></script>
 
 <script>
     // Initialize DataTables for each table when their tab is shown
@@ -804,7 +382,7 @@
             pageLength: 10,
             lengthMenu: [[5, 10, 25, 50, -1], [5, 10, 25, 50, "All"]],
             columnDefs: [
-                { targets: [7], type: 'date' } // Set type for RequestDate column
+                { targets: [7], type: 'date' }
             ]
         });
 
@@ -829,7 +407,7 @@
                     pageLength: 10,
                     lengthMenu: [[5, 10, 25, 50, -1], [5, 10, 25, 50, "All"]],
                     columnDefs: [
-                        { targets: [6], type: 'date' } // Set type for RequestDate column
+                        { targets: [6], type: 'date' }
                     ]
                 });
             }
@@ -855,22 +433,46 @@
                     pageLength: 10,
                     lengthMenu: [[5, 10, 25, 50, -1], [5, 10, 25, 50, "All"]],
                     columnDefs: [
-                        { targets: [3, 6], type: 'date' } // Set type for Consultation_Date and RequestDate columns
+                        { targets: [3, 6], type: 'date' }
                     ]
                 });
             }
         });
 
-        // Store the active tab in localStorage
+        // Store and restore active tab
+        var activeTab = localStorage.getItem('activeTab');
+        if (activeTab) {
+            $('#reportTabs a[href="' + activeTab + '"]').tab('show');
+            // Trigger DataTable initialization for the active tab
+            if (activeTab === '#indigency' && !$.fn.DataTable.isDataTable('#indigencyTable')) {
+                $('#indigency-tab').trigger('shown.bs.tab');
+            } else if (activeTab === '#consultation' && !$.fn.DataTable.isDataTable('#consultationTable')) {
+                $('#consultation-tab').trigger('shown.bs.tab');
+            }
+        }
+
         $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
             localStorage.setItem('activeTab', $(e.target).attr('href'));
         });
 
-        // Retrieve the active tab from localStorage
-        var activeTab = localStorage.getItem('activeTab');
-        if (activeTab) {
-            $('#reportTabs a[href="' + activeTab + '"]').tab('show');
-        }
+        // Validate date inputs
+        $.validator.addMethod("dateRange", function (value, element, params) {
+            var fromDate = $('#' + params.from).val();
+            var toDate = $('#' + params.to).val();
+            if (fromDate && toDate) {
+                return new Date(toDate) >= new Date(fromDate);
+            }
+            return true;
+        }, "End date must be after start date.");
+
+        $('#foodpack-date-from, #foodpack-date-to, #indigency-date-from, #indigency-date-to, #consultation-date-from, #consultation-date-to').each(function () {
+            $(this).rules('add', {
+                dateRange: {
+                    from: $(this).attr('id').includes('from') ? $(this).attr('id') : $(this).attr('id').replace('to', 'from'),
+                    to: $(this).attr('id').includes('to') ? $(this).attr('id') : $(this).attr('id').replace('from', 'to')
+                }
+            });
+        });
     });
 
     // Filter functions for each table
@@ -879,16 +481,19 @@
         var toDate = $('#foodpack-date-to').val();
         var table = $('#foodpackTable').DataTable();
 
-        // Clear previous filters
+        if (fromDate && toDate && new Date(toDate) < new Date(fromDate)) {
+            alert('End date must be after start date.');
+            return;
+        }
+
         table.columns().search('').draw();
 
         if (fromDate || toDate) {
-            // Custom filtering for date range
             $.fn.dataTable.ext.search.push(
                 function (settings, data, dataIndex) {
-                    var dateColumn = 7; // RequestDate column index
-                    var cellDateStr = data[dateColumn]; // Get the formatted date string
-                    var cellDate = new Date(cellDateStr); // Convert to Date object
+                    var dateColumn = 7;
+                    var cellDateStr = data[dateColumn];
+                    var cellDate = new Date(cellDateStr);
                     var from = fromDate ? new Date(fromDate) : null;
                     var to = toDate ? new Date(toDate) : null;
 
@@ -905,7 +510,7 @@
         }
 
         table.draw();
-        $.fn.dataTable.ext.search.pop(); // Remove the custom filter after drawing
+        $.fn.dataTable.ext.search.pop();
     }
 
     function filterIndigencyTable() {
@@ -913,16 +518,19 @@
         var toDate = $('#indigency-date-to').val();
         var table = $('#indigencyTable').DataTable();
 
-        // Clear previous filters
+        if (fromDate && toDate && new Date(toDate) < new Date(fromDate)) {
+            alert('End date must be after start date.');
+            return;
+        }
+
         table.columns().search('').draw();
 
         if (fromDate || toDate) {
-            // Custom filtering for date range
             $.fn.dataTable.ext.search.push(
                 function (settings, data, dataIndex) {
-                    var dateColumn = 6; // RequestDate column index
-                    var cellDateStr = data[dateColumn]; // Get the formatted date string
-                    var cellDate = new Date(cellDateStr); // Convert to Date object
+                    var dateColumn = 6;
+                    var cellDateStr = data[dateColumn];
+                    var cellDate = new Date(cellDateStr);
                     var from = fromDate ? new Date(fromDate) : null;
                     var to = toDate ? new Date(toDate) : null;
 
@@ -939,7 +547,7 @@
         }
 
         table.draw();
-        $.fn.dataTable.ext.search.pop(); // Remove the custom filter after drawing
+        $.fn.dataTable.ext.search.pop();
     }
 
     function filterConsultationTable() {
@@ -947,16 +555,19 @@
         var toDate = $('#consultation-date-to').val();
         var table = $('#consultationTable').DataTable();
 
-        // Clear previous filters
+        if (fromDate && toDate && new Date(toDate) < new Date(fromDate)) {
+            alert('End date must be after start date.');
+            return;
+        }
+
         table.columns().search('').draw();
 
         if (fromDate || toDate) {
-            // Custom filtering for date range
             $.fn.dataTable.ext.search.push(
                 function (settings, data, dataIndex) {
-                    var dateColumn = 6; // RequestDate column index
-                    var cellDateStr = data[dateColumn]; // Get the formatted date string
-                    var cellDate = new Date(cellDateStr); // Convert to Date object
+                    var dateColumn = 6;
+                    var cellDateStr = data[dateColumn];
+                    var cellDate = new Date(cellDateStr);
                     var from = fromDate ? new Date(fromDate) : null;
                     var to = toDate ? new Date(toDate) : null;
 
@@ -973,7 +584,7 @@
         }
 
         table.draw();
-        $.fn.dataTable.ext.search.pop(); // Remove the custom filter after drawing
+        $.fn.dataTable.ext.search.pop();
     }
 
     // Reset filter functions
@@ -998,11 +609,47 @@
         table.columns().search('').draw();
     }
 
+    // Data for print sections (assumed to be available client-side for filtering)
+    const foodPackData = @Html.Raw(Json.Serialize(Model.FoodPacks.Where(f => f.Status == ActiveStatus.Approved).Select(f => new {
+        Id = f.Id,
+        FullName = f.FullName,
+        Packs = f.Packs,
+        Reason = f.Reason,
+        ApprovedBy = f.ApprovedBy?.FullName ?? "N/A",
+        RequestDate = f.RequestDate.ToString("yyyy-MM-dd")
+    })));
+
+    const indigencyData = @Html.Raw(Json.Serialize(Model.Indigencies.Where(i => i.Status1 == ActiveStatus1.Approved).Select(i => new {
+        Id = i.Id,
+        FullName = i.FullName,
+        Age = i.Age1,
+        Barangay = i.Barangay1,
+        Reason = i.Reason1,
+        ApprovedBy = i.ApprovedBy?.FullName ?? "N/A",
+        RequestDate = i.RequestDate1.ToString("yyyy-MM-dd")
+    })));
+
+    const consultationData = @Html.Raw(Json.Serialize(Model.Consultations.Where(c => c.Consultation_status == ActiveStatus2.Approved).Select(c => new {
+        Id = c.Id,
+        FullName = c.FullName,
+        ContactNumber = c.ContactNumber2,
+        ConsultationDate = c.Consultation_Date.ToString("yyyy-MM-dd"),
+        ConsultationTime = c.Consultation_Time.ToString("hh:mm tt"),
+        ApprovedBy = c.ApprovedBy?.FullName ?? "N/A",
+        RequestDate = c.RequestDate.ToString("yyyy-MM-dd")
+    })));
+
     // Print functions with date range filtering
     function printFoodPackReport() {
         const fromDate = $('#foodpack-date-from').val();
         const toDate = $('#foodpack-date-to').val();
         const printSection = document.getElementById('foodpack-print');
+        const printBody = document.getElementById('foodpack-print-body');
+
+        if (fromDate && toDate && new Date(toDate) < new Date(fromDate)) {
+            alert('End date must be after start date.');
+            return;
+        }
 
         // Update date range in print header
         const dateRangeElement = printSection.querySelector('#foodpack-date-range');
@@ -1014,6 +661,40 @@
             dateRangeElement.textContent = 'All Dates';
         }
 
+        // Filter data based on date range
+        let filteredData = foodPackData;
+        if (fromDate || toDate) {
+            filteredData = foodPackData.filter(item => {
+                const requestDate = new Date(item.RequestDate);
+                const from = fromDate ? new Date(fromDate) : null;
+                const to = toDate ? new Date(toDate) : null;
+                if (from && to) {
+                    return requestDate >= from && requestDate <= to;
+                } else if (from) {
+                    return requestDate >= from;
+                } else if (to) {
+                    return requestDate <= to;
+                }
+                return true;
+            });
+        }
+
+        // Populate print body
+        printBody.innerHTML = '';
+        let counter = 1;
+        filteredData.forEach(item => {
+            printBody.innerHTML += `
+                <tr>
+                    <td>${counter} FN: ${item.FullName}</td>
+                    <td>${item.Packs}, ${item.Reason}, ${item.ApprovedBy}, ${item.RequestDate}</td>
+                </tr>`;
+            counter++;
+        });
+        printBody.innerHTML += `
+            <tr>
+                <td colspan="2">Total Approved Food Packs: ${filteredData.length}</td>
+            </tr>`;
+
         printReport(printSection);
     }
 
@@ -1021,6 +702,12 @@
         const fromDate = $('#indigency-date-from').val();
         const toDate = $('#indigency-date-to').val();
         const printSection = document.getElementById('indigency-print');
+        const printBody = document.getElementById('indigency-print-body');
+
+        if (fromDate && toDate && new Date(toDate) < new Date(fromDate)) {
+            alert('End date must be after start date.');
+            return;
+        }
 
         // Update date range in print header
         const dateRangeElement = printSection.querySelector('#indigency-date-range');
@@ -1032,6 +719,40 @@
             dateRangeElement.textContent = 'All Dates';
         }
 
+        // Filter data based on date range
+        let filteredData = indigencyData;
+        if (fromDate || toDate) {
+            filteredData = indigencyData.filter(item => {
+                const requestDate = new Date(item.RequestDate);
+                const from = fromDate ? new Date(fromDate) : null;
+                const to = toDate ? new Date(toDate) : null;
+                if (from && to) {
+                    return requestDate >= from && requestDate <= to;
+                } else if (from) {
+                    return requestDate >= from;
+                } else if (to) {
+                    return requestDate <= to;
+                }
+                return true;
+            });
+        }
+
+        // Populate print body
+        printBody.innerHTML = '';
+        let counter = 1;
+        filteredData.forEach(item => {
+            printBody.innerHTML += `
+                <tr>
+                    <td>${counter} FN: ${item.FullName}</td>
+                    <td>${item.Age} y/o, ${item.Barangay}, ${item.Reason}, ${item.ApprovedBy}, ${item.RequestDate}</td>
+                </tr>`;
+            counter++;
+        });
+        printBody.innerHTML += `
+            <tr>
+                <td colspan="2">Total Approved Indigency Certificates: ${filteredData.length}</td>
+            </tr>`;
+
         printReport(printSection);
     }
 
@@ -1039,6 +760,12 @@
         const fromDate = $('#consultation-date-from').val();
         const toDate = $('#consultation-date-to').val();
         const printSection = document.getElementById('consultation-print');
+        const printBody = document.getElementById('consultation-print-body');
+
+        if (fromDate && toDate && new Date(toDate) < new Date(fromDate)) {
+            alert('End date must be after start date.');
+            return;
+        }
 
         // Update date range in print header
         const dateRangeElement = printSection.querySelector('#consultation-date-range');
@@ -1050,6 +777,40 @@
             dateRangeElement.textContent = 'All Dates';
         }
 
+        // Filter data based on date range
+        let filteredData = consultationData;
+        if (fromDate || toDate) {
+            filteredData = consultationData.filter(item => {
+                const requestDate = new Date(item.RequestDate);
+                const from = fromDate ? new Date(fromDate) : null;
+                const to = toDate ? new Date(toDate) : null;
+                if (from && to) {
+                    return requestDate >= from && requestDate <= to;
+                } else if (from) {
+                    return requestDate >= from;
+                } else if (to) {
+                    return requestDate <= to;
+                }
+                return true;
+            });
+        }
+
+        // Populate print body
+        printBody.innerHTML = '';
+        let counter = 1;
+        filteredData.forEach(item => {
+            printBody.innerHTML += `
+                <tr>
+                    <td>${counter} FN: ${item.FullName}</td>
+                    <td>${item.ContactNumber}, ${item.ConsultationDate}, ${item.ConsultationTime}, ${item.ApprovedBy}, ${item.RequestDate}</td>
+                </tr>`;
+            counter++;
+        });
+        printBody.innerHTML += `
+            <tr>
+                <td colspan="2">Total Approved Consultations: ${filteredData.length}</td>
+            </tr>`;
+
         printReport(printSection);
     }
 
@@ -1060,6 +821,7 @@
         window.print();
         document.body.innerHTML = originalContents;
         printSection.style.display = 'none';
+        location.reload(); // Reload to restore DataTables and other dynamic content
     }
 </script>
 

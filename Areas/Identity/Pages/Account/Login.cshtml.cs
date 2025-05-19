@@ -104,7 +104,7 @@ namespace SocialWelfarre.Areas.Identity.Pages.Account
                 if (result.Succeeded)
                 {
                     _logger.LogInformation("User {UserName} logged in.", user.UserName);
-                    return RedirectToAction("Dashboard", "Admin", new { area = "" });
+                    return RedirectToAction("AllDashboard", "Dashboard", new { area = "" });
                 }
                 if (result.RequiresTwoFactor)
                 {

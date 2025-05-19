@@ -10,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using SocialWelfarre.Data;
 using SocialWelfarre.Models;
 using SocialWelfarre.Services;
+using System.Text.Json; // Added for JsonSerializer
 
 namespace SocialWelfarre.Controllers
 {
@@ -30,7 +31,134 @@ namespace SocialWelfarre.Controllers
         [Authorize(Roles = "Admin,Staff1,Staff2")]
         public async Task<IActionResult> Index()
         {
-            return View(await _context.ApplicationFoodPack.ToListAsync());
+            var applications = await _context.ApplicationFoodPack.ToListAsync();
+            return View(applications);
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "Admin,Staff1,Staff2")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CreateFromIndex([Bind("FirstName,MiddleName,LastName,Packs,Age,Barangay,Address,ContactNumber,Reason,Status")] ApplicationFoodPack applicationFoodPack, IFormFile brgyCertFile, IFormFile validIdFile)
+        {
+            var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".pdf" };
+            var maxFileSize = 5 * 1024 * 1024;
+
+            var allStocks = await _context.StockIn_FoodPacks.OrderBy(s => s.Id).ToListAsync();
+            var latestInventory = await _context.FoodPackInventories.OrderByDescending(i => i.RequestDate).FirstOrDefaultAsync();
+            int totalPacks = 0;
+
+            if (allStocks.Any())
+            {
+                totalPacks = allStocks.Sum(s => s.Add_Stock2);
+                if (latestInventory != null)
+                {
+                    totalPacks = latestInventory.StockLeft;
+                }
+            }
+            else
+            {
+                TempData["ErrorMessage"] = "No stock available. Please add stock first.";
+                return RedirectToAction(nameof(Index));
+            }
+
+            if (totalPacks < applicationFoodPack.Packs)
+            {
+                TempData["ErrorMessage"] = $"Insufficient stock available. Available stock: {totalPacks}, Requested: {applicationFoodPack.Packs}";
+                return RedirectToAction(nameof(Index));
+            }
+
+            if (brgyCertFile != null && brgyCertFile.Length > 0)
+            {
+                var extension = Path.GetExtension(brgyCertFile.FileName).ToLower();
+                if (!allowedExtensions.Contains(extension))
+                {
+                    ModelState.AddModelError("brgyCertFile", "Only .jpg, .jpeg, .png, and .pdf files are allowed for Barangay Certificate.");
+                    return View("Index", await _context.ApplicationFoodPack.ToListAsync());
+                }
+                if (brgyCertFile.Length > maxFileSize)
+                {
+                    ModelState.AddModelError("brgyCertFile", "Barangay Certificate file size cannot exceed 5 MB.");
+                    return View("Index", await _context.ApplicationFoodPack.ToListAsync());
+                }
+
+                var directoryPath = Path.Combine(_hostingEnvironment.WebRootPath, "Uploads", "brgy_certs");
+                Directory.CreateDirectory(directoryPath);
+
+                var fileName = Guid.NewGuid().ToString() + extension;
+                var filePath = Path.Combine(directoryPath, fileName);
+
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                {
+                    await brgyCertFile.CopyToAsync(stream);
+                }
+
+                applicationFoodPack.Brgy_Cert = fileName;
+                applicationFoodPack.Brgy_Cert_Path = "/Uploads/brgy_certs/" + fileName;
+            }
+            else
+            {
+                ModelState.AddModelError("brgyCertFile", "Please upload a Barangay Certificate.");
+                return View("Index", await _context.ApplicationFoodPack.ToListAsync());
+            }
+
+            if (validIdFile != null && validIdFile.Length > 0)
+            {
+                var extension = Path.GetExtension(validIdFile.FileName).ToLower();
+                if (!allowedExtensions.Contains(extension))
+                {
+                    ModelState.AddModelError("validIdFile", "Only .jpg, .jpeg, .png, and .pdf files are allowed for Valid ID.");
+                    return View("Index", await _context.ApplicationFoodPack.ToListAsync());
+                }
+                if (validIdFile.Length > maxFileSize)
+                {
+                    ModelState.AddModelError("validIdFile", "Valid ID file size cannot exceed 5 MB.");
+                    return View("Index", await _context.ApplicationFoodPack.ToListAsync());
+                }
+
+                var directoryPath = Path.Combine(_hostingEnvironment.WebRootPath, "Uploads", "valid_ids");
+                Directory.CreateDirectory(directoryPath);
+
+                var fileName = Guid.NewGuid().ToString() + extension;
+                var filePath = Path.Combine(directoryPath, fileName);
+
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                {
+                    await validIdFile.CopyToAsync(stream);
+                }
+
+                applicationFoodPack.Valid_ID = fileName;
+                applicationFoodPack.Valid_ID_Path = "/Uploads/valid_ids/" + fileName;
+            }
+            else
+            {
+                ModelState.AddModelError("validIdFile", "Please upload a Valid ID.");
+                return View("Index", await _context.ApplicationFoodPack.ToListAsync());
+            }
+
+            applicationFoodPack.Status = ActiveStatus.Approved;
+            applicationFoodPack.RequestDate = DateTime.Now;
+
+            var latestStock = allStocks.LastOrDefault();
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            _context.Add(applicationFoodPack);
+            await _context.SaveChangesAsync();
+
+            var activity = new AuditTrail
+            {
+                Action = "Create",
+                TimeStamp = DateTime.Now,
+                IpAddress = HttpContext.Connection.RemoteIpAddress?.ToString(),
+                UserId = userId,
+                Moduie = "Food Packs",
+                AffectedTable = "Food Packs"
+            };
+            _context.Add(activity);
+            await _context.SaveChangesAsync();
+
+            string message = "Your food pack request has been submitted and is pending approval.";
+            await _smsService.SendSmsAsync(applicationFoodPack.ContactNumber, message);
+
+            return RedirectToAction(nameof(Index));
         }
 
         [HttpGet]
@@ -82,7 +210,6 @@ namespace SocialWelfarre.Controllers
             var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".pdf" };
             var maxFileSize = 5 * 1024 * 1024;
 
-            // Validate Barangay Certificate
             if (brgyCertFile != null && brgyCertFile.Length > 0)
             {
                 var extension = Path.GetExtension(brgyCertFile.FileName).ToLower();
@@ -117,7 +244,6 @@ namespace SocialWelfarre.Controllers
                 return View(applicationFoodPack);
             }
 
-            // Validate Valid ID
             if (validIdFile != null && validIdFile.Length > 0)
             {
                 var extension = Path.GetExtension(validIdFile.FileName).ToLower();
@@ -152,10 +278,6 @@ namespace SocialWelfarre.Controllers
                 return View(applicationFoodPack);
             }
 
-            // Set default status to Pending
-            applicationFoodPack.Status = ActiveStatus.Approved;
-
-            // Calculate TotalPacks based on all stock entries and previous StockLeft
             var allStocks = await _context.StockIn_FoodPacks.OrderBy(s => s.Id).ToListAsync();
             var latestInventory = await _context.FoodPackInventories.OrderByDescending(i => i.RequestDate).FirstOrDefaultAsync();
             var latestStock = allStocks.LastOrDefault();
@@ -188,7 +310,6 @@ namespace SocialWelfarre.Controllers
             _context.Add(applicationFoodPack);
             await _context.SaveChangesAsync();
 
-            // Create FoodPackInventory record
             var inventory = new FoodPackInventory
             {
                 ApplicationFoodPackId = applicationFoodPack.Id,
@@ -202,7 +323,6 @@ namespace SocialWelfarre.Controllers
             _context.FoodPackInventories.Add(inventory);
             await _context.SaveChangesAsync();
 
-            // Log audit trail
             var activity = new AuditTrail
             {
                 Action = "Create",
@@ -215,12 +335,11 @@ namespace SocialWelfarre.Controllers
             _context.Add(activity);
             await _context.SaveChangesAsync();
 
-            // Send SMS
             string message = applicationFoodPack.Status == ActiveStatus.Approved
                 ? "Your food pack request has been approved. Please wait for further instructions."
                 : "Your food pack request has been denied.";
             await _smsService.SendSmsAsync(applicationFoodPack.ContactNumber, message);
-         
+
             return RedirectToAction(nameof(Index));
         }
 
@@ -313,6 +432,7 @@ namespace SocialWelfarre.Controllers
             TempData["Success"] = "Application submitted successfully!";
             return RedirectToAction(nameof(FoodPackPending));
         }
+
         [Authorize(Roles = "Admin,Staff1,Staff2")]
         public async Task<IActionResult> Edit(int? id)
         {
@@ -340,7 +460,6 @@ namespace SocialWelfarre.Controllers
                 if (existingRecord == null)
                     return NotFound();
 
-                // Check stock if Packs or Status changes to Approved
                 if (existingRecord.Packs != applicationFoodPack.Packs || (existingRecord.Status != ActiveStatus.Approved && applicationFoodPack.Status == ActiveStatus.Approved))
                 {
                     var latestInventory = await _context.FoodPackInventories.OrderByDescending(i => i.RequestDate).FirstOrDefaultAsync(i => i.Id != id);
@@ -369,7 +488,6 @@ namespace SocialWelfarre.Controllers
                     }
                 }
 
-                // Update fields
                 existingRecord.FirstName = applicationFoodPack.FirstName;
                 existingRecord.MiddleName = applicationFoodPack.MiddleName;
                 existingRecord.LastName = applicationFoodPack.LastName;
@@ -385,7 +503,6 @@ namespace SocialWelfarre.Controllers
                 var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".pdf" };
                 var maxFileSize = 5 * 1024 * 1024;
 
-                // Barangay Certificate file handling
                 if (brgyCertFile != null && brgyCertFile.Length > 0)
                 {
                     var extension = Path.GetExtension(brgyCertFile.FileName).ToLower();
@@ -422,7 +539,6 @@ namespace SocialWelfarre.Controllers
                     existingRecord.Brgy_Cert_Path = "/Uploads/brgy_certs/" + fileName;
                 }
 
-                // Valid ID file handling
                 if (validIdFile != null && validIdFile.Length > 0)
                 {
                     var extension = Path.GetExtension(validIdFile.FileName).ToLower();
@@ -464,7 +580,6 @@ namespace SocialWelfarre.Controllers
 
                 await _context.SaveChangesAsync();
 
-                // Update or create FoodPackInventory if Approved
                 if (existingRecord.Status == ActiveStatus.Approved)
                 {
                     var inventory = await _context.FoodPackInventories.FirstOrDefaultAsync(i => i.Id == existingRecord.Id);
@@ -514,7 +629,6 @@ namespace SocialWelfarre.Controllers
                     }
                     await _context.SaveChangesAsync();
 
-                    // Update subsequent inventories
                     var subsequentInventories = await _context.FoodPackInventories
                         .Where(i => i.RequestDate > inventory.RequestDate)
                         .OrderBy(i => i.RequestDate)
@@ -531,14 +645,12 @@ namespace SocialWelfarre.Controllers
                 }
                 else
                 {
-                    // Remove FoodPackInventory if not Approved
                     var inventory = await _context.FoodPackInventories.FirstOrDefaultAsync(i => i.Id == existingRecord.Id);
                     if (inventory != null)
                     {
                         _context.FoodPackInventories.Remove(inventory);
                         await _context.SaveChangesAsync();
 
-                        // Update subsequent inventories after deletion
                         var remainingInventories = await _context.FoodPackInventories
                             .OrderBy(i => i.RequestDate)
                             .ToListAsync();
@@ -557,7 +669,6 @@ namespace SocialWelfarre.Controllers
                     }
                 }
 
-                // Log audit trail
                 var activity = new AuditTrail
                 {
                     Action = "Edit",
@@ -570,8 +681,6 @@ namespace SocialWelfarre.Controllers
                 _context.Add(activity);
                 await _context.SaveChangesAsync();
 
-                // Show success message
-               
                 return RedirectToAction(nameof(Index));
             }
             catch (DbUpdateConcurrencyException)
@@ -582,6 +691,7 @@ namespace SocialWelfarre.Controllers
                     throw;
             }
         }
+
         [Authorize(Roles = "Admin,Staff1,Staff2")]
         public async Task<IActionResult> Delete(int? id)
         {
@@ -605,7 +715,6 @@ namespace SocialWelfarre.Controllers
             var applicationFoodPack = await _context.ApplicationFoodPack.FindAsync(id);
             if (applicationFoodPack != null)
             {
-                // Delete associated files
                 if (!string.IsNullOrEmpty(applicationFoodPack.Brgy_Cert_Path))
                 {
                     var filePath = Path.Combine(_hostingEnvironment.WebRootPath, applicationFoodPack.Brgy_Cert_Path.TrimStart('/'));
@@ -619,7 +728,6 @@ namespace SocialWelfarre.Controllers
                         System.IO.File.Delete(filePath);
                 }
 
-                // Delete related FoodPackInventory
                 var inventory = await _context.FoodPackInventories.FirstOrDefaultAsync(i => i.Id == id);
                 if (inventory != null)
                     _context.FoodPackInventories.Remove(inventory);
@@ -627,7 +735,6 @@ namespace SocialWelfarre.Controllers
                 _context.ApplicationFoodPack.Remove(applicationFoodPack);
                 await _context.SaveChangesAsync();
 
-                // Update subsequent inventories after deletion
                 var remainingInventories = await _context.FoodPackInventories
                     .OrderBy(i => i.RequestDate)
                     .ToListAsync();
@@ -644,7 +751,6 @@ namespace SocialWelfarre.Controllers
                 await _context.SaveChangesAsync();
             }
 
-            // Log audit trail
             var activity = new AuditTrail
             {
                 Action = "Delete",
@@ -658,7 +764,6 @@ namespace SocialWelfarre.Controllers
             await _context.SaveChangesAsync();
 
             return RedirectToAction(nameof(Index));
-
         }
 
         [HttpPost]
@@ -677,7 +782,6 @@ namespace SocialWelfarre.Controllers
                 return BadRequest("Status is required.");
             }
 
-            // Update status
             if (status.Equals("Process", StringComparison.OrdinalIgnoreCase))
             {
                 picture.Status = ActiveStatus.Process;
@@ -694,7 +798,6 @@ namespace SocialWelfarre.Controllers
             _context.Update(picture);
             await _context.SaveChangesAsync();
 
-            // If status is Rejected, remove any existing FoodPackInventory record
             if (picture.Status == ActiveStatus.Denied)
             {
                 var existingInventory = await _context.FoodPackInventories
@@ -704,7 +807,6 @@ namespace SocialWelfarre.Controllers
                     _context.FoodPackInventories.Remove(existingInventory);
                     await _context.SaveChangesAsync();
 
-                    // Recalculate remaining inventories
                     var remainingInventories = await _context.FoodPackInventories
                         .OrderBy(i => i.RequestDate)
                         .ToListAsync();
@@ -725,7 +827,6 @@ namespace SocialWelfarre.Controllers
                 }
             }
 
-            // Log audit trail
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var activity = new AuditTrail
             {
@@ -739,7 +840,6 @@ namespace SocialWelfarre.Controllers
             _context.Add(activity);
             await _context.SaveChangesAsync();
 
-            // Send SMS message
             string message = picture.Status == ActiveStatus.Process
                 ? "Your request has been processed. Please wait for the confirmation."
                 : "Your request has been rejected.";
@@ -766,7 +866,6 @@ namespace SocialWelfarre.Controllers
             }
 
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            // Check stock if status is Accepted
             int totalPacks = 0;
             if (status.Equals("Accepted", StringComparison.OrdinalIgnoreCase))
             {
@@ -797,11 +896,10 @@ namespace SocialWelfarre.Controllers
                 }
             }
 
-            // Update status
             if (status.Equals("Accepted", StringComparison.OrdinalIgnoreCase))
             {
                 picture.Status = ActiveStatus.Approved;
-                picture.ApprovedById = userId; // Set the approver to current user
+                picture.ApprovedById = userId;
             }
             else if (status.Equals("Rejected", StringComparison.OrdinalIgnoreCase))
             {
@@ -816,7 +914,6 @@ namespace SocialWelfarre.Controllers
             _context.Update(picture);
             await _context.SaveChangesAsync();
 
-            // Handle FoodPackInventory
             if (picture.Status == ActiveStatus.Approved)
             {
                 var allStocks = await _context.StockIn_FoodPacks.OrderBy(s => s.Restock_DateTime2).ToListAsync();
@@ -861,7 +958,6 @@ namespace SocialWelfarre.Controllers
 
                 await _context.SaveChangesAsync();
 
-                // Update subsequent inventories
                 var subsequentInventories = await _context.FoodPackInventories
                     .Where(i => i.RequestDate > DateTime.Now)
                     .OrderBy(i => i.RequestDate)
@@ -878,7 +974,6 @@ namespace SocialWelfarre.Controllers
             }
             else
             {
-                // Remove FoodPackInventory if status is Rejected
                 var existingInventory = await _context.FoodPackInventories
                     .FirstOrDefaultAsync(i => i.ApplicationFoodPackId == picture.Id);
                 if (existingInventory != null)
@@ -886,7 +981,6 @@ namespace SocialWelfarre.Controllers
                     _context.FoodPackInventories.Remove(existingInventory);
                     await _context.SaveChangesAsync();
 
-                    // Recalculate remaining inventories
                     var remainingInventories = await _context.FoodPackInventories
                         .OrderBy(i => i.RequestDate)
                         .ToListAsync();
@@ -907,8 +1001,6 @@ namespace SocialWelfarre.Controllers
                 }
             }
 
-            // Log audit trail
-          
             var activity = new AuditTrail
             {
                 Action = status.Equals("Accepted", StringComparison.OrdinalIgnoreCase) ? "Accepted" : "Rejected",
@@ -921,7 +1013,6 @@ namespace SocialWelfarre.Controllers
             _context.Add(activity);
             await _context.SaveChangesAsync();
 
-            // Send SMS message
             string message = picture.Status == ActiveStatus.Approved
                 ? "Your request has been accepted. Please proceed to Magsaysay CSWDO Office, Door 11."
                 : "Your request has been rejected.";
@@ -945,19 +1036,25 @@ namespace SocialWelfarre.Controllers
                         a.LastName,
                         a.Packs,
                         a.Age,
-                        a.Barangay,
+                        Barangay = a.Barangay.ToString(), // Convert enum to string
                         a.Address,
                         a.ContactNumber,
                         a.Brgy_Cert,
                         a.Brgy_Cert_Path,
                         a.Valid_ID,
                         a.Valid_ID_Path,
-                        a.Reason,
+                        Reason = a.Reason.ToString(), // Convert enum to string
                         Status = a.Status.ToString(),
                         RequestDate = a.RequestDate
                     })
                     .ToListAsync();
-                return Json(applications);
+
+                // Use System.Text.Json to serialize with enum string conversion
+                var options = new JsonSerializerOptions
+                {
+                    Converters = { new System.Text.Json.Serialization.JsonStringEnumConverter() }
+                };
+                return Json(applications, options);
             }
             catch (Exception ex)
             {
@@ -995,7 +1092,6 @@ namespace SocialWelfarre.Controllers
 
             await _context.SaveChangesAsync();
 
-            // Log audit trail
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var activity = new AuditTrail
             {

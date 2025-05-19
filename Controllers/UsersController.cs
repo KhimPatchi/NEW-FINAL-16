@@ -77,7 +77,7 @@ namespace SocialWelfarre.Controllers
                 if (result.Succeeded)
                 {
                     await _userManager.AddToRoleAsync(user, model.Role);
-                    return RedirectToAction("Dashboard", "Admin", new { area = "" });
+                    return RedirectToAction("ViewCreate", "Users");
                 }
 
                 foreach (var error in result.Errors)

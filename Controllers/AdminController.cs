@@ -14,17 +14,6 @@ namespace SocialWelfarre.Controllers
         {
             return View();
         }
-        public IActionResult CertificateOfIndigencyDashboard()
-        {
-            return View();
-        }
-        public IActionResult ConsultationDashboard()
-        {
-            return View();
-        }
-        public IActionResult DisasterKitDashboard()
-        {
-            return View();
-        }
+       
     }
     }

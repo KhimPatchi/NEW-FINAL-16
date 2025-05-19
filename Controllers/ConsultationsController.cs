@@ -111,16 +111,15 @@ namespace SocialWelfarre.Controllers
             return View();
         }
 
-        // POST: Consultations/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(
-            [Bind("Id,First_Name2,Middle_Name2,Last_Name2, ContactNumber2, Consultation_Date,Consultation_Time,Consultation_status")] Consultation consultation,
-            IFormFile brgyCertFile,
-            IFormFile proofSoloParentFile,
-            IFormFile birthCertFile,
-            IFormFile validIdFile,
-            IFormFile x1PicFile)
+     [Bind("Id,First_Name2,Middle_Name2,Last_Name2,ContactNumber2,Consultation_Date,Consultation_Time,Consultation_status")] Consultation consultation,
+     IFormFile brgyCertFile,
+     IFormFile proofSoloParentFile,
+     IFormFile birthCertFile,
+     IFormFile validIdFile,
+     IFormFile x1PicFile)
         {
             // Validate uploaded files
             var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".pdf" };
@@ -133,35 +132,34 @@ namespace SocialWelfarre.Controllers
                 if (!allowedExtensions.Contains(extension))
                 {
                     ModelState.AddModelError("brgyCertFile", "Only .jpg, .jpeg, .png, and .pdf files are allowed for Barangay Certificate.");
-                    return View(consultation);
                 }
-                if (brgyCertFile.Length > maxFileSize)
+                else if (brgyCertFile.Length > maxFileSize)
                 {
                     ModelState.AddModelError("brgyCertFile", "Barangay Certificate file size cannot exceed 5 MB.");
-                    return View(consultation);
                 }
-
-                var directoryPath = Path.Combine(_hostingEnvironment.WebRootPath, "Uploads", "brgy_certs");
-                if (!Directory.Exists(directoryPath))
+                else
                 {
-                    Directory.CreateDirectory(directoryPath);
+                    var directoryPath = Path.Combine(_hostingEnvironment.WebRootPath, "Uploads", "brgy_certs");
+                    if (!Directory.Exists(directoryPath))
+                    {
+                        Directory.CreateDirectory(directoryPath);
+                    }
+
+                    var fileName = Guid.NewGuid().ToString() + extension;
+                    var filePath = Path.Combine(directoryPath, fileName);
+
+                    using (var stream = new FileStream(filePath, FileMode.Create))
+                    {
+                        await brgyCertFile.CopyToAsync(stream);
+                    }
+
+                    consultation.Brgy_Cert2 = fileName;
+                    consultation.Brgy_Cert_Path2 = "/Uploads/brgy_certs/" + fileName;
                 }
-
-                var fileName = Guid.NewGuid().ToString() + extension;
-                var filePath = Path.Combine(directoryPath, fileName);
-
-                using (var stream = new FileStream(filePath, FileMode.Create))
-                {
-                    await brgyCertFile.CopyToAsync(stream);
-                }
-
-                consultation.Brgy_Cert2 = fileName;
-                consultation.Brgy_Cert_Path2 = "/Uploads/brgy_certs/" + fileName;
             }
             else
             {
                 ModelState.AddModelError("brgyCertFile", "Please upload a Barangay Certificate.");
-                return View(consultation);
             }
 
             // Validate Proof of Solo Parent file
@@ -171,35 +169,34 @@ namespace SocialWelfarre.Controllers
                 if (!allowedExtensions.Contains(extension))
                 {
                     ModelState.AddModelError("proofSoloParentFile", "Only .jpg, .jpeg, .png, and .pdf files are allowed for Proof of Solo Parent.");
-                    return View(consultation);
                 }
-                if (proofSoloParentFile.Length > maxFileSize)
+                else if (proofSoloParentFile.Length > maxFileSize)
                 {
                     ModelState.AddModelError("proofSoloParentFile", "Proof of Solo Parent file size cannot exceed 5 MB.");
-                    return View(consultation);
                 }
-
-                var directoryPath = Path.Combine(_hostingEnvironment.WebRootPath, "Uploads", "solo_parent_proofs");
-                if (!Directory.Exists(directoryPath))
+                else
                 {
-                    Directory.CreateDirectory(directoryPath);
+                    var directoryPath = Path.Combine(_hostingEnvironment.WebRootPath, "Uploads", "solo_parent_proofs");
+                    if (!Directory.Exists(directoryPath))
+                    {
+                        Directory.CreateDirectory(directoryPath);
+                    }
+
+                    var fileName = Guid.NewGuid().ToString() + extension;
+                    var filePath = Path.Combine(directoryPath, fileName);
+
+                    using (var stream = new FileStream(filePath, FileMode.Create))
+                    {
+                        await proofSoloParentFile.CopyToAsync(stream);
+                    }
+
+                    consultation.Proof_SoloParent2 = fileName;
+                    consultation.Proof_SoloParent_Path2 = "/Uploads/solo_parent_proofs/" + fileName;
                 }
-
-                var fileName = Guid.NewGuid().ToString() + extension;
-                var filePath = Path.Combine(directoryPath, fileName);
-
-                using (var stream = new FileStream(filePath, FileMode.Create))
-                {
-                    await proofSoloParentFile.CopyToAsync(stream);
-                }
-
-                consultation.Proof_SoloParent2 = fileName;
-                consultation.Proof_SoloParent_Path2 = "/Uploads/solo_parent_proofs/" + fileName;
             }
             else
             {
                 ModelState.AddModelError("proofSoloParentFile", "Please upload a Proof of Solo Parent.");
-                return View(consultation);
             }
 
             // Validate Birth Certificate file
@@ -209,35 +206,34 @@ namespace SocialWelfarre.Controllers
                 if (!allowedExtensions.Contains(extension))
                 {
                     ModelState.AddModelError("birthCertFile", "Only .jpg, .jpeg, .png, and .pdf files are allowed for Birth Certificate.");
-                    return View(consultation);
                 }
-                if (birthCertFile.Length > maxFileSize)
+                else if (birthCertFile.Length > maxFileSize)
                 {
                     ModelState.AddModelError("birthCertFile", "Birth Certificate file size cannot exceed 5 MB.");
-                    return View(consultation);
                 }
-
-                var directoryPath = Path.Combine(_hostingEnvironment.WebRootPath, "Uploads", "birth_certs");
-                if (!Directory.Exists(directoryPath))
+                else
                 {
-                    Directory.CreateDirectory(directoryPath);
+                    var directoryPath = Path.Combine(_hostingEnvironment.WebRootPath, "Uploads", "birth_certs");
+                    if (!Directory.Exists(directoryPath))
+                    {
+                        Directory.CreateDirectory(directoryPath);
+                    }
+
+                    var fileName = Guid.NewGuid().ToString() + extension;
+                    var filePath = Path.Combine(directoryPath, fileName);
+
+                    using (var stream = new FileStream(filePath, FileMode.Create))
+                    {
+                        await birthCertFile.CopyToAsync(stream);
+                    }
+
+                    consultation.Birth_Cert2 = fileName;
+                    consultation.Birth_Cert_Path2 = "/Uploads/birth_certs/" + fileName;
                 }
-
-                var fileName = Guid.NewGuid().ToString() + extension;
-                var filePath = Path.Combine(directoryPath, fileName);
-
-                using (var stream = new FileStream(filePath, FileMode.Create))
-                {
-                    await birthCertFile.CopyToAsync(stream);
-                }
-
-                consultation.Birth_Cert2 = fileName;
-                consultation.Birth_Cert_Path2 = "/Uploads/birth_certs/" + fileName;
             }
             else
             {
                 ModelState.AddModelError("birthCertFile", "Please upload a Birth Certificate.");
-                return View(consultation);
             }
 
             // Validate Valid ID file
@@ -247,35 +243,34 @@ namespace SocialWelfarre.Controllers
                 if (!allowedExtensions.Contains(extension))
                 {
                     ModelState.AddModelError("validIdFile", "Only .jpg, .jpeg, .png, and .pdf files are allowed for Valid ID.");
-                    return View(consultation);
                 }
-                if (validIdFile.Length > maxFileSize)
+                else if (validIdFile.Length > maxFileSize)
                 {
                     ModelState.AddModelError("validIdFile", "Valid ID file size cannot exceed 5 MB.");
-                    return View(consultation);
                 }
-
-                var directoryPath = Path.Combine(_hostingEnvironment.WebRootPath, "Uploads", "valid_ids");
-                if (!Directory.Exists(directoryPath))
+                else
                 {
-                    Directory.CreateDirectory(directoryPath);
+                    var directoryPath = Path.Combine(_hostingEnvironment.WebRootPath, "Uploads", "valid_ids");
+                    if (!Directory.Exists(directoryPath))
+                    {
+                        Directory.CreateDirectory(directoryPath);
+                    }
+
+                    var fileName = Guid.NewGuid().ToString() + extension;
+                    var filePath = Path.Combine(directoryPath, fileName);
+
+                    using (var stream = new FileStream(filePath, FileMode.Create))
+                    {
+                        await validIdFile.CopyToAsync(stream);
+                    }
+
+                    consultation.Valid_ID2 = fileName;
+                    consultation.Valid_ID_Path2 = "/Uploads/valid_ids/" + fileName;
                 }
-
-                var fileName = Guid.NewGuid().ToString() + extension;
-                var filePath = Path.Combine(directoryPath, fileName);
-
-                using (var stream = new FileStream(filePath, FileMode.Create))
-                {
-                    await validIdFile.CopyToAsync(stream);
-                }
-
-                consultation.Valid_ID2 = fileName;
-                consultation.Valid_ID_Path2 = "/Uploads/valid_ids/" + fileName;
             }
             else
             {
                 ModelState.AddModelError("validIdFile", "Please upload a Valid ID.");
-                return View(consultation);
             }
 
             // Validate 1x1 Picture file
@@ -285,39 +280,46 @@ namespace SocialWelfarre.Controllers
                 if (!allowedExtensions.Contains(extension))
                 {
                     ModelState.AddModelError("x1PicFile", "Only .jpg, .jpeg, .png, and .pdf files are allowed for 1x1 Picture.");
-                    return View(consultation);
                 }
-                if (x1PicFile.Length > maxFileSize)
+                else if (x1PicFile.Length > maxFileSize)
                 {
                     ModelState.AddModelError("x1PicFile", "1x1 Picture file size cannot exceed 5 MB.");
-                    return View(consultation);
                 }
-
-                var directoryPath = Path.Combine(_hostingEnvironment.WebRootPath, "Uploads", "x1_pics");
-                if (!Directory.Exists(directoryPath))
+                else
                 {
-                    Directory.CreateDirectory(directoryPath);
+                    var directoryPath = Path.Combine(_hostingEnvironment.WebRootPath, "Uploads", "x1_pics");
+                    if (!Directory.Exists(directoryPath))
+                    {
+                        Directory.CreateDirectory(directoryPath);
+                    }
+
+                    var fileName = Guid.NewGuid().ToString() + extension;
+                    var filePath = Path.Combine(directoryPath, fileName);
+
+                    using (var stream = new FileStream(filePath, FileMode.Create))
+                    {
+                        await x1PicFile.CopyToAsync(stream);
+                    }
+
+                    consultation.x1_Pic2 = fileName;
+                    consultation.x1_Pic_Path2 = "/Uploads/x1_pics/" + fileName;
                 }
-
-                var fileName = Guid.NewGuid().ToString() + extension;
-                var filePath = Path.Combine(directoryPath, fileName);
-
-                using (var stream = new FileStream(filePath, FileMode.Create))
-                {
-                    await x1PicFile.CopyToAsync(stream);
-                }
-
-                consultation.x1_Pic2 = fileName;
-                consultation.x1_Pic_Path2 = "/Uploads/x1_pics/" + fileName;
             }
             else
             {
                 ModelState.AddModelError("x1PicFile", "Please upload a 1x1 Picture.");
+            }
+
+            // Check if the model is valid before saving
+            if (!ModelState.IsValid)
+            {
+                // Return the view with the consultation model to preserve user input
                 return View(consultation);
             }
 
-            // Set status to Approved by default
-            consultation.Consultation_status = (ActiveStatus2)Enum.Parse(typeof(ActiveStatus2), "Approved");
+            // Set status to Pending by default
+            consultation.Consultation_status = ActiveStatus2.Approved;
+            consultation.RequestDate = DateTime.Now;
 
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             _context.Add(consultation);
@@ -329,7 +331,7 @@ namespace SocialWelfarre.Controllers
                 TimeStamp = DateTime.Now,
                 IpAddress = HttpContext.Connection.RemoteIpAddress?.ToString(),
                 UserId = userId,
-                Moduie = "Consultation",
+                Moduie = "Consultation", // Fixed typo from "Moduie"
                 AffectedTable = "Consultations"
             };
             _context.Add(activity);

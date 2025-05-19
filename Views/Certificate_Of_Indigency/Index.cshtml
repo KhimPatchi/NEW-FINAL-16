@@ -8,240 +8,303 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>@ViewData["Title"] - Certificate of Indigency Requests</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Certificate of Indigency Request</title>
+    <script src="https://cdn.tailwindcss.com/3.4.16"></script>
+    <script>
+        tailwind.config = {
+          theme: {
+            extend: {
+              colors: { primary: "#4263eb", secondary: "#829af1" },
+              borderRadius: {
+                none: "0px",
+                sm: "4px",
+                DEFAULT: "8px",
+                md: "12px",
+                lg: "16px",
+                xl: "20px",
+                "2xl": "24px",
+                "3xl": "32px",
+                full: "9999px",
+                button: "8px",
+              },
+            },
+          },
+        };
+    </script>
+   
+    <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap"
+          rel="stylesheet" />
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css" />
     <style>
-        .form-select {
-            border-radius: 8px;
-            padding: 10px;
-            font-size: 16px;
-            border: 1px solid #ced4da;
-            transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+        :where([class^="ri-"])::before {
+            content: "\f3c2";
         }
 
-            .form-select:focus {
-                border-color: #007bff;
-                box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
-                outline: none;
-            }
-
-            .form-select:hover {
-                border-color: #6c757d;
-            }
-
-        .form-group label {
-            font-weight: 500;
-            color: #343a40;
-            margin-bottom: 8px;
+        input[type="number"]::-webkit-inner-spin-button,
+        input[type="number"]::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
         }
 
-        .form-row {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 20px;
+        input[type="number"] {
+            -moz-appearance: textfield;
         }
 
-        .form-group {
-            flex: 1;
-            min-width: 200px;
-        }
-
-            /* Style for the icons to make them blue */
-            .form-group label i {
-                color: #007bff;
-                margin-right: 5px;
-            }
-
-        /* Custom file input styling */
-        .custom-file-upload {
-            position: relative;
-            display: inline-block;
-            width: 100%;
-        }
-
-            .custom-file-upload input[type="file"] {
-                position: absolute;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                opacity: 0;
-                cursor: pointer;
-            }
-
-        .custom-file-label {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 10px 15px;
-            background-color: white;
-            color: white;
-            border-radius: 8px;
-            font-size: 16px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            width: 100%;
+        .badge {
+            padding: 0.25em 0.6em;
+            font-size: 75%;
+            font-weight: 700;
+            line-height: 1;
             text-align: center;
+            white-space: nowrap;
+            vertical-align: baseline;
+            border-radius: 10rem;
         }
 
-            .custom-file-label i {
-                margin-right: 8px;
-            }
-
-            .custom-file-label:hover {
-                background-color: #0056b3;
-                box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
-                transform: translateY(-1px);
-            }
-
-            .custom-file-label:active {
-                transform: translateY(1px);
-            }
-
-        /* Ensure validation messages align with the custom styling */
-        .text-danger {
-            margin-top: 5px;
-            display: block;
+        .bg-success {
+            background-color: #d1fae5 !important;
+            color: #065f46 !important;
         }
 
-        /* Style for active tab */
-        .nav-tabs .nav-link.active {
-            font-weight: bold;
-            background-color: #f8f9fa;
-            border-bottom-color: transparent;
+        .bg-warning {
+            background-color: #fef3c7 !important;
+            color: #92400e !important;
         }
 
-        /* Add hover effect for tabs */
-        .nav-tabs .nav-link:hover:not(.active) {
-            background-color: #f1f1f1;
-            border-color: #e9ecef #e9ecef #dee2e6;
+        .bg-primary {
+            background-color: #dbeafe !important;
+            color: #1e40af !important;
+        }
+
+        .bg-danger {
+            background-color: #fee2e2 !important;
+            color: #991b1b !important;
+        }
+
+        .bg-secondary {
+            background-color: #e5e7eb !important;
+            color: #1f2937 !important;
         }
     </style>
 </head>
-<body>
-
-    <div class="card">
-        <div class="card-body">
-            <div class="form-section">
-                <h4><i class="fas fa-plus-circle"></i> Request Certificate of Indigency</h4>
-                <!-- Success Alert -->
-                <div id="successAlert" class="alert alert-success d-none" role="alert">
-                    Consultation submitted successfully!
+<body class="bg-gray-50 min-h-screen">
+    <div class="container mx-auto px-4 py-8">
+        <!-- Request Form Section -->
+        <div class="bg-white rounded-lg shadow-md p-6 mb-8">
+            <div class="flex items-center gap-3 mb-6 border-b pb-4">
+                <div class="w-8 h-8 flex items-center justify-center bg-primary text-white rounded-full">
+                    <i class="ri-file-list-3-line"></i>
                 </div>
+                <h1 class="text-xl font-semibold text-gray-800">
+                    Request Certificate of Indigency
+                </h1>
+            </div>
+            <!-- Success Alert -->
+            <div id="successAlert" class="hidden mb-4 p-4 bg-green-100 text-green-700 rounded">
+                Consultation submitted successfully!
+            </div>
+            <form asp-action="Create" method="post" enctype="multipart/form-data" id="Create" onsubmit="return handleSubmit(event)">
+                @Html.AntiForgeryToken()
+                <div asp-validation-summary="ModelOnly" class="text-red-500 mb-4"></div>
 
-                <form asp-action="Create" method="post" enctype="multipart/form-data" id="Create" onsubmit="return handleSubmit(event)">
-                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-
-                    <!-- Row 1 -->
-                    <div class="form-row">
-                        <div class="form-group col-md-3">
-                            <label><i class="fas fa-user"></i> First Name *</label>
-                            <input asp-for="@(new SocialWelfarre.Models.Certificate_Of_Indigency().FirstName1)" class="form-control" placeholder="Enter First Name" required />
-                        </div>
-                        <div class="form-group col-md-3">
-                            <label><i class="fas fa-user"></i> Middle Name *</label>
-                            <input asp-for="@(new SocialWelfarre.Models.Certificate_Of_Indigency().MiddleName1)" class="form-control" placeholder="Enter Middle Name" required />
-                        </div>
-                        <div class="form-group col-md-3">
-                            <label><i class="fas fa-user"></i> Last Name *</label>
-                            <input asp-for="@(new SocialWelfarre.Models.Certificate_Of_Indigency().LastName1)" class="form-control" placeholder="Enter Last Name" required />
-                        </div>
-                        <div class="form-group col-md-3">
-                            <label><i class="fas fa-birthday-cake"></i> Age *</label>
-                            <input asp-for="@(new SocialWelfarre.Models.Certificate_Of_Indigency().Age1)" class="form-control" type="number" placeholder="Enter Age" required />
-                        </div>
+                <!-- Personal Information -->
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
+                    <div class="col-span-1">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">
+                            <i class="ri-user-line text-gray-500 mr-1"></i> First Name
+                            <span class="text-red-500">*</span>
+                        </label>
+                        <input asp-for="@(new SocialWelfarre.Models.Certificate_Of_Indigency().FirstName1)"
+                               type="text"
+                               placeholder="Enter First Name"
+                               class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary"
+                               required />
                     </div>
-
-                    <!-- Row 2 -->
-                    <div class="form-row">
-                        <div class="form-group col-md-3">
-                            <label><i class="fas fa-phone"></i> Contact Number *</label>
-                            <input asp-for="@(new SocialWelfarre.Models.Certificate_Of_Indigency().ContactNumber1)" class="form-control" placeholder="Enter Contact Number" required />
-                        </div>
-                        <div class="form-group col-md-3">
-                            <label><i class="fas fa-boxes"></i> Request *</label>
-                            <input asp-for="@(new SocialWelfarre.Models.Certificate_Of_Indigency().No_Rquested1)" class="form-control" type="number" placeholder="Enter number requested" required />
-                        </div>
-                        <div class="form-group col-md-3">
-                            <label><i class="fas fa-home"></i> Address *</label>
-                            <input asp-for="@(new SocialWelfarre.Models.Certificate_Of_Indigency().Address1)" class="form-control" placeholder="Enter Address" required />
-                        </div>
-                        <div class="form-group col-md-3">
-                            <label><i class="fas fa-map-marker-alt"></i> Barangay *</label>
-                            <select asp-for="@(new SocialWelfarre.Models.Certificate_Of_Indigency().Barangay1)" class="form-select" required>
-                                <option value="">-- Select Barangay --</option>
+                    <div class="col-span-1">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">
+                            <i class="ri-user-line text-gray-500 mr-1"></i> Middle Name
+                            <span class="text-red-500">*</span>
+                        </label>
+                        <input asp-for="@(new SocialWelfarre.Models.Certificate_Of_Indigency().MiddleName1)"
+                               type="text"
+                               placeholder="Enter Middle Name"
+                               class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary"
+                               required />
+                    </div>
+                    <div class="col-span-1">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">
+                            <i class="ri-user-line text-gray-500 mr-1"></i> Last Name
+                            <span class="text-red-500">*</span>
+                        </label>
+                        <input asp-for="@(new SocialWelfarre.Models.Certificate_Of_Indigency().LastName1)"
+                               type="text"
+                               placeholder="Enter Last Name"
+                               class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary"
+                               required />
+                    </div>
+                    <div class="col-span-1">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">
+                            <i class="ri-calendar-line text-gray-500 mr-1"></i> Age
+                            <span class="text-red-500">*</span>
+                        </label>
+                        <input asp-for="@(new SocialWelfarre.Models.Certificate_Of_Indigency().Age1)"
+                               type="number"
+                               placeholder="0"
+                               class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary"
+                               required />
+                    </div>
+                </div>
+                <!-- Contact Information -->
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
+                    <div class="col-span-1">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">
+                            <i class="ri-phone-line text-gray-500 mr-1"></i> Contact Number
+                            <span class="text-red-500">*</span>
+                        </label>
+                        <input asp-for="@(new SocialWelfarre.Models.Certificate_Of_Indigency().ContactNumber1)"
+                               type="text"
+                               placeholder="Enter Contact Number"
+                               class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary"
+                               required />
+                    </div>
+                    <div class="col-span-1">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">
+                            <i class="ri-file-list-line text-gray-500 mr-1"></i> Request
+                            <span class="text-red-500">*</span>
+                        </label>
+                        <input asp-for="@(new SocialWelfarre.Models.Certificate_Of_Indigency().No_Rquested1)"
+                               type="number"
+                               placeholder="0"
+                               class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary"
+                               required />
+                    </div>
+                    <div class="col-span-1">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">
+                            <i class="ri-map-pin-line text-gray-500 mr-1"></i> Address
+                            <span class="text-red-500">*</span>
+                        </label>
+                        <input asp-for="@(new SocialWelfarre.Models.Certificate_Of_Indigency().Address1)"
+                               type="text"
+                               placeholder="Enter Address"
+                               class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary"
+                               required />
+                    </div>
+                    <div class="col-span-1">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">
+                            <i class="ri-building-line text-gray-500 mr-1"></i> Barangay
+                            <span class="text-red-500">*</span>
+                        </label>
+                        <div class="relative">
+                            <select asp-for="@(new SocialWelfarre.Models.Certificate_Of_Indigency().Barangay1)"
+                                    class="w-full px-4 py-2 border border-gray-300 rounded appearance-none focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary pr-8"
+                                    required>
+                                <option value="">Select Barangay</option>
                                 @foreach (var barangay in Html.GetEnumSelectList<Barangay1>())
                                 {
                                     <option value="@barangay.Value">@barangay.Text</option>
                                 }
                             </select>
+                            <div class="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
+                                <i class="ri-arrow-down-s-line text-gray-500"></i>
+                            </div>
                         </div>
                     </div>
-
-                    <!-- Row 3 -->
-                    <div class="form-row">
-                        <div class="form-group col-md-3">
-                            <label><i class="fas fa-comment"></i> Reason *</label>
-                            <select asp-for="@(new SocialWelfarre.Models.Certificate_Of_Indigency().Reason1)" class="form-select" required>
-                                <option value="">-- Select Reason --</option>
-                                @foreach (var reason in Html.GetEnumSelectList<Reason>())
+                </div>
+                <!-- Reason -->
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
+                    <div class="col-span-1">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">
+                            <i class="ri-question-line text-gray-500 mr-1"></i> Reason
+                            <span class="text-red-500">*</span>
+                        </label>
+                        <div class="relative">
+                            <select asp-for="@(new SocialWelfarre.Models.Certificate_Of_Indigency().Reason1)"
+                                    class="w-full px-4 py-2 border border-gray-300 rounded appearance-none focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary pr-8"
+                                    required>
+                                <option value="">Select Reason</option>
+                                @foreach (var reason in Html.GetEnumSelectList<Reason1>())
                                 {
                                     <option value="@reason.Value">@reason.Text</option>
                                 }
                             </select>
-                        </div>
-
-                        <div class="form-group col-md-3">
-                            <label for="brgyCertFile"><i class="fas fa-file-alt"></i> Barangay Certificate *</label>
-                            <div class="custom-file-upload">
-                                <input type="file" name="brgyCertFile" id="brgyCertFile" accept=".jpg,.jpeg,.png,.pdf" required />
-                                <label for="brgyCertFile" class="custom-file-label"><i class="fas fa-upload"></i> Choose File</label>
-                            </div>
-                        </div>
-                        <div class="form-group col-md-3">
-                            <label for="validIdFile"><i class="fas fa-id-card"></i> Valid ID *</label>
-                            <div class="custom-file-upload">
-                                <input type="file" name="validIdFile" id="validIdFile" accept=".jpg,.jpeg,.png,.pdf" required />
-                                <label for="validIdFile" class="custom-file-label"><i class="fas fa-upload"></i> Choose File</label>
+                            <div class="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
+                                <i class="ri-arrow-down-s-line text-gray-500"></i>
                             </div>
                         </div>
                     </div>
-
-                    <!-- Submit Button -->
-                    <div class="form-row">
-                        <div class="col-md-12 text-end">
-                            <button type="submit" class="btn btn-primary mt-1"><i class="fas fa-save"></i> Add Application</button>
+                </div>
+                <!-- Document Upload -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">
+                            <i class="ri-file-upload-line text-gray-500 mr-1"></i> Barangay
+                            Certificate <span class="text-red-500">*</span>
+                        </label>
+                        <div class="flex">
+                            <div id="brgyCertFileName"
+                                 class="flex-grow border border-gray-300 rounded-l px-4 py-2 bg-gray-50 text-gray-500 text-sm overflow-hidden whitespace-nowrap">
+                                No file chosen
+                            </div>
+                            <button type="button"
+                                    onclick="document.getElementById('brgyCertFile').click()"
+                                    class="flex items-center justify-center px-4 py-2 bg-primary text-white rounded-r hover:bg-primary/90 transition !rounded-button whitespace-nowrap">
+                                <i class="ri-upload-2-line mr-1"></i> Browse
+                            </button>
                         </div>
+                        <input type="file" class="hidden" id="brgyCertFile" name="brgyCertFile" accept=".jpg,.jpeg,.png,.pdf" required
+                               onchange="document.getElementById('brgyCertFileName').textContent = this.files[0] ? this.files[0].name : 'No file chosen'" />
                     </div>
-                </form>
-            </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">
+                            <i class="ri-id-card-line text-gray-500 mr-1"></i> Valid ID
+                            <span class="text-red-500">*</span>
+                        </label>
+                        <div class="flex">
+                            <div id="validIdFileName"
+                                 class="flex-grow border border-gray-300 rounded-l px-4 py-2 bg-gray-50 text-gray-500 text-sm overflow-hidden whitespace-nowrap">
+                                No file chosen
+                            </div>
+                            <button type="button"
+                                    onclick="document.getElementById('validIdFile').click()"
+                                    class="flex items-center justify-center px-4 py-2 bg-primary text-white rounded-r hover:bg-primary/90 transition !rounded-button whitespace-nowrap">
+                                <i class="ri-upload-2-line mr-1"></i> Browse
+                            </button>
+                        </div>
+                        <input type="file" class="hidden" id="validIdFile" name="validIdFile" accept=".jpg,.jpeg,.png,.pdf" required
+                               onchange="document.getElementById('validIdFileName').textContent = this.files[0] ? this.files[0].name : 'No file chosen'" />
+                    </div>
+                </div>
+                <!-- Submit Button -->
+                <div>
+                    <button type="submit"
+                            class="px-6 py-2.5 bg-primary text-white font-medium rounded shadow-sm hover:bg-primary/90 transition flex items-center !rounded-button whitespace-nowrap">
+                        <i class="ri-add-line mr-1"></i> ADD APPLICATION
+                    </button>
+                </div>
+            </form>
         </div>
-    </div>
 
+        @using Newtonsoft.Json
+        @{
+            var pendingStatus = ActiveStatus1.Pending.ToString();
+            var acceptedStatus = ActiveStatus1.Approved.ToString();
+            var rejectedStatus = ActiveStatus1.Denied.ToString();
+            var processStatus = ActiveStatus1.Process.ToString();
+            var nullStatus = "Null";
+            var statuses = new[] { pendingStatus, acceptedStatus, processStatus, rejectedStatus };
+        }
 
-    @using Newtonsoft.Json
-    @{
-        var pendingStatus = ActiveStatus1.Pending.ToString();
-        var acceptedStatus = ActiveStatus1.Approved.ToString();
-        var rejectedStatus = ActiveStatus1.Denied.ToString();
-        var processStatus = ActiveStatus1.Process.ToString();
-        var nullStatus = "Null";
-        var statuses = new[] { pendingStatus, acceptedStatus, processStatus, rejectedStatus };
-    }
-
-    <div class="card mt-4">
-        <div class="card-body">
-            <!-- Nav Tabs -->
-            <ul class="nav nav-tabs" id="applicationTabs" role="tablist">
+        <!-- Applications Section -->
+        <div class="bg-white rounded-lg shadow-md p-6">
+            <!-- Tabs -->
+            <div class="flex border-b mb-4">
                 @foreach (var status in statuses)
                 {
                     var tabId = status.ToLowerInvariant().Replace(" ", "-");
-                    var isActive = (status == pendingStatus) ? "active" : "";
+                    var isActive = (status == pendingStatus) ? "border-b-2 border-primary text-primary font-medium" : "text-gray-500 hover:text-gray-700";
                     var tabTitle = status switch
                     {
                         var s when s == pendingStatus => "Pending",
@@ -250,179 +313,336 @@
                         var s when s == rejectedStatus => "Denied",
                         _ => "Tab"
                     };
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link @isActive" id="@tabId-tab" data-bs-toggle="tab" data-bs-target="#@tabId" type="button" role="tab" aria-controls="@tabId" aria-selected="@(isActive != "" ? "true" : "false")">
-                            @tabTitle
-                        </button>
-                    </li>
+                    <button id="@tabId-tab"
+                            class="px-4 py-2 @isActive"
+                            onclick="switchTab('@tabId', '@status')">
+                        @tabTitle
+                    </button>
                 }
-            </ul>
-
-            <div class="tab-content mt-3" id="applicationTabContent">
-                @foreach (var status in statuses)
-                {
-                    var tabId = status.ToLowerInvariant().Replace(" ", "-");
-                    var isActive = (status == pendingStatus) ? "show active" : "";
-                    var tabTitle = status switch
-                    {
-                        var s when s == pendingStatus => "Pending Applications",
-                        var s when s == acceptedStatus => "Approved Applications",
-                        var s when s == processStatus => "In Process Applications",
-                        var s when s == rejectedStatus => "Denied Applications",
-                        _ => "Applications"
-                    };
-
-                    <div class="tab-pane fade @isActive" id="@tabId" role="tabpanel" aria-labelledby="@tabId-tab">
-                        <h4>@tabTitle</h4>
-                        <div class="table-responsive">
-                            <table id="@tabId-table" class="table table-striped table-bordered">
-                                <thead>
-                                    <tr>
-                                        <th>@Html.DisplayNameFor(model => model.FullName)</th>
-                                        <th>@Html.DisplayNameFor(model => model.Barangay1)</th>
-                                        <th>@Html.DisplayNameFor(model => model.No_Rquested1)</th>
-                                        <th>@Html.DisplayNameFor(model => model.Brgy_Cert_Path1)</th>
-                                        <th>@Html.DisplayNameFor(model => model.Valid_ID_Path1)</th>
-                                        <th>@Html.DisplayNameFor(model => model.Reason1)</th>
-                                        <th>@Html.DisplayNameFor(model => model.Status1)</th>
-                                        <th>Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach (var item in Model.Where(x =>
-                                   (Enum.GetName(typeof(ActiveStatus1), x.Status1) == status) ||
-                                   (status == nullStatus && x.Status1 == null)))
-                                    {
-                                        <tr>
-                                            <td>@Html.DisplayFor(modelItem => item.FullName)</td>
-                                            <td>@Html.DisplayFor(modelItem => item.Barangay1)</td>
-                                            <td>@Html.DisplayFor(modelItem => item.No_Rquested1)</td>
-                                            <td>
-                                                @if (!string.IsNullOrEmpty(item.Brgy_Cert_Path1))
-                                                {
-                                                    var ext = System.IO.Path.GetExtension(item.Brgy_Cert_Path1)?.ToLower();
-                                                    if (ext is ".jpg" or ".jpeg" or ".png")
-                                                    {
-                                                        <img src="@Url.Content(item.Brgy_Cert_Path1)" width="100" />
-                                                    }
-                                                    else
-                                                    {
-                                                        <span>Non-image file</span>
-                                                        ;
-                                                    }
-                                                }
-                                                else
-                                                {
-                                                    <span>No file</span>
-                                                    ;
-                                                }
-                                            </td>
-                                            <td>
-                                                @if (!string.IsNullOrEmpty(item.Valid_ID_Path1))
-                                                {
-                                                    var ext = System.IO.Path.GetExtension(item.Valid_ID_Path1)?.ToLower();
-                                                    if (ext is ".jpg" or ".jpeg" or ".png")
-                                                    {
-                                                        <img src="@Url.Content(item.Valid_ID_Path1)" width="100" />
-                                                    }
-                                                    else
-                                                    {
-                                                        <span>Non-image file</span>
-                                                        ;
-                                                    }
-                                                }
-                                                else
-                                                {
-                                                    <span>No file</span>
-                                                    ;
-                                                }
-                                            </td>
-                                            <td>@Html.DisplayFor(modelItem => item.Reason1)</td>
-                                            <td>
-                                                @{
-                                                    var statusText = Enum.GetName(typeof(ActiveStatus1), item.Status1);
-                                                    string badgeClass = statusText switch
-                                                    {
-                                                        var s when s == pendingStatus => "badge bg-warning",
-                                                        var s when s == acceptedStatus => "badge bg-success",
-                                                        var s when s == processStatus => "badge bg-primary",
-                                                        var s when s == rejectedStatus => "badge bg-danger",
-                                                        _ => "badge bg-secondary"
-                                                    };
-                                                }
-                                                <span class="@badgeClass rounded-pill">@statusText</span>
-                                            </td>
-                                            <td>
-                                                @{
-                                                    bool isAdmin = User.IsInRole("Admin");
-                                                    bool isStaff1 = User.IsInRole("Staff1");
-                                                    bool isStaff2 = User.IsInRole("Staff2");
-                                                    var currentStatus = Enum.GetName(typeof(ActiveStatus1), item.Status1);
-                                                    bool showActions =
-                                                    (currentStatus == pendingStatus && (isAdmin || isStaff1)) ||
-                                                    (currentStatus == processStatus && (isAdmin || isStaff2));
-                                                }
-
-                                                @if (showActions)
-                                                {
-                                                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-warning btn-sm"><i class="fa fa-edit"></i> Edit</a>
-                                                    <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-info btn-sm"><i class="fa fa-eye"></i> View</a>
-                                                   
-                                                }
-                                                else
-                                                {
-                                                    <span class="text-muted">No actions available</span>
-                                                }
-                                            </td>
-                                        </tr>
-                                    }
-                                </tbody>
-                            </table>
+            </div>
+            <h2 id="tableTitle" class="text-lg font-medium text-gray-800 mb-4">
+                Pending Applications
+            </h2>
+            <!-- Table Controls -->
+            <div class="flex justify-between items-center mb-4">
+                <div class="flex items-center">
+                    <span class="text-sm text-gray-600 mr-2">Show</span>
+                    <div class="relative">
+                        <select id="entriesPerPage"
+                                class="appearance-none border border-gray-300 rounded px-3 py-1 pr-8 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary">
+                            <option>10</option>
+                            <option>25</option>
+                            <option>50</option>
+                            <option>100</option>
+                        </select>
+                        <div class="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
+                            <i class="ri-arrow-down-s-line text-gray-500"></i>
                         </div>
                     </div>
-                }
+                    <span class="text-sm text-gray-600 ml-2">entries</span>
+                </div>
+                <div class="relative">
+                    <input type="text"
+                           id="searchInput"
+                           placeholder="Search..."
+                           class="border border-gray-300 rounded pl-9 pr-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary" />
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <i class="ri-search-line text-gray-500"></i>
+                    </div>
+                </div>
+            </div>
+            <!-- Applications Table -->
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Full Name
+                            </th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Barangay
+                            </th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Request No.
+                            </th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Brgy. Cert. Path
+                            </th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Valid ID Path
+                            </th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Reason
+                            </th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Status
+                            </th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Actions
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody id="applicationTableBody" class="bg-white divide-y divide-gray-200">
+                        @foreach (var item in Model.Where(x => (Enum.GetName(typeof(ActiveStatus1), x.Status1) == pendingStatus) || (pendingStatus == nullStatus && x.Status1 == null)))
+                        {
+                            <tr>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
+                                    @Html.DisplayFor(modelItem => item.FullName)
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
+                                    @Html.DisplayFor(modelItem => item.Barangay1)
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
+                                    @Html.DisplayFor(modelItem => item.No_Rquested1)
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
+                                    @if (!string.IsNullOrEmpty(item.Brgy_Cert_Path1))
+                                    {
+                                        var ext = System.IO.Path.GetExtension(item.Brgy_Cert_Path1)?.ToLower();
+                                        if (ext is ".jpg" or ".jpeg" or ".png")
+                                        {
+                                            <img src="@Url.Content(item.Brgy_Cert_Path1)" width="100" />
+                                        }
+                                        else
+                                        {
+                                            <span>Non-image file</span>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <span>No file</span>
+                                    }
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
+                                    @if (!string.IsNullOrEmpty(item.Valid_ID_Path1))
+                                    {
+                                        var ext = System.IO.Path.GetExtension(item.Valid_ID_Path1)?.ToLower();
+                                        if (ext is ".jpg" or ".jpeg" or ".png")
+                                        {
+                                            <img src="@Url.Content(item.Valid_ID_Path1)" width="100" />
+                                        }
+                                        else
+                                        {
+                                            <span>Non-image file</span>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <span>No file</span>
+                                    }
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
+                                    @Html.DisplayFor(modelItem => item.Reason1)
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    @{
+                                        var statusText = Enum.GetName(typeof(ActiveStatus1), item.Status1);
+                                        string badgeClass = statusText switch
+                                        {
+                                            var s when s == pendingStatus => "bg-yellow-100 text-yellow-800",
+                                            var s when s == acceptedStatus => "bg-green-100 text-green-800",
+                                            var s when s == processStatus => "bg-blue-100 text-blue-800",
+                                            var s when s == rejectedStatus => "bg-red-100 text-red-800",
+                                            _ => "bg-gray-100 text-gray-800"
+                                        };
+                                    }
+                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full @badgeClass">@statusText</span>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
+                                    @{
+                                        bool isAdmin = User.IsInRole("Admin");
+                                        bool isStaff1 = User.IsInRole("Staff1");
+                                        bool isStaff2 = User.IsInRole("Staff2");
+                                        var currentStatus = Enum.GetName(typeof(ActiveStatus1), item.Status1);
+                                        bool showActions =
+                                        (currentStatus == pendingStatus && (isAdmin || isStaff1)) ||
+                                        (currentStatus == processStatus && (isAdmin || isStaff2));
+                                    }
+
+                                    <div class="flex space-x-2">
+                                        @if (showActions)
+                                        {
+                                            <a asp-action="Details" asp-route-id="@item.Id" class="w-8 h-8 flex items-center justify-center text-blue-600 hover:bg-blue-50 rounded-full">
+                                                <i class="ri-eye-line"></i>
+                                            </a>
+                                            <a asp-action="Edit" asp-route-id="@item.Id" class="w-8 h-8 flex items-center justify-center text-yellow-600 hover:bg-yellow-50 rounded-full">
+                                                <i class="ri-edit-line"></i>
+                                            </a>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-gray-400">No actions</span>
+                                        }
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+            <!-- Pagination -->
+            <div class="flex items-center justify-between mt-4">
+                <div class="text-sm text-gray-700">
+                    Showing <span class="font-medium">1</span> to
+                    <span class="font-medium">10</span> of
+                    <span class="font-medium">@Model.Count()</span> entries
+                </div>
+                <div class="flex space-x-1">
+                    <button class="px-3 py-1 border border-gray-300 rounded-l bg-white text-gray-500 hover:bg-gray-50 disabled:opacity-50"
+                            disabled>
+                        Previous
+                    </button>
+                    <button class="px-3 py-1 border border-gray-300 bg-primary text-white">
+                        1
+                    </button>
+                    <button class="px-3 py-1 border border-gray-300 rounded-r bg-white text-gray-500 hover:bg-gray-50 disabled:opacity-50"
+                            disabled>
+                        Next
+                    </button>
+                </div>
             </div>
         </div>
     </div>
 
-    @section Scripts {
-        <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-        <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
-        <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css" />
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script>
+        // Store all applications data for filtering
+        const allApplications = @Html.Raw(JsonConvert.SerializeObject(Model.Select(item => new
+            {
+                Id = item.Id,
+                FullName = item.FullName,
+                Barangay = item.Barangay1.ToString(),
+                RequestNo = item.No_Rquested1,
+                BrgyCertPath = item.Brgy_Cert_Path1,
+                ValidIdPath = item.Valid_ID_Path1,
+                Reason = item.Reason1.ToString(),
+                Status = Enum.GetName(typeof(ActiveStatus1), item.Status1),
+                StatusValue = item.Status1
+            })));
 
-        <script>
-            $(document).ready(function () {
-                const tabIds = @Html.Raw(JsonConvert.SerializeObject(statuses.Select(s => s.ToLowerInvariant().Replace(" ", "-"))));
-                tabIds.forEach(id => {
-                    $(`#${id}-table`).DataTable({
-                        pageLength: 10,
-                        responsive: true
-                    });
-                });
-            });
+        function switchTab(tabId, status) {
+          // Update active tab styling
+          document.querySelectorAll('[id$="-tab"]').forEach(tab => {
+            tab.classList.remove('border-b-2', 'border-primary', 'text-primary', 'font-medium');
+            tab.classList.add('text-gray-500', 'hover:text-gray-700');
+          });
+          document.getElementById(`${tabId}-tab`).classList.add('border-b-2', 'border-primary', 'text-primary', 'font-medium');
+          document.getElementById(`${tabId}-tab`).classList.remove('text-gray-500', 'hover:text-gray-700');
 
-                         function handleSubmit(event) {
-                // Check if the form is valid
-                if (document.getElementById("Create").checkValidity()) {
-                    // Show success alert
-                    document.getElementById("successAlert").classList.remove("d-none");
+          // Update table title
+          const tabTitle = status === 'Pending' ? 'Pending Applications' :
+                           status === 'Approved' ? 'Approved Applications' :
+                           status === 'Process' ? 'In Process Applications' :
+                           'Denied Applications';
+          document.getElementById('tableTitle').textContent = tabTitle;
 
-                    // Optionally, you can hide the alert after a few seconds
-                    setTimeout(function() {
-                        document.getElementById("successAlert").classList.add("d-none");
-                    }, 3000);
+          // Filter applications by status
+          const filteredApplications = allApplications.filter(app =>
+            app.Status === status || (status === 'Null' && app.Status === null)
+          );
 
-                    return true; // Allow form submission
-                } else {
-                    event.preventDefault(); // Prevent form submission if not valid
-                    return false;
-                }
-            }
-        </script>
-    }
+          // Update table content
+          const tableBody = document.getElementById('applicationTableBody');
+          tableBody.innerHTML = '';
 
+          filteredApplications.forEach(app => {
+            const statusText = app.Status || 'Null';
+            const badgeClass =
+              statusText === 'Pending' ? 'bg-yellow-100 text-yellow-800' :
+              statusText === 'Approved' ? 'bg-green-100 text-green-800' :
+              statusText === 'Process' ? 'bg-blue-100 text-blue-800' :
+              statusText === 'Denied' ? 'bg-red-100 text-red-800' :
+              'bg-gray-100 text-gray-800';
 
+            const isAdmin = @Json.Serialize(User.IsInRole("Admin"));
+            const isStaff1 = @Json.Serialize(User.IsInRole("Staff1"));
+            const isStaff2 = @Json.Serialize(User.IsInRole("Staff2"));
 
+            const showActions =
+              (statusText === 'Pending' && (isAdmin || isStaff1)) ||
+              (statusText === 'Process' && (isAdmin || isStaff2));
+
+            const actionsHtml = showActions ? `
+              <div class="flex space-x-2">
+                <a href="/Certificate_Of_Indigency/Details/${app.Id}" class="w-8 h-8 flex items-center justify-center text-blue-600 hover:bg-blue-50 rounded-full">
+                  <i class="ri-eye-line"></i>
+                </a>
+                <a href="/Certificate_Of_Indigency/Edit/${app.Id}" class="w-8 h-8 flex items-center justify-center text-yellow-600 hover:bg-yellow-50 rounded-full">
+                  <i class="ri-edit-line"></i>
+                </a>
+              </div>
+            ` : '<span class="text-gray-400">No actions</span>';
+
+            const brgyCertHtml = app.BrgyCertPath ?
+              (app.BrgyCertPath.toLowerCase().endsWith('.jpg') ||
+               app.BrgyCertPath.toLowerCase().endsWith('.jpeg') ||
+               app.BrgyCertPath.toLowerCase().endsWith('.png') ?
+                `<img src="${app.BrgyCertPath}" width="100" />` :
+                'Non-image file') :
+              'No file';
+
+            const validIdHtml = app.ValidIdPath ?
+              (app.ValidIdPath.toLowerCase().endsWith('.jpg') ||
+               app.ValidIdPath.toLowerCase().endsWith('.jpeg') ||
+               app.ValidIdPath.toLowerCase().endsWith('.png') ?
+                `<img src="${app.ValidIdPath}" width="100" />` :
+                'Non-image file') :
+              'No file';
+
+            const row = document.createElement('tr');
+            row.innerHTML = `
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">${app.FullName}</td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">${app.Barangay}</td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">${app.RequestNo}</td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">${brgyCertHtml}</td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">${validIdHtml}</td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">${app.Reason}</td>
+              <td class="px-6 py-4 whitespace-nowrap">
+                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${badgeClass}">${statusText}</span>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
+                ${actionsHtml}
+              </td>
+            `;
+            tableBody.appendChild(row);
+          });
+
+          // Update pagination info
+          document.querySelector('.text-sm.text-gray-700').innerHTML = `
+            Showing <span class="font-medium">1</span> to
+            <span class="font-medium">${filteredApplications.length}</span> of
+            <span class="font-medium">${filteredApplications.length}</span> entries
+          `;
+        }
+
+        function handleSubmit(event) {
+          // Check if the form is valid
+          if (document.getElementById("Create").checkValidity()) {
+            // Show success alert
+            document.getElementById("successAlert").classList.remove("hidden");
+
+            // Optionally, you can hide the alert after a few seconds
+            setTimeout(function() {
+              document.getElementById("successAlert").classList.add("hidden");
+            }, 3000);
+
+            return true; // Allow form submission
+          } else {
+            event.preventDefault(); // Prevent form submission if not valid
+            return false;
+          }
+        }
+
+        // Initialize search functionality
+        document.getElementById('searchInput').addEventListener('input', function() {
+          const searchTerm = this.value.toLowerCase();
+          const rows = document.querySelectorAll('#applicationTableBody tr');
+
+          rows.forEach(row => {
+            const text = row.textContent.toLowerCase();
+            row.style.display = text.includes(searchTerm) ? '' : 'none';
+          });
+        });
+    </script>
 </body>
 </html>

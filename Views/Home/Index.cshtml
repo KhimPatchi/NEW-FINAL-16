@@ -1,246 +1,237 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
-}
+﻿<section class="relative overflow-hidden min-h-[600px] flex items-center" id="home">
+    <div class="absolute inset-0 z-0">
+        <img src="https://readdy.ai/api/search-image?query=diverse%20group%20of%20people%20helping%20each%20other%20in%20community%2C%20support%20and%20care%2C%20soft%20lighting%2C%20professional%20government%20service%20setting%2C%20modern%20office%20environment%2C%20warm%20and%20welcoming%20atmosphere%2C%20high%20end%20photography&width=1920&height=1080&seq=1&orientation=landscape"
+             alt="Hero Background"
+             class="w-full h-full object-cover" />
+        <div class="absolute inset-0 bg-primary/60"></div>
+    </div>
+    <div class="container mx-auto px-4 relative z-10">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+            <div class="text-white">
+                <h2 class="text-4xl md:text-5xl font-bold mb-6">
+                    Empowering Communities Through Care & Support
+                </h2>
+                <p class="text-xl mb-8 opacity-90">
+                    Dedicated to providing essential welfare services and creating
+                    positive change in the lives of our community members.
+                </p>
+                <div class="flex flex-wrap gap-4">
+                    <a href="#services" class="bg-white text-primary px-8 py-3 font-medium !rounded-button hover:bg-secondary hover:text-primary transition-colors whitespace-nowrap inline-block text-center">
+                        Get Started
+                    </a>
+                </div>
 
+            </div>
+            <div class="hidden md:block">
+                <div class="bg-white/90 p-8 rounded-lg shadow-xl">
+                    <h3 class="text-2xl font-bold text-primary mb-6">
+                        Quick Services
+                    </h3>
+                    <div class="space-y-4">
+                        <a asp-controller="ApplicationFoodPacks" asp-action="FoodPackPending"
+                           class="flex items-center p-4 bg-secondary/50 rounded hover:bg-secondary transition-colors">
+                            <i class="ri-heart-line text-2xl text-primary mr-4"></i>
+                            <div>
+                                <h4 class="font-medium text-primary">Food Assistance</h4>
+                                <p class="text-sm text-gray-600">
+                                    Emergency food support for families
+                                </p>
+                            </div>
+                        </a>
 
+                        <a asp-controller="Consultations" asp-action="ConsultationPending"
+                           class="flex items-center p-4 bg-secondary/50 rounded hover:bg-secondary transition-colors">
+                            <i class="ri-team-line text-2xl text-primary mr-4"></i>
+                            <div>
+                                <h4 class="font-medium text-primary">Family Services</h4>
+                                <p class="text-sm text-gray-600">
+                                    Support for parents and children
+                                </p>
+                            </div>
+                        </a>
 
+                        <a asp-controller="Certificate_Of_Indigency" asp-action="CertificateOfIndigencyPending"
+                           class="flex items-center p-4 bg-secondary/50 rounded hover:bg-secondary transition-colors">
+                            <i class="ri-file-list-3-line text-2xl text-primary mr-4"></i>
+                            <div>
+                                <h4 class="font-medium text-primary">Documentation</h4>
+                                <p class="text-sm text-gray-600">
+                                    Certificate requests and processing
+                                </p>
+                            </div>
+                        </a>
+                    </div>
+                </div>
 
-
-<!-- services section start -->
-<div id="services" class="services_section layout_padding" style="background-color: #ffffff; padding: 60px 0;">
-    <div class="container">
-        <h1 class="services_taital text-center" style="color: #003049; font-weight: bold; font-size: 2.8rem;">
+            </div>
+        </div>
+    </div>
+</section>
+<!-- Service Cards Section -->
+<section class="py-16" id="services">
+    <div class="container mx-auto px-4">
+        <h2 class="text-3xl font-bold text-center text-gray-800 mb-12">
             Our Services
-        </h1>
-        <p class="many_taital text-center" style="color: #555; font-size: 1.2rem;">
-            Providing essential services to support our community's well-being.
+        </h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <!-- Food Pack Application Card -->
+            <div class="bg-white rounded shadow-lg border-t-4 border-primary overflow-hidden transition-transform hover:transform hover:scale-105">
+                <div class="p-6">
+                    <div class="w-16 h-16 bg-secondary rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="ri-shopping-basket-2-line text-primary text-3xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-primary text-center mb-3">
+                        Food Pack Application
+                    </h3>
+                    <p class="text-gray-600 mb-6 text-center">
+                        Apply for emergency food assistance packages for your family
+                        during times of need.
+                    </p>
+                    <ul class="mb-6 text-sm text-gray-700">
+                        <li class="flex items-start mb-2">
+                            <span class="w-5 h-5 flex items-center justify-center mr-2 mt-0.5">
+                                <i class="ri-check-line text-primary"></i>
+                            </span>
+                            <span>Available for low-income families</span>
+                        </li>
+                        <li class="flex items-start mb-2">
+                            <span class="w-5 h-5 flex items-center justify-center mr-2 mt-0.5">
+                                <i class="ri-check-line text-primary"></i>
+                            </span>
+                            <span>Contains essential food items</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="w-5 h-5 flex items-center justify-center mr-2 mt-0.5">
+                                <i class="ri-check-line text-primary"></i>
+                            </span>
+                            <span>Monthly distribution schedule</span>
+                        </li>
+                    </ul>
+                    <div class="text-center">
+                        <a asp-controller="ApplicationFoodPacks" asp-action="FoodPackPending"
+                           class="bg-primary text-white px-6 py-2 font-medium rounded-button hover:bg-primary/90 transition-colors whitespace-nowrap text-decoration-none inline-flex items-center">
+                            Apply Now
+                        </a>
+
+                    </div>
+                </div>
+            </div>
+            <!-- Solo Parent Consultation Card -->
+            <div class="bg-white rounded shadow-lg border-t-4 border-primary overflow-hidden transition-transform hover:transform hover:scale-105">
+                <div class="p-6">
+                    <div class="w-16 h-16 bg-secondary rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="ri-parent-line text-primary text-3xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-primary text-center mb-3">
+                        Solo Parent Consultation
+                    </h3>
+                    <p class="text-gray-600 mb-6 text-center">
+                        Access specialized support services and guidance for single
+                        parents in our community.
+                    </p>
+                    <ul class="mb-6 text-sm text-gray-700">
+                        <li class="flex items-start mb-2">
+                            <span class="w-5 h-5 flex items-center justify-center mr-2 mt-0.5">
+                                <i class="ri-check-line text-primary"></i>
+                            </span>
+                            <span>Legal advice and assistance</span>
+                        </li>
+                        <li class="flex items-start mb-2">
+                            <span class="w-5 h-5 flex items-center justify-center mr-2 mt-0.5">
+                                <i class="ri-check-line text-primary"></i>
+                            </span>
+                            <span>Parenting workshops</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="w-5 h-5 flex items-center justify-center mr-2 mt-0.5">
+                                <i class="ri-check-line text-primary"></i>
+                            </span>
+                            <span>Financial support programs</span>
+                        </li>
+                    </ul>
+                    <div class="text-center">
+                        <a asp-controller="Consultations" asp-action="ConsultationPending"
+                           class="bg-primary text-white px-6 py-2 font-medium rounded-button hover:bg-primary/90 transition-colors whitespace-nowrap text-decoration-none inline-flex items-center fw-bold">
+                            Book Consultation
+                        </a>
+
+                    </div>
+                </div>
+            </div>
+            <!-- Certificate of Indigency Card -->
+            <div class="bg-white rounded shadow-lg border-t-4 border-primary overflow-hidden transition-transform hover:transform hover:scale-105">
+                <div class="p-6">
+                    <div class="w-16 h-16 bg-secondary rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="ri-file-list-3-line text-primary text-3xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-primary text-center mb-3">
+                        Certificate of Indigency
+                    </h3>
+                    <p class="text-gray-600 mb-6 text-center">
+                        Request official documentation certifying low-income status for
+                        various assistance programs.
+                    </p>
+                    <ul class="mb-6 text-sm text-gray-700">
+                        <li class="flex items-start mb-2">
+                            <span class="w-5 h-5 flex items-center justify-center mr-2 mt-0.5">
+                                <i class="ri-check-line text-primary"></i>
+                            </span>
+                            <span>Required for medical assistance</span>
+                        </li>
+                        <li class="flex items-start mb-2">
+                            <span class="w-5 h-5 flex items-center justify-center mr-2 mt-0.5">
+                                <i class="ri-check-line text-primary"></i>
+                            </span>
+                            <span>Used for educational subsidies</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="w-5 h-5 flex items-center justify-center mr-2 mt-0.5">
+                                <i class="ri-check-line text-primary"></i>
+                            </span>
+                            <span>Valid for 6 months</span>
+                        </li>
+                    </ul>
+                    <div class="text-center">
+                        <a asp-controller="Certificate_Of_Indigency" asp-action="CertificateOfIndigencyPending"
+                           class="bg-primary text-white px-6 py-2 font-medium rounded-button hover:bg-primary/90 transition-colors whitespace-nowrap text-decoration-none inline-flex items-center fw-bold">
+                            Request Certificate
+                        </a>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- About Section -->
+<section class="py-16 bg-gray-50" id="about">
+    <div class="container mx-auto px-4 text-center">
+        <h2 class="text-3xl font-bold text-gray-800 mb-6">About Us</h2>
+        <p class="text-gray-600 max-w-2xl mx-auto">
+            The City Social Welfare and Development Office (CSWDO) is committed to uplifting communities by providing essential welfare programs, ensuring care, and promoting sustainable development for all.
         </p>
-
-        <div class="services_section2 mt-5 px-3">
-            <div class="row g-4 justify-content-center">
-                <!-- Food Packs Card -->
-                <div class="col-lg-4 col-md-6 d-flex justify-content-center my-3">
-                    <div class="card text-center border-0 shadow position-relative pt-6" style="width: 18rem; padding-top: 4.5rem;">
-                        <!-- Floating Icon -->
-                        <div class="card-icon position-absolute start-50 translate-middle-x rounded-circle p-3 bg-white border shadow" style="top: -25px;">
-                            <img src="images/FoodPacks.png" alt="Food Packs Icon" class="img-fluid" style="width: 50px; height: 50px;">
-                        </div>
-                        <div class="card-body d-flex flex-column justify-content-between px-3 pb-4 mt-3">
-                            <h5 class="card-title fw-bold mb-3" style="color: #003049;">Food Packs</h5>
-                            <p class="card-text flex-grow-1" style="font-size: 1rem;">
-                                We are honored to distribute these food packs as part of our commitment to supporting our community.
-                            </p>
-                            <hr class="text-secondary my-3">
-                            <a asp-controller="ApplicationFoodPacks" asp-action="FoodPackPending" class="text-dark text-decoration-none fw-bold">
-                                Request Now!
-                            </a>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Consultation Card -->
-                <div class="col-lg-4 col-md-6 d-flex justify-content-center my-3">
-                    <div class="card text-center border-0 shadow position-relative pt-6" style="width: 18rem; padding-top: 4.5rem;">
-                        <!-- Floating Icon -->
-                        <div class="card-icon position-absolute start-50 translate-middle-x rounded-circle p-3 bg-white border shadow" style="top: -25px;">
-                            <img src="images/Consultation.png" alt="Consultation Icon" class="img-fluid" style="width: 50px; height: 50px;">
-                        </div>
-                        <div class="card-body d-flex flex-column justify-content-between px-3 pb-4 mt-3">
-                            <h5 class="card-title fw-bold mb-3" style="color: #003049;">Consultation</h5>
-                            <p class="card-text flex-grow-1" style="font-size: 1rem;">
-                                Consultation for Solo Parents!
-                            </p>
-                            <hr class="text-secondary my-3">
-                            <a asp-controller="Consultations" asp-action="ConsultationPending" class="text-dark text-decoration-none fw-bold">
-                                Schedule Now!
-                            </a>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Certificate of Indigency Card -->
-                <div class="col-lg-4 col-md-6 d-flex justify-content-center my-3">
-                    <div class="card text-center border-0 shadow position-relative pt-6" style="width: 18rem; padding-top: 4.5rem;">
-                        <!-- Floating Icon -->
-                        <div class="card-icon position-absolute start-50 translate-middle-x rounded-circle p-3 bg-white border shadow" style="top: -25px;">
-                            <img src="images/certificate.png" alt="Certificate Icon" class="img-fluid" style="width: 50px; height: 50px;">
-                        </div>
-                        <div class="card-body d-flex flex-column justify-content-between px-3 pb-4 mt-3">
-                            <h5 class="card-title fw-bold mb-3" style="color: #003049;">Certificate of Indigency</h5>
-                            <p class="card-text flex-grow-1" style="font-size: 1rem;">
-                                This certificate proves the bearer qualifies for financial aid based on their economic status.
-                            </p>
-                            <hr class="text-secondary my-3">
-                            <a asp-controller="Certificate_Of_Indigency" asp-action="CertificateOfIndigencyPending" class="text-dark text-decoration-none fw-bold">
-                                Get Now!
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-
-        </div>
-
-
-
     </div>
-</div>
-<!-- services section end -->
-<!-- about section start -->
-<div id="about" class="about_section layout_padding" style="background-color: #f0f8ff; color: #003049;">
-    <div class="container">
-        <div class="row">
-            <div class="col-md-6">
-                <h1 class="about_text" style="color: #003049;">About Us</h1>
-                <p class="lorem_text" style="color: #003049;">
-                    City Social Welfare and Development Office (CSWDO) is dedicated to improving the quality of life of individuals, families, and communities through inclusive social protection and welfare services.
-                </p>
-                <div class="read_bt1"><a href="#" style="color: #f0f8ff; text-decoration: underline;">Read More</a></div>
-            </div>
-            <div class="col-md-6">
-                <div class="image_1"><img src="images/logo-New.png" alt="CSWDO Logo"></div>
+</section>
+<!-- Location Map Section -->
+<section class="py-16 bg-secondary">
+    <div class="container mx-auto px-4">
+        <h2 class="text-3xl font-bold text-center text-gray-800 mb-12">
+            Find Us
+        </h2>
+        <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+            <div class="map-container h-96 relative">
+                <!-- Google Maps Iframe -->
+                <div class="absolute inset-0">
+                    <iframe src="https://www.google.com/maps/embed/v1/place?key=AIzaSyBcv3IGFLuWYxQbLif2NLmYJMXBzt1c17o&q=Ramon+Magsaysay+Park,Davao+City"
+                            width="100%" height="100%" frameborder="0"
+                            style="border:0;" allowfullscreen="" loading="lazy"
+                            referrerpolicy="no-referrer-when-downgrade"
+                            class="w-full h-full"></iframe>
+                </div>
+
+             
+
             </div>
         </div>
     </div>
-</div>
-<!-- about section end -->
-<!-- Projects Section Start -->
-<div id="projects" class="projects_section layout_padding">
-    <div class="container">
-        <h1 class="our_text">Our Programs</h1>
-        <p class="ipsum_text">Responsible for social welfare and development programs within a city</p>
-
-        <div id="main_slider" class="carousel slide" data-ride="carousel">
-            <div class="carousel-inner">
-
-                <!-- Slide 1 -->
-                <div class="carousel-item active">
-                    <div class="row">
-                        <div class="col-md-4 d-flex align-items-stretch">
-                            <div class="container_main1 w-100">
-                                <img src="images/Foodpacks1.jpg" alt="Food Packs" class="image" style="width:100%">
-                                <h1 class="modern_text">Giving Food Packs</h1>
-                                <div class="middle">
-                                    <div class="text">VIEW MORE</div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-4 d-flex align-items-stretch">
-                            <div class="container_main1 w-100">
-                                <img src="images/EduAssistance.jpg" alt="Educational Assistance" class="image" style="width:100%">
-                                <h1 class="modern_text">Educational Assistance</h1>
-                                <div class="middle">
-                                    <div class="text">VIEW MORE</div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-4 d-flex align-items-stretch">
-                            <div class="container_main1 w-100">
-                                <img src="images/Disasterkit.jpg" alt="Disaster Kits" class="image" style="width:100%">
-                                <h1 class="modern_text">Disaster Kits</h1>
-                                <div class="middle">
-                                    <div class="text">VIEW MORE</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Slide 2 -->
-                <div class="carousel-item">
-                    <div class="row">
-                        <div class="col-md-4 d-flex align-items-stretch">
-                            <div class="container_main1 w-100">
-                                <img src="images/CommunityDev.jpg" alt="Community Development" class="image" style="width:100%">
-                                <h1 class="modern_text">Community Development Programs</h1>
-                                <div class="middle">
-                                    <div class="text">VIEW MORE</div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-4 d-flex align-items-stretch">
-                            <div class="container_main1 w-100">
-                                <img src="images/SoloParent.jpg" alt="Solo Parent Assistance" class="image" style="width:100%">
-                                <h1 class="modern_text">Solo Parent Assistance</h1>
-                                <div class="middle">
-                                    <div class="text">VIEW MORE</div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-4 d-flex align-items-stretch">
-                            <div class="container_main1 w-100">
-                                <img src="images/crisisIntervention.jpg" alt="Crisis Intervention" class="image" style="width:100%">
-                                <h1 class="modern_text">Crisis Intervention Services</h1>
-                                <div class="middle">
-                                    <div class="text">VIEW MORE</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-
-            <!-- Carousel Controls -->
-            <a class="carousel-control-prev" href="#main_slider" role="button" data-slide="prev">
-                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                <span class="sr-only">Previous</span>
-            </a>
-            <a class="carousel-control-next" href="#main_slider" role="button" data-slide="next">
-                <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                <span class="sr-only">Next</span>
-            </a>
-        </div>
-	</div>
-
-    <footer class="text-white text-center text-lg-start" style="background-color: #23242a;">
-        <!-- Grid row (no container for full width) -->
-        <div class="row">
-            <!--Grid column: About company -->
-            <div class="col-12 col-md-4">
-                <h5 class="text-uppercase">About company</h5>
-                <p>
-                    The City Social Welfare and Development Office (CSWDO) supports the well-being of vulnerable individuals and families through social protection programs.
-                </p>
-                <p>
-                    We are committed to providing compassionate services and sustainable programs for long-term community development.
-                </p>
-            </div>
-            <!--Grid column: Our Office -->
-            <div class="col-12 col-md-4">
-                <h5 class="text-uppercase">Our Office</h5>
-                <div class="form-outline form-white">
-                    <div class="map-responsive">
-                        <iframe src="https://www.google.com/maps/embed/v1/place?key=AIzaSyBcv3IGFLuWYxQbLif2NLmYJMXBzt1c17o&q=Ramon+Magsaysay+Park,Davao+City"
-                                width="100%" height="200" frameborder="0" style="border:0;" allowfullscreen=""></iframe>
-                    </div>
-                </div>
-                <ul class="fa-ul" style="margin-left: 1.65em;">
-                    <li><span class="fa-li"><i class="fas fa-home"></i></span><span class="ms-2">Ramon Magsaysay Park, Door 11, Davao City</span></li>
-                    <li><span class="fa-li"><i class="fas fa-envelope"></i></span><span class="ms-2">CSWDO@gmail.com</span></li>
-                    <li><span class="fa-li"><i class="fas fa-phone"></i></span><span class="ms-2">+6392313145</span></li>
-                    <li><span class="fa-li"><i class="fas fa-print"></i></span><span class="ms-2">+639781718171</span></li>
-                </ul>
-            </div>
-            <!--Grid column: Opening hours -->
-            <div class="col-12 col-md-4">
-                <h5 class="text-uppercase">Opening hours</h5>
-                <table class="table text-center text-white">
-                    <tbody class="font-weight-normal">
-                        <tr>
-                            <td>Mon - Fri:</td>
-                            <td>8am - 5pm</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-        <!-- Copyright -->
-        <div class="text-center p-3" style="background-color: rgba(0, 0, 0, 0.2);">
-            © 2025 Copyright:
-            <a class="text-white" href="https://mdbootstrap.com/">CSWDO</a>
-        </div>
-        <!-- Copyright -->
-    </footer>
+</section>

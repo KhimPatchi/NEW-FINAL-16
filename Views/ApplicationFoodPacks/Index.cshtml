@@ -12,775 +12,627 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Food Pack Applications</title>
-    <!-- CSS dependencies (assumed to be in layout, included here for completeness) -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdn.datatables.net/1.11.5/css/dataTables.bootstrap5.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com/3.4.16"></script>
+    <script>
+        tailwind.config = {
+          theme: {
+            extend: {
+              colors: { primary: "#4263eb", secondary: "#829af1" },
+              borderRadius: {
+                none: "0px",
+                sm: "4px",
+                DEFAULT: "8px",
+                md: "12px",
+                lg: "16px",
+                xl: "20px",
+                "2xl": "24px",
+                "3xl": "32px",
+                full: "9999px",
+                button: "8px",
+              },
+            },
+          },
+        };
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css">
+    <style>
+        :where([class^="ri-"])::before {
+            content: none;
+        }
+
+        input[type="number"]::-webkit-inner-spin-button,
+        input[type="number"]::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        input[type="number"] {
+            -moz-appearance: textfield;
+        }
+
+        .file-input-container {
+            position: relative;
+        }
+
+            .file-input-container input[type="file"] {
+                position: absolute;
+                top: 0;
+                left: 0;
+                opacity: 0;
+                width: 100%;
+                height: 100%;
+                cursor: pointer;
+            }
+
+        .tab-button.active {
+            color: #4263eb;
+            border-bottom: 2px solid #4263eb;
+            font-weight: 500;
+        }
+
+        .tab-button {
+            color: #6b7280;
+            font-weight: 500;
+        }
+
+            .tab-button:hover {
+                color: #4b5563;
+            }
+
+        .badge-pending {
+            background-color: #fef08a;
+            color: #854d0e;
+        }
+
+        .badge-process {
+            background-color: #fed7aa;
+            color: #9a3412;
+        }
+
+        .badge-approved {
+            background-color: #bbf7d0;
+            color: #166534;
+        }
+
+        .badge-denied {
+            background-color: #fecaca;
+            color: #991b1b;
+        }
+
+        .table-container {
+            overflow-x: auto;
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+            .table th {
+                background-color: #f3f4f6;
+                text-align: left;
+                padding: 12px;
+                font-weight: 500;
+                color: #4b5563;
+                text-transform: uppercase;
+                font-size: 0.75rem;
+                letter-spacing: 0.05em;
+            }
+
+            .table td {
+                padding: 12px;
+                border-bottom: 1px solid #e5e7eb;
+                vertical-align: middle;
+            }
+
+            .table tr:hover {
+                background-color: #f9fafb;
+            }
+
+        .document-preview {
+            color: #3b82f6;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+            .document-preview:hover {
+                color: #2563eb;
+            }
+    </style>
 </head>
-<body>
-    <!-- Add Application Form Section -->
-    <div class="card">
-        <div class="card-body">
-            <div class="form-section">
-                <h4><i class="fas fa-plus-circle"></i> Add New Application</h4>
-                <!-- Success Alert -->
-                <div id="successAlert" class="alert alert-success d-none" role="alert">
-                    Consultation submitted successfully!
+<body class="bg-gray-50 min-h-screen">
+    <div class="container mx-auto px-4 py-8 min-h-screen">
+        <!-- Success Alert -->
+        <div id="successAlert" class="hidden bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4" role="alert">
+            <strong class="font-bold">Success!</strong>
+            <span class="block sm:inline">Application submitted successfully!</span>
+        </div>
+
+        @if (TempData["ErrorMessage"] != null)
+        {
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                @TempData["ErrorMessage"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        }
+
+        <!-- Add New Application Form -->
+        <div class="bg-white rounded-lg shadow-md p-6 mb-8">
+            <div class="flex items-center justify-between mb-6 border-b pb-4">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 flex items-center justify-center bg-primary/10 text-primary rounded-full">
+                        <i class="ri-file-add-line text-xl"></i>
+                    </div>
+                    <h1 class="text-xl font-semibold text-gray-800">Add New Application</h1>
+                </div>
+                <div class="text-sm text-gray-500">
+                    <span class="font-medium">Date:</span> @DateTime.Now.ToString("yyyy-MM-dd")
+                </div>
+            </div>
+            <form asp-action="CreateFromIndex" method="post" enctype="multipart/form-data" id="Create" onsubmit="return handleSubmit(event)">
+                <div asp-validation-summary="ModelOnly" class="text-red-500 text-sm mb-4"></div>
+
+                <!-- Personal Information -->
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
+                    <div class="col-span-1">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">
+                            <i class="ri-user-line text-gray-500 mr-1"></i> First Name <span class="text-primary">*</span>
+                        </label>
+                        <input asp-for="@(new SocialWelfarre.Models.ApplicationFoodPack().FirstName)" type="text" placeholder="Enter First Name" class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary" required>
+                        <span asp-validation-for="@(new SocialWelfarre.Models.ApplicationFoodPack().FirstName)" class="text-red-500 text-xs"></span>
+                    </div>
+                    <div class="col-span-1">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">
+                            <i class="ri-user-line text-gray-500 mr-1"></i> Middle Name
+                        </label>
+                        <input asp-for="@(new SocialWelfarre.Models.ApplicationFoodPack().MiddleName)" type="text" placeholder="Enter Middle Name" class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary">
+                        <span asp-validation-for="@(new SocialWelfarre.Models.ApplicationFoodPack().MiddleName)" class="text-red-500 text-xs"></span>
+                    </div>
+                    <div class="col-span-1">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">
+                            <i class="ri-user-line text-gray-500 mr-1"></i> Last Name <span class="text-primary">*</span>
+                        </label>
+                        <input asp-for="@(new SocialWelfarre.Models.ApplicationFoodPack().LastName)" type="text" placeholder="Enter Last Name" class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary" required>
+                        <span asp-validation-for="@(new SocialWelfarre.Models.ApplicationFoodPack().LastName)" class="text-red-500 text-xs"></span>
+                    </div>
+                    <div class="col-span-1">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">
+                            <i class="ri-phone-line text-gray-500 mr-1"></i> Contact Number <span class="text-primary">*</span>
+                        </label>
+                        <input asp-for="@(new SocialWelfarre.Models.ApplicationFoodPack().ContactNumber)" type="text" placeholder="09XX XXXX XXX" class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary" required>
+                        <span asp-validation-for="@(new SocialWelfarre.Models.ApplicationFoodPack().ContactNumber)" class="text-red-500 text-xs"></span>
+                    </div>
                 </div>
 
-                <form asp-action="Create" method="post" enctype="multipart/form-data" id="Create" onsubmit="return handleSubmit(event)">
-                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                    <div class="form-row">
-                        <div class="form-group col-md-2">
-                            <label asp-for="@(new SocialWelfarre.Models.ApplicationFoodPack().FirstName)" class="form-label"><i class="fas fa-user"></i> First Name</label>
-                            <input asp-for="@(new SocialWelfarre.Models.ApplicationFoodPack().FirstName)" class="form-control" placeholder="Enter First Name" required />
-                            <span asp-validation-for="@(new SocialWelfarre.Models.ApplicationFoodPack().FirstName)" class="text-danger"></span>
-                        </div>
-                        <div class="form-group col-md-2">
-                            <label asp-for="@(new SocialWelfarre.Models.ApplicationFoodPack().MiddleName)" class="form-label"><i class="fas fa-user"></i> Middle Name</label>
-                            <input asp-for="@(new SocialWelfarre.Models.ApplicationFoodPack().MiddleName)" class="form-control" placeholder="Enter Middle Name" />
-                            <span asp-validation-for="@(new SocialWelfarre.Models.ApplicationFoodPack().MiddleName)" class="text-danger"></span>
-                        </div>
-                        <div class="form-group col-md-2">
-                            <label asp-for="@(new SocialWelfarre.Models.ApplicationFoodPack().LastName)" class="form-label"><i class="fas fa-user"></i> Last Name</label>
-                            <input asp-for="@(new SocialWelfarre.Models.ApplicationFoodPack().LastName)" class="form-control" placeholder="Enter Last Name" required />
-                            <span asp-validation-for="@(new SocialWelfarre.Models.ApplicationFoodPack().LastName)" class="text-danger"></span>
-                        </div>
-                        <div class="form-group col-md-2">
-                            <label asp-for="@(new SocialWelfarre.Models.ApplicationFoodPack().ContactNumber)" class="form-label"><i class="fas fa-phone"></i> Contact Number</label>
-                            <input asp-for="@(new SocialWelfarre.Models.ApplicationFoodPack().ContactNumber)" class="form-control" placeholder="Enter Contact Number" required />
-                            <span asp-validation-for="@(new SocialWelfarre.Models.ApplicationFoodPack().ContactNumber)" class="text-danger"></span>
-                        </div>
-                        <div class="form-group col-sm-1">
-                            <label asp-for="@(new SocialWelfarre.Models.ApplicationFoodPack().Age)" class="form-label"><i class="fas fa-birthday-cake"></i> Age</label>
-                            <input asp-for="@(new SocialWelfarre.Models.ApplicationFoodPack().Age)" class="form-control" type="number" placeholder="Enter Age" required />
-                            <span asp-validation-for="@(new SocialWelfarre.Models.ApplicationFoodPack().Age)" class="text-danger"></span>
-                        </div>
-                        <div class="form-group col-sm-1">
-                            <label asp-for="@(new SocialWelfarre.Models.ApplicationFoodPack().Packs)" class="form-label"><i class="fas fa-boxes"></i> Number of Packs</label>
-                            <input asp-for="@(new SocialWelfarre.Models.ApplicationFoodPack().Packs)" class="form-control" type="number" placeholder="Enter Number of Packs" required />
-                            <span asp-validation-for="@(new SocialWelfarre.Models.ApplicationFoodPack().Packs)" class="text-danger"></span>
-                        </div>
-                        <div class="form-group col-sm-1">
-                            <label asp-for="@(new SocialWelfarre.Models.ApplicationFoodPack().Address)" class="form-label"><i class="fas fa-home"></i> Address</label>
-                            <input asp-for="@(new SocialWelfarre.Models.ApplicationFoodPack().Address)" class="form-control" placeholder="Enter Address" required />
-                            <span asp-validation-for="@(new SocialWelfarre.Models.ApplicationFoodPack().Address)" class="text-danger"></span>
-                        </div>
-                        <div class="form-group col-md-2">
-                            <label asp-for="@(new SocialWelfarre.Models.ApplicationFoodPack().Barangay)" class="form-label"><i class="fas fa-map-marker-alt"></i> Barangay</label>
-                            <select asp-for="@(new SocialWelfarre.Models.ApplicationFoodPack().Barangay)" class="form-select">
-                                <option value="">-- Select Barangay --</option>
+                <!-- Additional Information -->
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
+                    <div class="col-span-1">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">
+                            <i class="ri-numbers-line text-gray-500 mr-1"></i> Age <span class="text-primary">*</span>
+                        </label>
+                        <input asp-for="@(new SocialWelfarre.Models.ApplicationFoodPack().Age)" type="number" placeholder="Enter Age" class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary" required>
+                        <span asp-validation-for="@(new SocialWelfarre.Models.ApplicationFoodPack().Age)" class="text-red-500 text-xs"></span>
+                    </div>
+                    <div class="col-span-1">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">
+                            <i class="ri-group-line text-gray-500 mr-1"></i> Number of Packs <span class="text-primary">*</span>
+                        </label>
+                        <input asp-for="@(new SocialWelfarre.Models.ApplicationFoodPack().Packs)" type="number" placeholder="Enter Number" class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary" required>
+                        <span asp-validation-for="@(new SocialWelfarre.Models.ApplicationFoodPack().Packs)" class="text-red-500 text-xs"></span>
+                    </div>
+                    <div class="col-span-1">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">
+                            <i class="ri-map-pin-line text-gray-500 mr-1"></i> Address <span class="text-primary">*</span>
+                        </label>
+                        <input asp-for="@(new SocialWelfarre.Models.ApplicationFoodPack().Address)" type="text" placeholder="Enter Address" class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary" required>
+                        <span asp-validation-for="@(new SocialWelfarre.Models.ApplicationFoodPack().Address)" class="text-red-500 text-xs"></span>
+                    </div>
+                    <div class="col-span-1">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">
+                            <i class="ri-building-line text-gray-500 mr-1"></i> Barangay <span class="text-primary">*</span>
+                        </label>
+                        <div class="relative">
+                            <select asp-for="@(new SocialWelfarre.Models.ApplicationFoodPack().Barangay)" class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary appearance-none pr-8" required>
+                                <option value="">Select Barangay</option>
                                 @foreach (var barangay in Html.GetEnumSelectList<Barangay>())
                                 {
                                     <option value="@barangay.Value">@barangay.Text</option>
                                 }
                             </select>
-                            <span asp-validation-for="@(new SocialWelfarre.Models.ApplicationFoodPack().Barangay)" class="text-danger"></span>
+                            <div class="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
+                                <i class="ri-arrow-down-s-line text-gray-500"></i>
+                            </div>
                         </div>
-                        <div class="form-group col-sm-1">
-                            <label asp-for="@(new SocialWelfarre.Models.ApplicationFoodPack().Reason)" class="form-label"><i class="fas fa-comment"></i> Reason</label>
-                            <select asp-for="@(new SocialWelfarre.Models.ApplicationFoodPack().Reason)" class="form-select">
-                                <option value="">-- Select Reason --</option>
+                        <span asp-validation-for="@(new SocialWelfarre.Models.ApplicationFoodPack().Barangay)" class="text-red-500 text-xs"></span>
+                    </div>
+                </div>
+
+                <!-- Reason and Documents -->
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
+                    <div class="col-span-1">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">
+                            <i class="ri-question-line text-gray-500 mr-1"></i> Reason <span class="text-primary">*</span>
+                        </label>
+                        <div class="relative">
+                            <select asp-for="@(new SocialWelfarre.Models.ApplicationFoodPack().Reason)" class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary appearance-none pr-8" required>
+                                <option value="">Select Reason</option>
                                 @foreach (var reason in Html.GetEnumSelectList<Reason>())
                                 {
                                     <option value="@reason.Value">@reason.Text</option>
                                 }
                             </select>
-                            <span asp-validation-for="@(new SocialWelfarre.Models.ApplicationFoodPack().Reason)" class="text-danger"></span>
-                        </div>
-                        <div class="form-group col-md-3">
-                            <label for="brgyCertFile"><i class="fas fa-file-alt"></i> Barangay Certificate</label>
-                            <div class="custom-file-upload">
-                                <input type="file" name="brgyCertFile" id="brgyCertFile" accept=".jpg,.jpeg,.png,.pdf" required />
-                                <label for="brgyCertFile" class="custom-file-label"><i class="fas fa-upload"></i> Choose File</label>
+                            <div class="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
+                                <i class="ri-arrow-down-s-line text-gray-500"></i>
                             </div>
-                            <span asp-validation-for="@(new SocialWelfarre.Models.ApplicationFoodPack().Brgy_Cert)" class="text-danger"></span>
                         </div>
-                        <div class="form-group col-md-3">
-                            <label for="validIdFile"><i class="fas fa-id-card"></i> Valid ID</label>
-                            <div class="custom-file-upload">
-                                <input type="file" name="validIdFile" id="validIdFile" accept=".jpg,.jpeg,.png,.pdf" required />
-                                <label for="validIdFile" class="custom-file-label"><i class="fas fa-upload"></i> Choose File</label>
+                        <span asp-validation-for="@(new SocialWelfarre.Models.ApplicationFoodPack().Reason)" class="text-red-500 text-xs"></span>
+                    </div>
+                    <div class="col-span-1">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">
+                            <i class="ri-file-list-line text-gray-500 mr-1"></i> Barangay Certificate <span class="text-primary">*</span>
+                        </label>
+                        <div class="flex">
+                            <div id="brgyCertFileName" class="flex-grow border border-gray-300 rounded-l px-4 py-2 bg-gray-50 text-gray-500 text-sm overflow-hidden whitespace-nowrap">
+                                Choose File
                             </div>
-                            <span asp-validation-for="@(new SocialWelfarre.Models.ApplicationFoodPack().Valid_ID)" class="text-danger"></span>
+                            <div class="file-input-container">
+                                <button type="button" class="flex items-center justify-center px-4 py-2 bg-primary text-white rounded-r hover:bg-primary/90 transition !rounded-button whitespace-nowrap">
+                                    Browse
+                                </button>
+                                <input type="file" name="brgyCertFile" id="brgyCertFile" accept=".jpg,.jpeg,.png,.pdf" required>
+                            </div>
+                        </div>
+                        <span asp-validation-for="@(new SocialWelfarre.Models.ApplicationFoodPack().Brgy_Cert)" class="text-red-500 text-xs"></span>
+                    </div>
+                    <div class="col-span-1">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">
+                            <i class="ri-file-list-line text-gray-500 mr-1"></i> Valid ID <span class="text-primary">*</span>
+                        </label>
+                        <div class="flex">
+                            <div id="validIdFileName" class="flex-grow border border-gray-300 rounded-l px-4 py-2 bg-gray-50 text-gray-500 text-sm overflow-hidden whitespace-nowrap">
+                                Choose File
+                            </div>
+                            <div class="file-input-container">
+                                <button type="button" class="flex items-center justify-center px-4 py-2 bg-primary text-white rounded-r hover:bg-primary/90 transition !rounded-button whitespace-nowrap">
+                                    Browse
+                                </button>
+                                <input type="file" name="validIdFile" id="validIdFile" accept=".jpg,.jpeg,.png,.pdf" required>
+                            </div>
+                        </div>
+                        <span asp-validation-for="@(new SocialWelfarre.Models.ApplicationFoodPack().Valid_ID)" class="text-red-500 text-xs"></span>
+                    </div>
+                </div>
+
+                <!-- Submit Button -->
+                <div>
+                    <button type="submit" class="px-6 py-2.5 bg-primary text-white font-medium rounded shadow-sm hover:bg-primary/90 transition flex items-center !rounded-button whitespace-nowrap">
+                        <i class="ri-add-line mr-1"></i> ADD APPLICATION
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Applications Section -->
+        <div class="bg-white rounded-lg shadow-md">
+            <!-- Tabs -->
+            <div class="border-b border-gray-100">
+                <div class="flex">
+                    <button id="pending-tab" class="px-6 py-4 tab-button active">Pending</button>
+                    <button id="process-tab" class="px-6 py-4 tab-button">Process</button>
+                    <button id="approved-tab" class="px-6 py-4 tab-button">Approved</button>
+                    <button id="denied-tab" class="px-6 py-4 tab-button">Denied</button>
+                </div>
+            </div>
+            <div class="p-6">
+                <h2 id="table-title" class="text-lg font-semibold text-gray-800 mb-4">Pending Applications</h2>
+
+                <!-- Table Controls -->
+                <div class="flex justify-between items-center mb-4">
+                    <div class="flex items-center">
+                        <span class="text-sm text-gray-600 mr-2">Show</span>
+                        <div class="relative">
+                            <select id="entriesSelect" class="appearance-none border border-gray-300 rounded px-3 py-1 pr-8 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary">
+                                <option>10</option>
+                                <option>25</option>
+                                <option>50</option>
+                                <option>100</option>
+                            </select>
+                            <div class="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
+                                <i class="ri-arrow-down-s-line text-gray-500"></i>
+                            </div>
+                        </div>
+                        <span class="text-sm text-gray-600 ml-2">entries</span>
+                    </div>
+                    <div class="relative">
+                        <input type="text" id="searchInput" placeholder="Search..." class="border border-gray-300 rounded pl-9 pr-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <i class="ri-search-line text-gray-500"></i>
                         </div>
                     </div>
+                </div>
 
+                <!-- Applications Table -->
+                <div class="table-container">
+                    <table class="table" id="applicationsTable">
+                        <thead>
+                            <tr>
+                                <th class="p-3 text-sm font-medium text-gray-700 border-b">Name</th>
+                                <th class="p-3 text-sm font-medium text-gray-700 border-b">Packs</th>
+                                <th class="p-3 text-sm font-medium text-gray-700 border-b">Barangay</th>
+                                <th class="p-3 text-sm font-medium text-gray-700 border-b">Certificate</th>
+                                <th class="p-3 text-sm font-medium text-gray-700 border-b">Valid ID</th>
+                                <th class="p-3 text-sm font-medium text-gray-700 border-b">Reason</th>
+                                <th class="p-3 text-sm font-medium text-gray-700 border-b">Status</th>
+                                <th class="p-3 text-sm font-medium text-gray-700 border-b">Request Date</th>
+                                <th class="p-3 text-sm font-medium text-gray-700 border-b">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                                var status = Enum.GetName(typeof(ActiveStatus), item.Status) ?? "Pending";
+                                var rowClass = status.ToLower() + "-row";
+                                <tr class="@rowClass @(status != "Pending" ? "hidden" : "")">
+                                    <td class="p-3 text-sm text-gray-700">@Html.DisplayFor(modelItem => item.FullName)</td>
+                                    <td class="p-3 text-sm text-gray-700">@Html.DisplayFor(modelItem => item.Packs)</td>
+                                    <td class="p-3 text-sm text-gray-700">@Html.DisplayFor(modelItem => item.Barangay)</td>
+                                    <td class="p-3 text-sm text-blue-600">
+                                        @if (!string.IsNullOrEmpty(item.Brgy_Cert_Path))
+                                        {
+                                            <i class="ri-file-text-line document-preview cursor-pointer" onclick="showDocument('@Url.Content(item.Brgy_Cert_Path)')"></i>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-gray-400">N/A</span>
+                                        }
+                                    </td>
+                                    <td class="p-3 text-sm text-blue-600">
+                                        @if (!string.IsNullOrEmpty(item.Valid_ID_Path))
+                                        {
+                                            <i class="ri-file-text-line document-preview cursor-pointer" onclick="showDocument('@Url.Content(item.Valid_ID_Path)')"></i>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-gray-400">N/A</span>
+                                        }
+                                    </td>
+                                    <td class="p-3 text-sm text-gray-700">@Html.DisplayFor(modelItem => item.Reason)</td>
+                                    <td class="p-3">
+                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full badge-@status.ToLower()">@status</span>
+                                    </td>
+                                    <td class="p-3 text-sm text-gray-700">@Html.DisplayFor(modelItem => item.RequestDate)</td>
+                                    <td class="p-3 text-sm text-gray-700">
+                                        <div class="flex space-x-2">
+                                            <a asp-action="Details" asp-route-id="@item.Id" class="w-8 h-8 flex items-center justify-center text-blue-600 hover:bg-blue-50 rounded-full">
+                                                <i class="ri-eye-line"></i>
+                                            </a>
+                                            @if ((status == "Pending" && (User.IsInRole("Staff1") || User.IsInRole("Admin"))) ||
+                                           (status == "Process" && (User.IsInRole("Staff2") || User.IsInRole("Admin"))) ||
+                                           (status == "Denied" && User.IsInRole("Admin")))
+                                            {
+                                                <a asp-action="Edit" asp-route-id="@item.Id" class="w-8 h-8 flex items-center justify-center text-yellow-600 hover:bg-yellow-50 rounded-full">
+                                                    <i class="ri-edit-line"></i>
+                                                </a>
+                                            }
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                            @if (!Model.Any())
+                            {
+                                <tr>
+                                    <td colspan="9" class="p-4 text-sm text-gray-500 text-center">No data available in table</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
 
-                    <button type="submit" class="btn btn-primary mt-1"><i class="fas fa-save"></i> Add Application</button>
-                </form>
+                <!-- Pagination -->
+                <div class="flex justify-between items-center mt-4">
+                    <div class="text-sm text-gray-500">
+                        Showing <span id="showingFrom">0</span> to <span id="showingTo">0</span> of <span id="totalEntries">0</span> entries
+                    </div>
+                    <div class="flex">
+                        <button id="prevBtn" class="px-3 py-1 border border-gray-200 rounded-l-button text-sm text-gray-600 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed" disabled>Previous</button>
+                        <button id="nextBtn" class="px-3 py-1 border border-gray-200 rounded-r-button text-sm text-gray-600 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed" disabled>Next</button>
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
 
-    <!-- Define status variables -->
-    @{
-        var pendingStatus = ActiveStatus.Pending.ToString();
-        var acceptedStatus = ActiveStatus.Approved.ToString();
-        var rejectedStatus = ActiveStatus.Denied.ToString();
-        var processStatus = ActiveStatus.Process.ToString();
-    }
-
-    <!-- Tabs Section -->
-    <div class="card">
-        <div class="card-body">
-            <!-- Tabs for Pending, Process, Accepted, Rejected -->
-            <ul class="nav nav-tabs" id="pictureTab" role="tablist">
-                <li class="nav-item" role="presentation">
-                    <button class="nav-link active" id="pending-tab" data-bs-toggle="tab" data-bs-target="#pending" type="button" role="tab" aria-controls="pending" aria-selected="true">Pending</button>
-                </li>
-                <li class="nav-item" role="presentation">
-                    <button class="nav-link" id="process-tab" data-bs-toggle="tab" data-bs-target="#process" type="button" role="tab" aria-controls="process" aria-selected="false">Process</button>
-                </li>
-                <li class="nav-item" role="presentation">
-                    <button class="nav-link" id="accepted-tab" data-bs-toggle="tab" data-bs-target="#accepted" type="button" role="tab" aria-controls="accepted" aria-selected="false">Accepted</button>
-                </li>
-                <li class="nav-item" role="presentation">
-                    <button class="nav-link" id="rejected-tab" data-bs-toggle="tab" data-bs-target="#rejected" type="button" role="tab" aria-controls="rejected" aria-selected="false">Rejected</button>
-                </li>
-            </ul>
-
-            <div class="tab-content" id="pictureTabContent">
-                <!-- Pending Tab -->
-                <div class="tab-pane fade show active" id="pending" role="tabpanel" aria-labelledby="pending-tab">
-                    <h3 class="mt-3 mb-3">Pending Applications</h3>
-                    <table id="pendingTable" class="table table-striped" style="width:100%">
-                        <thead>
-                            <tr>
-                                <th>Name</th>
-                                <th>Packs</th>
-                                <th>Barangay</th>
-                                <th>Barangay Certificate</th>
-                                <th>Valid ID</th>
-                                <th>Reason</th>
-                                <th>Status</th>
-                                <th>Request Date</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach (var item in Model.Where(x => (x.Status == null) || Enum.GetName(typeof(ActiveStatus), x.Status) == pendingStatus))
-                            {
-                                <tr>
-                                    <td>@Html.DisplayFor(modelItem => item.FullName)</td>
-                                    <td>@Html.DisplayFor(modelItem => item.Packs)</td>
-                                    <td>@Html.DisplayFor(modelItem => item.Barangay)</td>
-                                    <td>
-                                        @if (!string.IsNullOrEmpty(item.Brgy_Cert_Path))
-                                        {
-                                            var extension = System.IO.Path.GetExtension(item.Brgy_Cert_Path)?.ToLower();
-                                            if (!string.IsNullOrEmpty(extension) && (extension == ".jpg" || extension == ".jpeg" || extension == ".png"))
-                                            {
-                                                <img src="@Url.Content(item.Brgy_Cert_Path)" alt="@item.Brgy_Cert" width="100" />
-                                            }
-                                            else
-                                            {
-                                                <span>Non-image file</span>
-                                            }
-                                        }
-                                        else
-                                        {
-                                            <span>No file</span>
-                                        }
-                                    </td>
-                                    <td>
-                                        @if (!string.IsNullOrEmpty(item.Valid_ID_Path))
-                                        {
-                                            var extension = System.IO.Path.GetExtension(item.Valid_ID_Path)?.ToLower();
-                                            if (!string.IsNullOrEmpty(extension) && (extension == ".jpg" || extension == ".jpeg" || extension == ".png"))
-                                            {
-                                                <img src="@Url.Content(item.Valid_ID_Path)" alt="@item.Valid_ID" width="100" />
-                                            }
-                                            else
-                                            {
-                                                <span>Non-image file</span>
-                                            }
-                                        }
-                                        else
-                                        {
-                                            <span>No file</span>
-                                        }
-                                    </td>
-                                    <td>@Html.DisplayFor(modelItem => item.Reason)</td>
-                                    <td><span class="badge badge-warning">@Html.DisplayFor(modelItem => item.Status)</span></td>
-                                    <td>@Html.DisplayFor(modelItem => item.RequestDate)</td>
-                                    <td>
-                                        @if (User.IsInRole("Staff1") || User.IsInRole("Admin"))
-                                        {
-                                            <div class="btn-group" role="group">
-                                                <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-primary btn-sm"><i class="fas fa-eye"></i></a>
-                                                <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-warning btn-sm"><i class="fas fa-edit"></i></a>
-                                               
-                                            </div>
-                                        }
-                                    </td>
-                                </tr>
-                            }
-                        </tbody>
-                    </table>
+        <!-- Document Preview Modal -->
+        <div id="documentModal" class="fixed inset-0 z-50 hidden overflow-y-auto">
+            <div class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+                <div class="fixed inset-0 transition-opacity" aria-hidden="true">
+                    <div class="absolute inset-0 bg-gray-500 opacity-75"></div>
                 </div>
-
-                <!-- Process Tab -->
-                <div class="tab-pane fade" id="process" role="tabpanel" aria-labelledby="process-tab">
-                    <h3 class="mt-3 mb-3">Process Applications</h3>
-                    <table id="processTable" class="table table-striped" style="width:100%">
-                        <thead>
-                            <tr>
-                                <th>Name</th>
-                                <th>Packs</th>
-                                <th>Barangay</th>
-                                <th>Barangay Certificate</th>
-                                <th>Valid ID</th>
-                                <th>Reason</th>
-                                <th>Status</th>
-                                <th>Request Date</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach (var item in Model.Where(x => Enum.GetName(typeof(ActiveStatus), x.Status) == processStatus))
-                            {
-                                <tr>
-                                    <td>@Html.DisplayFor(modelItem => item.FullName)</td>
-                                    <td>@Html.DisplayFor(modelItem => item.Packs)</td>
-                                    <td>@Html.DisplayFor(modelItem => item.Barangay)</td>
-                                    <td>
-                                        @if (!string.IsNullOrEmpty(item.Brgy_Cert_Path))
-                                        {
-                                            var extension = System.IO.Path.GetExtension(item.Brgy_Cert_Path)?.ToLower();
-                                            if (!string.IsNullOrEmpty(extension) && (extension == ".jpg" || extension == ".jpeg" || extension == ".png"))
-                                            {
-                                                <img src="@Url.Content(item.Brgy_Cert_Path)" alt="@item.Brgy_Cert" width="100" />
-                                            }
-                                            else
-                                            {
-                                                <span>Non-image file</span>
-                                            }
-                                        }
-                                        else
-                                        {
-                                            <span>No file</span>
-                                        }
-                                    </td>
-                                    <td>
-                                        @if (!string.IsNullOrEmpty(item.Valid_ID_Path))
-                                        {
-                                            var extension = System.IO.Path.GetExtension(item.Valid_ID_Path)?.ToLower();
-                                            if (!string.IsNullOrEmpty(extension) && (extension == ".jpg" || extension == ".jpeg" || extension == ".png"))
-                                            {
-                                                <img src="@Url.Content(item.Valid_ID_Path)" alt="@item.Valid_ID" width="100" />
-                                            }
-                                            else
-                                            {
-                                                <span>Non-image file</span>
-                                            }
-                                        }
-                                        else
-                                        {
-                                            <span>No file</span>
-                                        }
-                                    </td>
-                                    <td>@Html.DisplayFor(modelItem => item.Reason)</td>
-                                    <td><span class="badge custom-orange">@Html.DisplayFor(modelItem => item.Status)</span></td>
-                                    <td>@Html.DisplayFor(modelItem => item.RequestDate)</td>
-                                    <td>
-                                        @if (User.IsInRole("Staff2") || User.IsInRole("Admin"))
-                                        {
-                                            <div class="btn-group" role="group">
-                                                <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-primary btn-sm"><i class="fas fa-eye"></i></a>
-                                                <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-warning btn-sm"><i class="fas fa-edit"></i></a>
-                                               
-                                            </div>
-                                        }
-                                    </td>
-                                </tr>
-                            }
-                        </tbody>
-                    </table>
-                </div>
-
-                <!-- Accepted Tab -->
-                <div class="tab-pane fade" id="accepted" role="tabpanel" aria-labelledby="accepted-tab">
-                    <h3 class="mt-3 mb-3">Accepted Applications</h3>
-                    <table id="acceptedTable" class="table table-striped" style="width:100%">
-                        <thead>
-                            <tr>
-                                <th>Name</th>
-                                <th>Packs</th>
-                                <th>Barangay</th>
-                                <th>Barangay Certificate</th>
-                                <th>Valid ID</th>
-                                <th>Reason</th>
-                                <th>Status</th>
-                                <th>Request Date</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach (var item in Model.Where(x => Enum.GetName(typeof(ActiveStatus), x.Status) == acceptedStatus))
-                            {
-                                <tr>
-                                    <td>@Html.DisplayFor(modelItem => item.FullName)</td>
-                                    <td>@Html.DisplayFor(modelItem => item.Packs)</td>
-                                    <td>@Html.DisplayFor(modelItem => item.Barangay)</td>
-                                    <td>
-                                        @if (!string.IsNullOrEmpty(item.Brgy_Cert_Path))
-                                        {
-                                            var extension = System.IO.Path.GetExtension(item.Brgy_Cert_Path)?.ToLower();
-                                            if (!string.IsNullOrEmpty(extension) && (extension == ".jpg" || extension == ".jpeg" || extension == ".png"))
-                                            {
-                                                <img src="@Url.Content(item.Brgy_Cert_Path)" alt="@item.Brgy_Cert" width="100" />
-                                            }
-                                            else
-                                            {
-                                                <span>Non-image file</span>
-                                            }
-                                        }
-                                        else
-                                        {
-                                            <span>No file</span>
-                                        }
-                                    </td>
-                                    <td>
-                                        @if (!string.IsNullOrEmpty(item.Valid_ID_Path))
-                                        {
-                                            var extension = System.IO.Path.GetExtension(item.Valid_ID_Path)?.ToLower();
-                                            if (!string.IsNullOrEmpty(extension) && (extension == ".jpg" || extension == ".jpeg" || extension == ".png"))
-                                            {
-                                                <img src="@Url.Content(item.Valid_ID_Path)" alt="@item.Valid_ID" width="100" />
-                                            }
-                                            else
-                                            {
-                                                <span>Non-image file</span>
-                                            }
-                                        }
-                                        else
-                                        {
-                                            <span>No file</span>
-                                        }
-                                    </td>
-                                    <td>@Html.DisplayFor(modelItem => item.Reason)</td>
-                                    <td><span class="badge badge-success">@Html.DisplayFor(modelItem => item.Status)</span></td>
-                                    <td>@Html.DisplayFor(modelItem => item.RequestDate)</td>
-                                    <td>
-                                        <div class="btn-group" role="group">
-                                            <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-primary btn-sm"><i class="fas fa-eye"></i></a>
-                                        </div>
-                                    </td>
-                                </tr>
-                            }
-                        </tbody>
-                    </table>
-                </div>
-
-                <!-- Rejected Tab -->
-                <div class="tab-pane fade" id="rejected" role="tabpanel" aria-labelledby="rejected-tab">
-                    <h3 class="mt-3 mb-3">Rejected Applications</h3>
-                    <table id="rejectedTable" class="table table-striped" style="width:100%">
-                        <thead>
-                            <tr>
-                                <th>Name</th>
-                                <th>Packs</th>
-                                <th>Barangay</th>
-                                <th>Barangay Certificate</th>
-                                <th>Valid ID</th>
-                                <th>Reason</th>
-                                <th>Status</th>
-                                <th>Request Date</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach (var item in Model.Where(x => Enum.GetName(typeof(ActiveStatus), x.Status) == rejectedStatus))
-                            {
-                                <tr>
-                                    <td>@Html.DisplayFor(modelItem => item.FullName)</td>
-                                    <td>@Html.DisplayFor(modelItem => item.Packs)</td>
-                                    <td>@Html.DisplayFor(modelItem => item.Barangay)</td>
-                                    <td>
-                                        @if (!string.IsNullOrEmpty(item.Brgy_Cert_Path))
-                                        {
-                                            var extension = System.IO.Path.GetExtension(item.Brgy_Cert_Path)?.ToLower();
-                                            if (!string.IsNullOrEmpty(extension) && (extension == ".jpg" || extension == ".jpeg" || extension == ".png"))
-                                            {
-                                                <img src="@Url.Content(item.Brgy_Cert_Path)" alt="@item.Brgy_Cert" width="100" />
-                                            }
-                                            else
-                                            {
-                                                <span>Non-image file</span>
-                                            }
-                                        }
-                                        else
-                                        {
-                                            <span>No file</span>
-                                        }
-                                    </td>
-                                    <td>
-                                        @if (!string.IsNullOrEmpty(item.Valid_ID_Path))
-                                        {
-                                            var extension = System.IO.Path.GetExtension(item.Valid_ID_Path)?.ToLower();
-                                            if (!string.IsNullOrEmpty(extension) && (extension == ".jpg" || extension == ".jpeg" || extension == ".png"))
-                                            {
-                                                <img src="@Url.Content(item.Valid_ID_Path)" alt="@item.Valid_ID" width="100" />
-                                            }
-                                            else
-                                            {
-                                                <span>Non-image file</span>
-                                            }
-                                        }
-                                        else
-                                        {
-                                            <span>No file</span>
-                                        }
-                                    </td>
-                                    <td>@Html.DisplayFor(modelItem => item.Reason)</td>
-                                    <td><span class="badge badge-danger">@Html.DisplayFor(modelItem => item.Status)</span></td>
-                                    <td>@Html.DisplayFor(modelItem => item.RequestDate)</td>
-                                    <td>
-                                        <div class="btn-group" role="group">
-                                            <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-primary btn-sm"><i class="fas fa-eye"></i></a>
-                                            <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-warning btn-sm"><i class="fas fa-edit"></i></a>
-                                           
-                                        </div>
-                                    </td>
-                                </tr>
-                            }
-                        </tbody>
-                    </table>
+                <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true"></span>
+                <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-4xl sm:w-full">
+                    <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                        <div class="sm:flex sm:items-start">
+                            <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left w-full">
+                                <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4" id="modalTitle">Document Preview</h3>
+                                <div class="mt-2">
+                                    <img id="documentImage" src="" alt="Document Preview" class="mx-auto max-w-full max-h-[70vh] hidden">
+                                    <iframe id="documentPdf" src="" class="w-full h-[70vh] hidden"></iframe>
+                                    <div id="unsupportedDocument" class="text-center py-10 hidden">
+                                        <i class="ri-file-unknow-line text-4xl text-gray-400 mb-2"></i>
+                                        <p class="text-gray-600">Document preview is not available for this file type.</p>
+                                        <a id="downloadDocument" href="#" class="text-primary hover:underline mt-2 inline-block">Download Document</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                        <button type="button" onclick="closeModal()" class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
+                            Close
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Custom CSS -->
-    <style>
-        .form-select {
-            border-radius: 8px;
-        
-            font-size: 16px;
-            border: 1px solid #ced4da;
-            transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
-        }
-
-            .form-select:focus {
-                border-color: #007bff;
-                box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
-                outline: none;
-            }
-
-            .form-select:hover {
-                border-color: #6c757d;
-            }
-
-        .form-group label {
-            font-weight: 500;
-            color: #343a40;
-            margin-bottom: 8px;
-        }
-
-        .form-row {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 20px;
-        }
-
-        .form-group {
-            flex: 1;
-            min-width: 200px;
-        }
-
-            .form-group label i {
-                color: #007bff;
-                margin-right: 5px;
-            }
-
-        .custom-file-upload {
-            position: relative;
-            display: inline-block;
-            width: 100%;
-        }
-
-            .custom-file-upload input[type="file"] {
-                position: absolute;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                opacity: 0;
-                cursor: pointer;
-            }
-
-        .custom-file-label {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 10px 15px;
-            background-color: white;
-            color: white;
-            border-radius: 8px;
-            font-size: 16px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            width: 100%;
-            text-align: center;
-        }
-
-            .custom-file-label i {
-                margin-right: 8px;
-            }
-
-            .custom-file-label:hover {
-                background-color: white;
-                box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
-                transform: translateY(-1px);
-            }
-
-            .custom-file-label:active {
-                transform: translateY(1px);
-            }
-
-        .text-danger {
-            margin-top: 5px;
-            display: block;
-        }
-
-        #pendingTable, #processTable, #acceptedTable, #rejectedTable {
-            width: 100% !important;
-        }
-
-        .table {
-            border-collapse: collapse;
-            margin: 25px 0;
-            font-size: 0.9em;
-            font-family: sans-serif;
-            min-width: 400px;
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
-        }
-
-            .table thead tr {
-                background-color: #1a5f7a;
-                color: #ffffff;
-                text-align: left;
-            }
-
-            .table th,
-            .table td {
-                padding: 12px 15px;
-                vertical-align: middle;
-            }
-
-            .table tbody tr {
-                border-bottom: 1px solid #dddddd;
-            }
-
-                .table tbody tr:nth-of-type(even) {
-                    background-color: #f3f3f3;
-                }
-
-                .table tbody tr:last-of-type {
-                    border-bottom: 2px solid #1a5f7a;
-                }
-
-                .table tbody tr:hover {
-                    background-color: #e6f2f7;
-                }
-
-            .table img {
-                max-width: 100px;
-                max-height: 100px;
-                border-radius: 4px;
-            }
-
-        .badge {
-            font-size: 0.85em;
-            padding: 5px 10px;
-        }
-
-        .badge-warning {
-            background-color: #ffc107;
-            color: #1a5f7a;
-        }
-
-        .badge-success {
-            background-color: #28a745;
-        }
-
-        .badge-danger {
-            background-color: #dc3545;
-        }
-
-        .custom-orange {
-            background-color: #fb5607;
-            color: white;
-        }
-
-        .nav-tabs .nav-link {
-            color: #1a5f7a;
-            font-weight: 500;
-        }
-
-            .nav-tabs .nav-link.active {
-                color: #1a5f7a;
-                font-weight: 600;
-                border-bottom: 3px solid #1a5f7a;
-            }
-
-        .btn-sm {
-            padding: 0.25rem 0.5rem;
-            font-size: 0.875rem;
-        }
-
-        .card {
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            margin-bottom: 20px;
-        }
-
-        .card-header {
-            background-color: #f8f9fa;
-            border-bottom: 1px solid #eaeaea;
-        }
-    </style>
-
-    <!-- Scripts Section -->
     @section Scripts {
         @{
             await Html.RenderPartialAsync("_ValidationScriptsPartial");
         }
-        <!-- Include necessary scripts (ensure these are not duplicated in the layout) -->
-        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-        <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
-        <script src="https://cdn.datatables.net/1.11.5/js/dataTables.bootstrap5.min.js"></script>
+
         <script>
-            $(document).ready(function () {
-                // Initialize the Pending tab's DataTable
-                var pendingTable = $('#pendingTable').DataTable({
-                    responsive: true,
-                    dom: '<"top"lf>rt<"bottom"ip><"clear">',
-                    language: {
-                        search: "_INPUT_",
-                        searchPlaceholder: "Search...",
-                        lengthMenu: "Show _MENU_ entries",
-                        paginate: {
-                            first: "First",
-                            last: "Last",
-                            next: "Next",
-                            previous: "Previous"
-                        }
-                    }
+            document.addEventListener("DOMContentLoaded", function () {
+                // File upload handlers
+                document.getElementById('brgyCertFile').addEventListener('change', function() {
+                    const fileName = this.files[0] ? this.files[0].name : "Choose File";
+                    document.getElementById('brgyCertFileName').textContent = fileName;
                 });
 
-                // Store references to all DataTables
-                var tables = {
-                    pending: pendingTable,
-                    process: null,
-                    accepted: null,
-                    rejected: null
+                document.getElementById('validIdFile').addEventListener('change', function() {
+                    const fileName = this.files[0] ? this.files[0].name : "Choose File";
+                    document.getElementById('validIdFileName').textContent = fileName;
+                });
+
+                // Tab switching logic
+                const tabs = {
+                    "pending-tab": "Pending Applications",
+                    "process-tab": "Processing Applications",
+                    "approved-tab": "Approved Applications",
+                    "denied-tab": "Denied Applications"
                 };
 
-                // Initialize DataTables when tabs are shown
-                $('button[data-bs-toggle="tab"]').on('shown.bs.tab', function (e) {
-                    var target = $(e.target).data('bs-target'); // Get the target tab pane
-
-                    // Initialize the DataTable for the target tab if not already initialized
-                    switch (target) {
-                        case '#process':
-                            if (tables.process === null) {
-                                tables.process = $('#processTable').DataTable({
-                                    responsive: true,
-                                    dom: '<"top"lf>rt<"bottom"ip><"clear">',
-                                    language: {
-                                        search: "_INPUT_",
-                                        searchPlaceholder: "Search...",
-                                        lengthMenu: "Show _MENU_ entries",
-                                        paginate: {
-                                            first: "First",
-                                            last: "Last",
-                                            next: "Next",
-                                            previous: "Previous"
-                                        }
-                                    }
-                                });
-                            }
-                            break;
-                        case '#accepted':
-                            if (tables.accepted === null) {
-                                tables.accepted = $('#acceptedTable').DataTable({
-                                    responsive: true,
-                                    dom: '<"top"lf>rt<"bottom"ip><"clear">',
-                                    language: {
-                                        search: "_INPUT_",
-                                        searchPlaceholder: "Search...",
-                                        lengthMenu: "Show _MENU_ entries",
-                                        paginate: {
-                                            first: "First",
-                                            last: "Last",
-                                            next: "Next",
-                                            previous: "Previous"
-                                        }
-                                    }
-                                });
-                            }
-                            break;
-                        case '#rejected':
-                            if (tables.rejected === null) {
-                                tables.rejected = $('#rejectedTable').DataTable({
-                                    responsive: true,
-                                    dom: '<"top"lf>rt<"bottom"ip><"clear">',
-                                    language: {
-                                        search: "_INPUT_",
-                                        searchPlaceholder: "Search...",
-                                        lengthMenu: "Show _MENU_ entries",
-                                        paginate: {
-                                            first: "First",
-                                            last: "Last",
-                                            next: "Next",
-                                            previous: "Previous"
-                                        }
-                                    }
-                                });
-                            }
-                            break;
-                    }
-
-                    // Redraw the table to fix any rendering issues
-                    var tableKey = target.substring(1); // Remove the '#' from target
-                    if (tables[tableKey]) {
-                        tables[tableKey].columns.adjust().responsive.recalc();
-                    }
-                });
-
-                // Update the label text to show the selected file name
-                document.querySelectorAll('.custom-file-upload input[type="file"]').forEach(input => {
-                    input.addEventListener('change', function () {
-                        const label = this.nextElementSibling;
-                        const fileName = this.files.length > 0 ? this.files[0].name : 'Choose File';
-                        label.innerHTML = `<i class="fas fa-upload"></i> ${fileName}`;
+                function switchTab(activeTabId) {
+                    // Update tab styles
+                    Object.keys(tabs).forEach(tabId => {
+                        const tab = document.getElementById(tabId);
+                        if (tabId === activeTabId) {
+                            tab.classList.add('active');
+                            tab.classList.remove('text-gray-500', 'hover:text-gray-700');
+                            tab.classList.add('text-primary', 'font-medium');
+                        } else {
+                            tab.classList.remove('active');
+                            tab.classList.remove('text-primary', 'font-medium');
+                            tab.classList.add('text-gray-500', 'hover:text-gray-700');
+                        }
                     });
-                });
-            });
 
+                    // Update table title
+                    document.getElementById('table-title').textContent = tabs[activeTabId];
 
-             function handleSubmit(event) {
-                // Check if the form is valid
-                if (document.getElementById("Create").checkValidity()) {
-                    // Show success alert
-                    document.getElementById("successAlert").classList.remove("d-none");
+                    // Show/hide rows based on tab
+                    const rows = document.querySelectorAll('#applicationsTable tbody tr');
+                    rows.forEach(row => {
+                        row.classList.add('hidden');
+                        if (row.classList.contains(activeTabId.replace('-tab', '-row'))) {
+                            row.classList.remove('hidden');
+                        }
+                    });
 
-                    // Optionally, you can hide the alert after a few seconds
-                    setTimeout(function() {
-                        document.getElementById("successAlert").classList.add("d-none");
-                    }, 3000);
-
-                    return true; // Allow form submission
-                } else {
-                    event.preventDefault(); // Prevent form submission if not valid
-                    return false;
+                    // Update pagination info
+                    updatePaginationInfo();
                 }
-            }
+
+                // Attach click events to tabs
+                Object.keys(tabs).forEach(tabId => {
+                    const tab = document.getElementById(tabId);
+                    tab.addEventListener('click', () => switchTab(tabId));
+                });
+
+                // Search functionality
+                document.getElementById('searchInput').addEventListener('input', function() {
+                    const searchTerm = this.value.toLowerCase();
+                    const activeTabId = document.querySelector('.tab-button.active').id;
+                    const rows = document.querySelectorAll(`#applicationsTable .${activeTabId.replace('-tab', '-row')}`);
+
+                    rows.forEach(row => {
+                        const rowText = row.textContent.toLowerCase();
+                        row.classList.toggle('hidden', !rowText.includes(searchTerm));
+                    });
+
+                    updatePaginationInfo();
+                });
+
+                // Entries per page functionality
+                document.getElementById('entriesSelect').addEventListener('change', function() {
+                    updatePaginationInfo();
+                });
+
+                // Pagination logic
+                function updatePaginationInfo() {
+                    const activeTabId = document.querySelector('.tab-button.active').id;
+                    const rows = Array.from(document.querySelectorAll(`#applicationsTable .${activeTabId.replace('-tab', '-row')}:not(.hidden)`));
+                    const entriesPerPage = parseInt(document.getElementById('entriesSelect').value);
+                    const totalEntries = rows.length;
+                    const currentPage = 1; // Simplified for now, can be extended later
+
+                    const start = 0;
+                    const end = Math.min(entriesPerPage, totalEntries);
+
+                    document.getElementById('showingFrom').textContent = totalEntries > 0 ? start + 1 : 0;
+                    document.getElementById('showingTo').textContent = end;
+                    document.getElementById('totalEntries').textContent = totalEntries;
+
+                    document.getElementById('prevBtn').disabled = true;
+                    document.getElementById('nextBtn').disabled = totalEntries <= entriesPerPage;
+
+                    // Show only the rows for the current page
+                    rows.forEach((row, index) => {
+                        row.classList.toggle('hidden', index < start || index >= end);
+                    });
+                }
+
+                // Document preview
+                window.showDocument = function(documentUrl) {
+                    const modal = document.getElementById('documentModal');
+                    const imageElement = document.getElementById('documentImage');
+                    const pdfElement = document.getElementById('documentPdf');
+                    const unsupportedElement = document.getElementById('unsupportedDocument');
+                    const downloadLink = document.getElementById('downloadDocument');
+
+                    imageElement.classList.add('hidden');
+                    pdfElement.classList.add('hidden');
+                    unsupportedElement.classList.add('hidden');
+
+                    const extension = documentUrl.split('.').pop().toLowerCase();
+                    if (['jpg', 'jpeg', 'png'].includes(extension)) {
+                        imageElement.src = documentUrl;
+                        imageElement.classList.remove('hidden');
+                    } else if (extension === 'pdf') {
+                        pdfElement.src = documentUrl;
+                        pdfElement.classList.remove('hidden');
+                    } else {
+                        unsupportedElement.classList.remove('hidden');
+                        downloadLink.href = documentUrl;
+                    }
+
+                    modal.classList.remove('hidden');
+                };
+
+                window.closeModal = function() {
+                    document.getElementById('documentModal').classList.add('hidden');
+                };
+
+                // Form submission handler
+                window.handleSubmit = function(event) {
+                    if (document.getElementById("Create").checkValidity()) {
+                        document.getElementById("successAlert").classList.remove("hidden");
+                        setTimeout(() => {
+                            document.getElementById("successAlert").classList.add("hidden");
+                        }, 3000);
+                        return true;
+                    } else {
+                        event.preventDefault();
+                        return false;
+                    }
+                };
+
+                // Initialize
+                switchTab('pending-tab');
+                updatePaginationInfo();
+            });
         </script>
     }
 </body>

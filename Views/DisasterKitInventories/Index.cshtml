@@ -1,43 +1,35 @@
-﻿@model IEnumerable<SocialWelfarre.Models.DisasterKitInventory>
+﻿@model Tuple<IEnumerable<SocialWelfarre.Models.DisasterKitInventory>, IEnumerable<SocialWelfarre.Models.StockIn_DisasterKit>>
 
 @{
     ViewData["Title"] = "Disaster Kit Inventory";
-    Layout = "/Views/Shared/_DashboardLayout.cshtml";
+    Layout = "~/Views/Shared/_DashboardLayout.cshtml";
 }
 
-<style>
-    .table-section table {
-        width: 100%;
-        border-collapse: collapse;
-    }
+<!-- DataTables CSS -->
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css" />
 
-    .table-section th, .table-section td {
-        padding: 12px;
-        text-align: left;
-        border-bottom: 1px solid #dee2e6;
-    }
-
-    .table-section th {
-        background-color: #f8f9fa;
-        font-weight: 600;
-    }
-
-    .btn-action {
-        margin-right: 5px;
-        padding: 6px 12px;
-        font-size: 14px;
-    }
-</style>
+<!-- Link to the CSS design -->
+<link href="~/css/TemporaryFoodPackInventoriesDesign.css" rel="stylesheet" />
 
 <div class="card">
     <div class="card-body">
+        <!-- Add Stock Form -->
+        <h4><i class="fas fa-plus-circle"></i> Add Stock to Disaster Kit</h4>
+        <form asp-controller="DisasterKitInventories" asp-action="AddStock" method="post" class="mb-5">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label for="Add_Stock1" class="form-label"><i class="fas fa-boxes"></i> Number of Packs to Add</label>
+                <input name="Add_Stock1" class="form-control" type="number" placeholder="Enter number of packs" required />
+                <span class="text-danger field-validation-valid" data-valmsg-for="Add_Stock1" data-valmsg-replace="true"></span>
+            </div>
+            <button type="submit" class="btn btn-primary mt-3"><i class="fas fa-save"></i> Add Stock</button>
+            <a asp-controller="DisasterKitTransactions" asp-action="Index" class="btn btn-secondary mt-3"><i class="fas fa-arrow-left"></i> Back to Transactions</a>
+        </form>
+
+        <!-- Inventory Table -->
         <h4><i class="fas fa-boxes"></i> Disaster Kit Inventory</h4>
-        <div class="mb-3">
-            <a asp-controller="DisasterKitInventories" asp-action="AddStock" class="btn btn-success"><i class="fas fa-plus"></i> Add Stock</a>
-            <a asp-controller="DisasterKitTransactions" asp-action="Index" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Back to Transactions</a>
-        </div>
         <div class="table-section">
-            <table class="table table-striped">
+            <table id="inventoryTable" class="table table-striped">
                 <thead>
                     <tr>
                         <th><i class="fas fa-map-marker-alt"></i> Barangay</th>
@@ -49,7 +41,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach (var item in Model)
+                    @foreach (var item in Model.Item1)
                     {
                         <tr>
                             <td>@Html.DisplayFor(modelItem => item.Barangay3)</td>
@@ -63,5 +55,49 @@
                 </tbody>
             </table>
         </div>
+
+        <!-- Stock History Table -->
+        <h4 class="stock-history-table"><i class="fas fa-history"></i> Stock Addition History</h4>
+        <div class="table-section">
+            <table id="stockHistoryTable" class="table table-striped">
+                <thead>
+                    <tr>
+                        <th><i class="fas fa-boxes"></i> Number of Packs Added</th>
+                        <th><i class="fas fa-calendar-alt"></i> Date Added</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.Item2)
+                    {
+                        <tr>
+                            <td>@Html.DisplayFor(modelItem => item.Add_Stock1)</td>
+                            <td>@Html.DisplayFor(modelItem => item.StockInDate)</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $('#inventoryTable').DataTable({
+                "dom": '<"top"lf>rt<"bottom"ip><"clear">',
+                "language": {
+                    "lengthMenu": "Show _MENU_ entries"
+                }
+            });
+            $('#stockHistoryTable').DataTable({
+                "dom": '<"top"lf>rt<"bottom"ip><"clear">',
+                "language": {
+                    "lengthMenu": "Show _MENU_ entries"
+                }
+            });
+        });
+    </script>
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

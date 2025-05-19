@@ -1,0 +1,934 @@
+﻿@model dynamic
+@{
+    ViewData["Title"] = "Unified Dashboard";
+    Layout = "/Views/Shared/_DashboardLayout.cshtml";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Social Welfare Dashboard</title>
+    <script src="https://cdn.tailwindcss.com/3.4.16"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: { primary: "#0066cc", secondary: "#f87171" },
+                    borderRadius: {
+                        none: "0px",
+                        sm: "4px",
+                        DEFAULT: "8px",
+                        md: "12px",
+                        lg: "16px",
+                        xl: "20px",
+                        "2xl": "24px",
+                        "3xl": "32px",
+                        full: "9999px",
+                        button: "8px",
+                    },
+                },
+            },
+        };
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.5.0/echarts.min.js"></script>
+    <style>
+        :where([class^="ri-"])::before {
+            content: "\f3c2";
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+            .tab-content.active {
+                display: block;
+            }
+
+        .sub-tab-content {
+            display: none;
+        }
+
+            .sub-tab-content.active {
+                display: block;
+            }
+
+        .tab-button {
+            position: relative;
+            transition: all 0.3s;
+        }
+
+            .tab-button:hover {
+                color: #0066cc;
+                background-color: #f0f7ff;
+            }
+
+            .tab-button.active {
+                color: #0066cc;
+                background-color: #f0f7ff;
+            }
+
+                .tab-button.active::after {
+                    content: '';
+                    position: absolute;
+                    bottom: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 2px;
+                    background-color: #0066cc;
+                }
+
+        .sub-tab-button {
+            transition: all 0.3s;
+        }
+
+            .sub-tab-button:hover {
+                background-color: rgba(0, 102, 204, 0.1);
+            }
+
+            .sub-tab-button.active {
+                background-color: #0066cc;
+                color: white;
+                box-shadow: 0 2px 4px rgba(0, 102, 204, 0.2);
+            }
+
+        table {
+            border-collapse: separate;
+            border-spacing: 0;
+            width: 100%;
+        }
+
+            table th, table td {
+                padding: 1rem;
+                text-align: left;
+                border-bottom: 1px solid #e5e7eb;
+            }
+
+            table tr:hover td {
+                background-color: #f8fafc;
+            }
+
+        .status-card {
+            background-color: white;
+            border-radius: 16px;
+            padding: 1.5rem;
+            text-align: center;
+            transition: all 0.3s;
+            border: 1px solid #e5e7eb;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+            .status-card:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            }
+
+        .chart-container {
+            background-color: white;
+            border-radius: 16px;
+            border: 1px solid #e5e7eb;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s;
+        }
+
+            .chart-container:hover {
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            }
+
+        .error-message {
+            color: #fff;
+            background-color: #dc3545;
+            padding: 10px;
+            border-radius: 8px;
+            display: none;
+        }
+
+        .loading-message {
+            color: #fff;
+            background-color: #28a745;
+            padding: 10px;
+            border-radius: 8px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body class="bg-white min-h-screen">
+    <div class="container mx-auto px-6 py-8 max-w-7xl">
+        <div class="mb-12">
+            <div class="flex items-center gap-6">
+                <div class="w-16 h-16 flex items-center justify-center bg-gradient-to-br from-primary/20 via-primary/10 to-transparent !rounded-2xl shadow-lg">
+                    <i class="ri-heart-pulse-line text-primary text-3xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-4xl font-bold text-gray-800 mb-2 bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent">Social Welfare Dashboard</h1>
+                    <p class="text-gray-500 text-lg">Manage and track social welfare services efficiently</p>
+                </div>
+            </div>
+            <div class="block">
+                <div class="bg-white shadow-lg !rounded-2xl mb-8 p-1">
+                    <div class="flex flex-wrap">
+                        <button class="tab-button active px-8 py-4 text-sm font-medium hover:bg-gray-50/80" data-tab="foodPack">
+                            <div class="flex items-center gap-3">
+                                <div class="w-8 h-8 flex items-center justify-center bg-primary/10 !rounded-lg">
+                                    <i class="ri-shopping-basket-2-line text-primary"></i>
+                                </div>
+                                <span>Food Pack</span>
+                            </div>
+                        </button>
+                        <button class="tab-button px-8 py-4 text-sm font-medium" data-tab="certificateOfIndigency">
+                            <div class="flex items-center gap-2">
+                                <i class="ri-file-list-3-line"></i>
+                                <span>Certificate of Indigency</span>
+                            </div>
+                        </button>
+                        <button class="tab-button px-8 py-4 text-sm font-medium" data-tab="soloParentID">
+                            <div class="flex items-center gap-2">
+                                <i class="ri-parent-line"></i>
+                                <span>Solo Parent ID</span>
+                            </div>
+                        </button>
+                    </div>
+                </div>
+                <!-- Food Pack Tab -->
+                <div id="foodPack" class="tab-content active">
+                    <div class="bg-primary text-white px-4 py-3 mb-6 !rounded-button">
+                        <h2 class="text-lg font-medium">Food Pack Applications</h2>
+                    </div>
+                    <div id="foodpackLoading" class="loading-message">Loading data...</div>
+                    <div id="foodpackError" class="error-message">Unable to load data.</div>
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                        <div class="status-card flex items-center gap-6 !rounded-2xl hover:shadow-xl transition-all bg-gradient-to-br from-white via-white to-gray-50/30 border border-gray-100 p-6">
+                            <div class="w-16 h-16 flex items-center justify-center bg-gradient-to-br from-orange-100 via-orange-50 to-transparent !rounded-xl shadow-sm">
+                                <i class="ri-time-line text-orange-500 text-3xl"></i>
+                            </div>
+                            <div class="text-left">
+                                <p class="text-base text-gray-600 mb-2 font-medium">Pending</p>
+                                <h3 class="text-4xl font-bold text-gray-800" id="foodpackPending">0</h3>
+                            </div>
+                        </div>
+                        <div class="status-card flex items-center gap-4 !rounded-xl hover:shadow-md transition-all">
+                            <div class="w-12 h-12 flex items-center justify-center bg-green-50 !rounded-xl">
+                                <i class="ri-checkbox-circle-line text-green-500 text-2xl"></i>
+                            </div>
+                            <div class="text-left">
+                                <p class="text-sm text-gray-600">Approved</p>
+                                <h3 class="text-2xl font-bold text-gray-800" id="foodpackApproved">0</h3>
+                            </div>
+                        </div>
+                        <div class="status-card flex items-center gap-4 !rounded-xl hover:shadow-md transition-all">
+                            <div class="w-12 h-12 flex items-center justify-center bg-red-50 !rounded-xl">
+                                <i class="ri-close-circle-line text-red-500 text-2xl"></i>
+                            </div>
+                            <div class="text-left">
+                                <p class="text-sm text-gray-600">Rejected</p>
+                                <h3 class="text-2xl font-bold text-gray-800" id="foodpackRejected">0</h3>
+                            </div>
+                        </div>
+                        <div class="status-card flex items-center gap-4 !rounded-xl hover:shadow-md transition-all">
+                            <div class="w-12 h-12 flex items-center justify-center bg-blue-50 !rounded-xl">
+                                <i class="ri-bar-chart-box-line text-blue-500 text-2xl"></i>
+                            </div>
+                            <div class="text-left">
+                                <p class="text-sm text-gray-600">Total</p>
+                                <h3 class="text-2xl font-bold text-gray-800" id="foodpackTotal">0</h3>
+                            </div>
+                        </div>
+                    </div>
+                   <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                        <div class="chart-container p-8 hover:shadow-xl transition-all bg-gradient-to-br from-white via-white to-gray-50/30 border border-gray-100">
+                            <h3 class="text-xl font-semibold mb-6 flex items-center gap-3">
+                                 <i class="ri-pie-chart-2-line text-primary text-2xl"></i>
+                                <span class="bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent">Reason Distribution</span>
+                            </h3>
+                            <div id="reasonDistributionChart" style="width: 100%; height: 300px;"></div>
+                        </div>
+                        <div class="chart-container p-6">
+                            <h3 class="text-lg font-medium mb-4">Trends by Barangay</h3>
+                            <div id="trendsByBarangayChart" style="width: 100%; height: 300px;"></div>
+                        </div>
+                    </div>
+                    <div class="chart-container p-6 mb-8">
+                        <h3 class="text-lg font-medium mb-4">Applications</h3>
+                        <div class="mb-4">
+                            <div class="flex space-x-2">
+                                <button class="sub-tab-button active px-4 py-2 !rounded-button text-sm whitespace-nowrap" data-subtab="pending">Pending</button>
+                                <button class="sub-tab-button px-4 py-2 !rounded-button text-sm whitespace-nowrap" data-subtab="approved">Approved</button>
+                                <button class="sub-tab-button px-4 py-2 !rounded-button text-sm whitespace-nowrap" data-subtab="rejected">Rejected</button>
+                            </div>
+                        </div>
+                        <div class="sub-tab-content active" id="pending">
+                            <div class="overflow-x-auto">
+                                <table class="min-w-full bg-white !rounded-button overflow-hidden">
+                                    <thead>
+                                        <tr class="bg-gradient-to-r from-gray-50 to-white text-gray-600 text-sm">
+                                            <th class="!rounded-tl-button px-6 py-4">Barangay</th>
+                                            <th class="px-6 py-4">Packs</th>
+                                            <th class="px-6 py-4">Reason</th>
+                                            <th class="!rounded-tr-button px-6 py-4">Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="foodpackPendingTableBody"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="sub-tab-content" id="approved">
+                            <div class="overflow-x-auto">
+                                <table class="min-w-full bg-white !rounded-button overflow-hidden">
+                                    <thead>
+                                        <tr class="bg-gradient-to-r from-gray-50 to-white text-gray-600 text-sm">
+                                            <th class="!rounded-tl-button px-6 py-4">Barangay</th>
+                                            <th class="px-6 py-4">Packs</th>
+                                            <th class="px-6 py-4">Reason</th>
+                                            <th class="!rounded-tr-button px-6 py-4">Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="foodpackApprovedTableBody"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="sub-tab-content" id="rejected">
+                            <div class="overflow-x-auto">
+                                <table class="min-w-full bg-white !rounded-button overflow-hidden">
+                                    <thead>
+                                        <tr class="bg-gradient-to-r from-gray-50 to-white text-gray-600 text-sm">
+                                            <th class="!rounded-tl-button px-6 py-4">Barangay</th>
+                                            <th class="px-6 py-4">Packs</th>
+                                            <th class="px-6 py-4">Reason</th>
+                                            <th class="!rounded-tr-button px-6 py-4">Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="foodpackRejectedTableBody"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Certificate of Indigency Tab -->
+                <div id="certificateOfIndigency" class="tab-content">
+                    <div class="bg-primary text-white px-4 py-3 mb-6 !rounded-button">
+                        <h2 class="text-lg font-medium">Certificate of Indigency</h2>
+                    </div>
+                    <div id="indigencyLoading" class="loading-message">Loading data...</div>
+                    <div id="indigencyError" class="error-message">Unable to load data.</div>
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                        <div class="status-card flex flex-col items-center">
+                            <div class="w-12 h-12 flex items-center justify-center mb-3">
+                                <i class="ri-time-line text-primary text-2xl"></i>
+                            </div>
+                            <h3 class="text-3xl font-bold text-gray-800" id="indigencyPending">0</h3>
+                            <p class="text-sm text-gray-600">Pending</p>
+                        </div>
+                        <div class="status-card">
+                            <h3 class="text-3xl font-bold text-gray-800" id="indigencyApproved">0</h3>
+                            <p class="text-sm text-gray-600">Approved</p>
+                        </div>
+                        <div class="status-card">
+                            <h3 class="text-3xl font-bold text-gray-800" id="indigencyRejected">0</h3>
+                            <p class="text-sm text-gray-600">Rejected</p>
+                        </div>
+                        <div class="status-card">
+                            <h3 class="text-3xl font-bold text-gray-800" id="indigencyTotal">0</h3>
+                            <p class="text-sm text-gray-600">Total</p>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                        <div class="chart-container p-6">
+                            <h3 class="text-lg font-medium mb-4">Reason Distribution</h3>
+                            <div id="reasonDistributionChart2" style="width: 100%; height: 300px;"></div>
+                        </div>
+
+                        <div class="chart-container p-6">
+                            <h3 class="text-lg font-medium mb-4">Trends by Barangay</h3>
+                            <div id="trendsByBarangayChart2" style="width: 100%; height: 300px;"></div>
+                        </div>
+                    </div>
+                    <div class="chart-container p-6 mb-8">
+                        <h3 class="text-lg font-medium mb-4">Applications</h3>
+                        <div class="mb-4">
+                            <div class="flex space-x-2">
+                                <button class="sub-tab-button active px-4 py-2 !rounded-button text-sm whitespace-nowrap" data-subtab="pending2">Pending</button>
+                                <button class="sub-tab-button px-4 py-2 !rounded-button text-sm whitespace-nowrap" data-subtab="approved2">Approved</button>
+                                <button class="sub-tab-button px-4 py-2 !rounded-button text-sm whitespace-nowrap" data-subtab="rejected2">Rejected</button>
+                            </div>
+                        </div>
+                        <div class="sub-tab-content active" id="pending2">
+                            <div class="overflow-x-auto">
+                                <table class="min-w-full bg-white !rounded-button overflow-hidden">
+                                    <thead>
+                                        <tr class="bg-gray-50 text-gray-600 text-sm">
+                                            <th class="!rounded-tl-button px-6 py-4">Barangay</th>
+                                            <th class="px-6 py-4">Requests</th>
+                                            <th class="px-6 py-4">Reason</th>
+                                            <th class="!rounded-tr-button px-6 py-4">Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="indigencyPendingTableBody"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="sub-tab-content" id="approved2">
+                            <div class="overflow-x-auto">
+                                <table class="min-w-full bg-white !rounded-button overflow-hidden">
+                                    <thead>
+                                        <tr class="bg-gray-50 text-gray-600 text-sm">
+                                            <th class="!rounded-tl-button px-6 py-4">Barangay</th>
+                                            <th class="px-6 py-4">Requests</th>
+                                            <th class="px-6 py-4">Reason</th>
+                                            <th class="!rounded-tr-button px-6 py-4">Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="indigencyApprovedTableBody"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="sub-tab-content" id="rejected2">
+                            <div class="overflow-x-auto">
+                                <table class="min-w-full bg-white !rounded-button overflow-hidden">
+                                    <thead>
+                                        <tr class="bg-gray-50 text-gray-600 text-sm">
+                                            <th class="!rounded-tl-button px-6 py-4">Barangay</th>
+                                            <th class="px-6 py-4">Requests</th>
+                                            <th class="px-6 py-4">Reason</th>
+                                            <th class="!rounded-tr-button px-6 py-4">Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="indigencyRejectedTableBody"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Solo Parent ID Tab -->
+                <div id="soloParentID" class="tab-content">
+                    <div class="bg-primary text-white px-4 py-3 mb-6 !rounded-button">
+                        <h2 class="text-lg font-medium">Consultation Requests</h2>
+                    </div>
+                    <div id="consultationLoading" class="loading-message">Loading data...</div>
+                    <div id="consultationError" class="error-message">Unable to load data.</div>
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                        <div class="status-card flex flex-col items-center">
+                            <div class="w-12 h-12 flex items-center justify-center mb-3">
+                                <i class="ri-time-line text-primary text-2xl"></i>
+                            </div>
+                            <h3 class="text-3xl font-bold text-gray-800" id="consultationPending">0</h3>
+                            <p class="text-sm text-gray-600">Pending</p>
+                        </div>
+                        <div class="status-card">
+                            <h3 class="text-3xl font-bold text-gray-800" id="consultationApproved">0</h3>
+                            <p class="text-sm text-gray-600">Approved</p>
+                        </div>
+                        <div class="status-card">
+                            <h3 class="text-3xl font-bold text-gray-800" id="consultationRejected">0</h3>
+                            <p class="text-sm text-gray-600">Rejected</p>
+                        </div>
+                        <div class="status-card">
+                            <h3 class="text-3xl font-bold text-gray-800" id="consultationTotal">0</h3>
+                            <p class="text-sm text-gray-600">Total</p>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                        <div class="chart-container p-6">
+                            <h3 class="text-lg font-medium mb-4">Status Distribution</h3>
+                            <div id="statusDistributionChart" style="width: 100%; height: 300px;"></div>
+                        </div>
+                        <div class="chart-container p-6">
+                            <h3 class="text-lg font-medium mb-4">Trends Over Time</h3>
+                            <div id="trendsOverTimeChart" style="width: 100%; height: 300px;"></div>
+                        </div>
+                    </div>
+                    <div class="chart-container p-6 mb-8">
+                        <h3 class="text-lg font-medium mb-4">Consultations</h3>
+                        <div class="mb-4">
+                            <div class="flex space-x-2">
+                                <button class="sub-tab-button active px-4 py-2 !rounded-button text-sm whitespace-nowrap" data-subtab="pending3">Pending</button>
+                                <button class="sub-tab-button px-4 py-2 !rounded-button text-sm whitespace-nowrap" data-subtab="approved3">Approved</button>
+                                <button class="sub-tab-button px-4 py-2 !rounded-button text-sm whitespace-nowrap" data-subtab="rejected3">Rejected</button>
+                            </div>
+                        </div>
+                        <div class="sub-tab-content active" id="pending3">
+                            <div class="overflow-x-auto">
+                                <table class="min-w-full bg-white !rounded-button overflow-hidden">
+                                    <thead>
+                                        <tr class="bg-gray-50 text-gray-600 text-sm">
+                                            <th class="!rounded-tl-button px-6 py-4">Full Name</th>
+                                            <th class="px-6 py-4">Date</th>
+                                            <th class="px-6 py-4">Time</th>
+                                            <th class="!rounded-tr-button px-6 py-4">Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="consultationPendingTableBody"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="sub-tab-content" id="approved3">
+                            <div class="overflow-x-auto">
+                                <table class="min-w-full bg-white !rounded-button overflow-hidden">
+                                    <thead>
+                                        <tr class="bg-gray-50 text-gray-600 text-sm">
+                                            <th class="!rounded-tl-button px-6 py-4">Full Name</th>
+                                            <th class="px-6 py-4">Date</th>
+                                            <th class="px-6 py-4">Time</th>
+                                            <th class="!rounded-tr-button px-6 py-4">Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="consultationApprovedTableBody"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="sub-tab-content" id="rejected3">
+                            <div class="overflow-x-auto">
+                                <table class="min-w-full bg-white !rounded-button overflow-hidden">
+                                    <thead>
+                                        <tr class="bg-gray-50 text-gray-600 text-sm">
+                                            <th class="!rounded-tl-button px-6 py-4">Full Name</th>
+                                            <th class="px-6 py-4">Date</th>
+                                            <th class="px-6 py-4">Time</th>
+                                            <th class="!rounded-tr-button px-6 py-4">Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="consultationRejectedTableBody"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                // Main Tab Navigation
+                const tabButtons = document.querySelectorAll(".tab-button");
+                const tabContents = document.querySelectorAll(".tab-content");
+                tabButtons.forEach((button) => {
+                    button.addEventListener("click", () => {
+                        const tabId = button.getAttribute("data-tab");
+                        tabButtons.forEach((btn) => btn.classList.remove("active"));
+                        tabContents.forEach((content) => content.classList.remove("active"));
+                        button.classList.add("active");
+                        document.getElementById(tabId).classList.add("active");
+                    });
+                });
+                // Sub Tab Navigation
+                const subTabButtons = document.querySelectorAll(".sub-tab-button");
+                subTabButtons.forEach((button) => {
+                    button.addEventListener("click", () => {
+                        const parentElement = button.closest("div");
+                        const subTabButtons = parentElement.querySelectorAll(".sub-tab-button");
+                        const tabId = button.getAttribute("data-subtab");
+                        const tabContents = parentElement
+                            .closest(".chart-container")
+                            .querySelectorAll(".sub-tab-content");
+                        subTabButtons.forEach((btn) => btn.classList.remove("active"));
+                        tabContents.forEach((content) => content.classList.remove("active"));
+                        button.classList.add("active");
+                        document.getElementById(tabId).classList.add("active");
+                    });
+                });
+                // Initialize Charts and Data
+                initializeDashboard();
+            });
+
+            const colorPalette = ['rgba(87, 181, 231, 1)', 'rgba(252, 141, 98, 1)', 'rgba(255, 206, 86, 1)', 'rgba(75, 192, 192, 1)', 'rgba(153, 102, 255, 1)'];
+
+            function initializeFoodPack(counts, applications) {
+                document.getElementById('foodpackLoading').style.display = 'none';
+                document.getElementById('foodpackPending').textContent = counts.pending || 0;
+                document.getElementById('foodpackApproved').textContent = counts.approved || 0;
+                document.getElementById('foodpackRejected').textContent = counts.rejected || 0;
+                document.getElementById('foodpackTotal').textContent = counts.total || 0;
+
+                // Reason Distribution Chart
+                const approvedApplications = applications.filter(app => app.Status === 'Approved');
+                const reasonCounts = {};
+                approvedApplications.forEach(app => {
+                    const reason = app.Reason || 'N/A';
+                    reasonCounts[reason] = (reasonCounts[reason] || 0) + 1;
+                });
+                const reasons = Object.keys(reasonCounts);
+                const reasonData = reasons.map((reason, i) => ({
+                    value: reasonCounts[reason],
+                    name: reason,
+                    itemStyle: { color: colorPalette[i % colorPalette.length] }
+                }));
+
+                const reasonDistributionChart = echarts.init(document.getElementById("reasonDistributionChart"));
+                const reasonDistributionOption = {
+                    animation: false,
+                    tooltip: { trigger: "item", backgroundColor: "rgba(255, 255, 255, 0.8)", textStyle: { color: "#1f2937" } },
+                    legend: { bottom: "0%", left: "center", textStyle: { color: "#1f2937" } },
+                    series: [{
+                        name: "Reason Distribution",
+                        type: "pie",
+                        radius: ["40%", "70%"],
+                        avoidLabelOverlap: false,
+                        itemStyle: { borderRadius: 8 },
+                        label: { show: false },
+                        emphasis: { label: { show: true, fontSize: "14", fontWeight: "bold" } },
+                        labelLine: { show: false },
+                        data: reasonData.length > 0 ? reasonData : [{ value: 1, name: "No Data", itemStyle: { color: "#d3d3d3" } }]
+                    }]
+                };
+                reasonDistributionChart.setOption(reasonDistributionOption);
+
+                // Trends by Barangay Chart
+                const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+                const barangayTrends = {};
+                approvedApplications.forEach(app => {
+                    const barangay = app.Barangay || 'N/A';
+                    if (!barangayTrends[barangay]) barangayTrends[barangay] = new Array(12).fill(0);
+                });
+                approvedApplications.forEach(app => {
+                    const barangay = app.Barangay || 'N/A';
+                    const date = new Date(app.RequestDate && new Date(app.RequestDate).getFullYear() > 2000 ? app.RequestDate : Date.now());
+                    barangayTrends[barangay][date.getMonth()]++;
+                });
+                const datasets = Object.keys(barangayTrends).map((barangay, i) => ({
+                    name: barangay,
+                    type: "line",
+                    smooth: true,
+                    lineStyle: { width: 2, color: colorPalette[i % colorPalette.length] },
+                    areaStyle: {
+                        color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                            { offset: 0, color: colorPalette[i % colorPalette.length].replace('1)', '0.3)') },
+                            { offset: 1, color: colorPalette[i % colorPalette.length].replace('1)', '0.1)') }
+                        ])
+                    },
+                    data: barangayTrends[barangay]
+                }));
+
+                const trendsByBarangayChart = echarts.init(document.getElementById("trendsByBarangayChart"));
+                const trendsByBarangayOption = {
+                    animation: false,
+                    tooltip: { trigger: "axis", backgroundColor: "rgba(255, 255, 255, 0.8)", textStyle: { color: "#1f2937" } },
+                    legend: { data: Object.keys(barangayTrends), bottom: "0%", textStyle: { color: "#1f2937" } },
+                    grid: { left: "3%", right: "4%", bottom: "15%", top: "3%", containLabel: true },
+                    xAxis: { type: "category", boundaryGap: false, data: months, axisLabel: { color: "#1f2937" } },
+                    yAxis: { type: "value", axisLabel: { color: "#1f2937" } },
+                    series: datasets.length > 0 ? datasets : [{
+                        name: "No Data",
+                        type: "line",
+                        data: new Array(12).fill(0),
+                        lineStyle: { color: "#d3d3d3" },
+                        areaStyle: { color: "#d3d3d3" }
+                    }]
+                };
+                trendsByBarangayChart.setOption(trendsByBarangayOption);
+
+                // Populate Tables
+                const pendingTableBody = document.getElementById('foodpackPendingTableBody');
+                const approvedTableBody = document.getElementById('foodpackApprovedTableBody');
+                const rejectedTableBody = document.getElementById('foodpackRejectedTableBody');
+                applications.forEach(item => {
+                    const statusColor = item.Status === 'Pending' ? 'yellow' : item.Status === 'Approved' ? 'green' : 'red';
+                    const row = `
+                        <tr class="border-b border-gray-200 hover:bg-gray-50">
+                            <td>${item.Barangay || 'N/A'}</td>
+                            <td>${item.Packs || 0}</td>
+                            <td>${item.Reason || 'N/A'}</td>
+                            <td><span class="px-2 py-1 bg-${statusColor}-50 text-${statusColor}-600 rounded-full text-xs">${item.Status || 'Pending'}</span></td>
+                        </tr>`;
+                    if (item.Status === 'Pending') pendingTableBody.innerHTML += row;
+                    else if (item.Status === 'Approved') approvedTableBody.innerHTML += row;
+                    else if (item.Status === 'Denied') rejectedTableBody.innerHTML += row;
+                });
+
+                // Handle empty tables
+                if (pendingTableBody.innerHTML === '') {
+                    pendingTableBody.innerHTML = '<tr><td colspan="4" class="text-center py-4 text-gray-500">No pending applications</td></tr>';
+                }
+                if (approvedTableBody.innerHTML === '') {
+                    approvedTableBody.innerHTML = '<tr><td colspan="4" class="text-center py-4 text-gray-500">No approved applications</td></tr>';
+                }
+                if (rejectedTableBody.innerHTML === '') {
+                    rejectedTableBody.innerHTML = '<tr><td colspan="4" class="text-center py-4 text-gray-500">No rejected applications</td></tr>';
+                }
+
+                return { reasonDistributionChart, trendsByBarangayChart };
+            }
+
+            function initializeIndigency(counts, applications) {
+                document.getElementById('indigencyLoading').style.display = 'none';
+                document.getElementById('indigencyPending').textContent = counts.pending || 0;
+                document.getElementById('indigencyApproved').textContent = counts.approved || 0;
+                document.getElementById('indigencyRejected').textContent = counts.rejected || 0;
+                document.getElementById('indigencyTotal').textContent = counts.total || 0;
+
+                // Reason Distribution Chart
+                const approvedApplications = applications.filter(app => app.Status1 === 'Approved');
+                const reasonCounts = {};
+                approvedApplications.forEach(app => {
+                    const reason = app.Reason1 || 'N/A';
+                    reasonCounts[reason] = (reasonCounts[reason] || 0) + 1;
+                });
+                const reasons = Object.keys(reasonCounts);
+                const reasonData = reasons.map((reason, i) => ({
+                    value: reasonCounts[reason],
+                    name: reason,
+                    itemStyle: { color: colorPalette[i % colorPalette.length] }
+                }));
+
+                const reasonDistributionChart2 = echarts.init(document.getElementById("reasonDistributionChart2"));
+                const reasonDistributionOption2 = {
+                    animation: false,
+                    tooltip: { trigger: "item", backgroundColor: "rgba(255, 255, 255, 0.8)", textStyle: { color: "#1f2937" } },
+                    legend: { bottom: "0%", left: "center", textStyle: { color: "#1f2937" } },
+                    series: [{
+                        name: "Reason Distribution",
+                        type: "pie",
+                        radius: ["40%", "70%"],
+                        avoidLabelOverlap: false,
+                        itemStyle: { borderRadius: 8 },
+                        label: { show: false },
+                        emphasis: { label: { show: true, fontSize: "14", fontWeight: "bold" } },
+                        labelLine: { show: false },
+                        data: reasonData.length > 0 ? reasonData : [{ value: 1, name: "No Data", itemStyle: { color: "#d3d3d3" } }]
+                    }]
+                };
+                reasonDistributionChart2.setOption(reasonDistributionOption2);
+
+                // Trends by Barangay Chart
+                const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+                const barangayTrends = {};
+                approvedApplications.forEach(app => {
+                    const barangay = app.Barangay1 || 'N/A';
+                    if (!barangayTrends[barangay]) barangayTrends[barangay] = new Array(12).fill(0);
+                });
+                approvedApplications.forEach(app => {
+                    const barangay = app.Barangay1 || 'N/A';
+                    const date = new Date(app.RequestDate1 && new Date(app.RequestDate1).getFullYear() > 2000 ? app.RequestDate1 : Date.now());
+                    barangayTrends[barangay][date.getMonth()]++;
+                });
+                const datasets = Object.keys(barangayTrends).map((barangay, i) => ({
+                    name: barangay,
+                    type: "line",
+                    smooth: true,
+                    lineStyle: { width: 2, color: colorPalette[i % colorPalette.length] },
+                    areaStyle: {
+                        color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                            { offset: 0, color: colorPalette[i % colorPalette.length].replace('1)', '0.3)') },
+                            { offset: 1, color: colorPalette[i % colorPalette.length].replace('1)', '0.1)') }
+                        ])
+                    },
+                    data: barangayTrends[barangay]
+                }));
+
+                const trendsByBarangayChart2 = echarts.init(document.getElementById("trendsByBarangayChart2"));
+                const trendsByBarangayOption2 = {
+                    animation: false,
+                    tooltip: { trigger: "axis", backgroundColor: "rgba(255, 255, 255, 0.8)", textStyle: { color: "#1f2937" } },
+                    legend: { data: Object.keys(barangayTrends), bottom: "0%", textStyle: { color: "#1f2937" } },
+                    grid: { left: "3%", right: "4%", bottom: "15%", top: "3%", containLabel: true },
+                    xAxis: { type: "category", boundaryGap: false, data: months, axisLabel: { color: "#1f2937" } },
+                    yAxis: { type: "value", axisLabel: { color: "#1f2937" } },
+                    series: datasets.length > 0 ? datasets : [{
+                        name: "No Data",
+                        type: "line",
+                        data: new Array(12).fill(0),
+                        lineStyle: { color: "#d3d3d3" },
+                        areaStyle: { color: "#d3d3d3" }
+                    }]
+                };
+                trendsByBarangayChart2.setOption(trendsByBarangayOption2);
+
+                // Populate Tables
+                const pendingTableBody = document.getElementById('indigencyPendingTableBody');
+                const approvedTableBody = document.getElementById('indigencyApprovedTableBody');
+                const rejectedTableBody = document.getElementById('indigencyRejectedTableBody');
+                applications.forEach(item => {
+                    const statusColor = item.Status1 === 'Pending' ? 'yellow' : item.Status1 === 'Approved' ? 'green' : 'red';
+                    const row = `
+                        <tr class="border-b border-gray-200 hover:bg-gray-50">
+                            <td>${item.Barangay1 || 'N/A'}</td>
+                            <td>${item.No_Rquested1 || 0}</td>
+                            <td>${item.Reason1 || 'N/A'}</td>
+                            <td><span class="px-2 py-1 bg-${statusColor}-50 text-${statusColor}-600 rounded-full text-xs">${item.Status1 || 'Pending'}</span></td>
+                        </tr>`;
+                    if (item.Status1 === 'Pending') pendingTableBody.innerHTML += row;
+                    else if (item.Status1 === 'Approved') approvedTableBody.innerHTML += row;
+                    else if (item.Status1 === 'Denied') rejectedTableBody.innerHTML += row;
+                });
+
+                // Handle empty tables
+                if (pendingTableBody.innerHTML === '') {
+                    pendingTableBody.innerHTML = '<tr><td colspan="4" class="text-center py-4 text-gray-500">No pending applications</td></tr>';
+                }
+                if (approvedTableBody.innerHTML === '') {
+                    approvedTableBody.innerHTML = '<tr><td colspan="4" class="text-center py-4 text-gray-500">No approved applications</td></tr>';
+                }
+                if (rejectedTableBody.innerHTML === '') {
+                    rejectedTableBody.innerHTML = '<tr><td colspan="4" class="text-center py-4 text-gray-500">No rejected applications</td></tr>';
+                }
+
+                return { reasonDistributionChart2, trendsByBarangayChart2 };
+            }
+
+            function initializeConsultation(counts, consultations) {
+                document.getElementById('consultationLoading').style.display = 'none';
+                document.getElementById('consultationPending').textContent = counts.pending || 0;
+                document.getElementById('consultationApproved').textContent = counts.approved || 0;
+                document.getElementById('consultationRejected').textContent = counts.rejected || 0;
+                document.getElementById('consultationTotal').textContent = counts.total || 0;
+
+                // Status Distribution Chart
+                const approvedConsultations = consultations.filter(consult => consult.consultationStatus === 'Approved');
+                const approvedCount = approvedConsultations.length;
+                const statusData = approvedCount > 0 ? [{
+                    value: approvedCount,
+                    name: "Approved",
+                    itemStyle: { color: colorPalette[1] }
+                }] : [{ value: 1, name: "No Data", itemStyle: { color: "#d3d3d3" } }];
+
+                const statusDistributionChart = echarts.init(document.getElementById("statusDistributionChart"));
+                const statusDistributionOption = {
+                    animation: false,
+                    tooltip: { trigger: "item", backgroundColor: "rgba(255, 255, 255, 0.8)", textStyle: { color: "#1f2937" } },
+                    legend: { bottom: "0%", left: "center", textStyle: { color: "#1f2937" } },
+                    series: [{
+                        name: "Status Distribution",
+                        type: "pie",
+                        radius: ["40%", "70%"],
+                        avoidLabelOverlap: false,
+                        itemStyle: { borderRadius: 8 },
+                        label: { show: false },
+                        emphasis: { label: { show: true, fontSize: "14", fontWeight: "bold" } },
+                        labelLine: { show: false },
+                        data: statusData
+                    }]
+                };
+                statusDistributionChart.setOption(statusDistributionOption);
+
+                // Trends Over Time Chart
+                const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+                const approvedData = new Array(12).fill(0);
+                approvedConsultations.forEach(consult => {
+                    const date = consult.consultationDate ? new Date(consult.consultationDate.split('-').map(Number).join('-')) : new Date();
+                    const monthIndex = date.getMonth();
+                    approvedData[monthIndex]++;
+                });
+
+                const trendsOverTimeChart = echarts.init(document.getElementById("trendsOverTimeChart"));
+                const trendsOverTimeOption = {
+                    animation: false,
+                    tooltip: { trigger: "axis", backgroundColor: "rgba(255, 255, 255, 0.8)", textStyle: { color: "#1f2937" } },
+                    legend: { data: ["Approved"], bottom: "0%", textStyle: { color: "#1f2937" } },
+                    grid: { left: "3%", right: "4%", bottom: "15%", top: "3%", containLabel: true },
+                    xAxis: { type: "category", boundaryGap: false, data: months, axisLabel: { color: "#1f2937" } },
+                    yAxis: { type: "value", axisLabel: { color: "#1f2937" } },
+                    series: approvedData.some(count => count > 0) ? [{
+                        name: "Approved",
+                        type: "line",
+                        smooth: true,
+                        lineStyle: { width: 2, color: colorPalette[1] },
+                        areaStyle: {
+                            color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                                { offset: 0, color: colorPalette[1].replace('1)', '0.3)') },
+                                { offset: 1, color: colorPalette[1].replace('1)', '0.1)') }
+                            ])
+                        },
+                        data: approvedData
+                    }] : [{
+                        name: "No Data",
+                        type: "line",
+                        data: new Array(12).fill(0),
+                        lineStyle: { color: "#d3d3d3" },
+                        areaStyle: { color: "#d3d3d3" }
+                    }]
+                };
+                trendsOverTimeChart.setOption(trendsOverTimeOption);
+
+                // Populate Tables
+                const pendingTableBody = document.getElementById('consultationPendingTableBody');
+                const approvedTableBody = document.getElementById('consultationApprovedTableBody');
+                const rejectedTableBody = document.getElementById('consultationRejectedTableBody');
+                consultations.forEach(item => {
+                    const fullName = `${item.firstName2 || ''} ${item.middleName2 || ''} ${item.lastName2 || ''}`.trim() || 'N/A';
+                    const statusColor = item.consultationStatus === 'Pending' ? 'yellow' : item.consultationStatus === 'Approved' ? 'green' : 'red';
+                    const row = `
+                        <tr class="border-b border-gray-200 hover:bg-gray-50">
+                            <td>${fullName}</td>
+                            <td>${item.consultationDate || 'N/A'}</td>
+                            <td>${item.consultationTime || 'N/A'}</td>
+                            <td><span class="px-2 py-1 bg-${statusColor}-50 text-${statusColor}-600 rounded-full text-xs">${item.consultationStatus || 'Pending'}</span></td>
+                        </tr>`;
+                    const status = item.consultationStatus || 'Pending';
+                    if (status === 'Pending') pendingTableBody.innerHTML += row;
+                    else if (status === 'Approved') approvedTableBody.innerHTML += row;
+                    else if (status === 'Denied') rejectedTableBody.innerHTML += row;
+                });
+
+                // Handle empty tables
+                if (pendingTableBody.innerHTML === '') {
+                    pendingTableBody.innerHTML = '<tr><td colspan="4" class="text-center py-4 text-gray-500">No pending consultations</td></tr>';
+                }
+                if (approvedTableBody.innerHTML === '') {
+                    approvedTableBody.innerHTML = '<tr><td colspan="4" class="text-center py-4 text-gray-500">No approved consultations</td></tr>';
+                }
+                if (rejectedTableBody.innerHTML === '') {
+                    rejectedTableBody.innerHTML = '<tr><td colspan="4" class="text-center py-4 text-gray-500">No rejected consultations</td></tr>';
+                }
+
+                return { statusDistributionChart, trendsOverTimeChart };
+            }
+
+            function initializeDashboard() {
+                // Fetch and initialize Food Pack
+                Promise.all([
+                    fetch('/ApplicationFoodPacks/GetDashboardCounts').then(res => res.ok ? res.json() : Promise.reject('Failed to fetch counts')).catch(() => ({ pending: 0, approved: 0, rejected: 0, total: 0 })),
+                    fetch('/ApplicationFoodPacks/GetAllApplications').then(res => res.ok ? res.json() : Promise.reject('Failed to fetch applications')).catch(() => [])
+                ]).then(([counts, applications]) => initializeFoodPack(counts, applications))
+                  .catch(err => {
+                      document.getElementById('foodpackError').textContent = `Error: ${err}`;
+                      document.getElementById('foodpackError').style.display = 'block';
+                      initializeFoodPack({ pending: 0, approved: 0, rejected: 0, total: 0 }, []);
+                  });
+
+                // Fetch and initialize Certificate of Indigency
+                Promise.all([
+                    fetch('/Certificate_Of_Indigency/GetDashboardCounts').then(res => res.ok ? res.json() : Promise.reject('Failed to fetch counts')).catch(() => ({ pending: 0, approved: 0, rejected: 0, total: 0 })),
+                    fetch('/Certificate_Of_Indigency/GetAllApplications').then(res => res.ok ? res.json() : Promise.reject('Failed to fetch applications')).catch(() => [])
+                ]).then(([counts, applications]) => initializeIndigency(counts, applications))
+                  .catch(err => {
+                      document.getElementById('indigencyError').textContent = `Error: ${err}`;
+                      document.getElementById('indigencyError').style.display = 'block';
+                      initializeIndigency({ pending: 0, approved: 0, rejected: 0, total: 0 }, []);
+                  });
+
+                // Fetch and initialize Consultation
+                Promise.all([
+                    fetch('/Consultations/GetDashboardCounts').then(res => res.ok ? res.json() : Promise.reject('Failed to fetch counts')).catch(() => ({ pending: 0, approved: 0, rejected: 0, total: 0 })),
+                    fetch('/Consultations/GetAllConsultations').then(res => res.ok ? res.json() : Promise.reject('Failed to fetch consultations')).catch(() => [])
+                ]).then(([counts, consultations]) => initializeConsultation(counts, consultations))
+                  .catch(err => {
+                      document.getElementById('consultationError').textContent = `Error: ${err}`;
+                      document.getElementById('consultationError').style.display = 'block';
+                      initializeConsultation({ pending: 0, approved: 0, rejected: 0, total: 0 }, []);
+                  });
+            }
+
+            // Handle window resize
+            window.addEventListener("resize", function () {
+                const charts = [
+                    document.getElementById("reasonDistributionChart"),
+                    document.getElementById("trendsByBarangayChart"),
+                    document.getElementById("reasonDistributionChart2"),
+                    document.getElementById("trendsByBarangayChart2"),
+                    document.getElementById("statusDistributionChart"),
+                    document.getElementById("trendsOverTimeChart")
+                ].map(id => echarts.getInstanceByDom(document.getElementById(id))).filter(chart => chart);
+                charts.forEach(chart => chart.resize());
+            });
+        </script>
+    </div>
+</body>
+</html>

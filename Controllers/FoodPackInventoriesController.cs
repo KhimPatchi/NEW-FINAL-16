@@ -56,7 +56,11 @@ namespace SocialWelfarre.Controllers
                 )
                 .ToListAsync();
 
-            return View(inventories);
+            var stockHistory = await _context.StockIn_FoodPacks
+                .OrderByDescending(s => s.Restock_DateTime2)
+                .ToListAsync();
+
+            return View(Tuple.Create(inventories.AsEnumerable(), stockHistory.AsEnumerable()));
         }
 
         [Authorize(Roles = "Admin,Staff1,Staff2")]

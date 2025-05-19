@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using SocialWelfarre.Services;
 using Microsoft.AspNetCore.Authorization;
+using System.Text.Json; // Added for JsonSerializer
 
 namespace SocialWelfarre.Controllers
 {
@@ -26,12 +27,12 @@ namespace SocialWelfarre.Controllers
             _smsService = smsService;
         }
 
-        // GET: Certificate_Of_Indigency
         [Authorize(Roles = "Admin,Staff1,Staff2")]
         public async Task<IActionResult> Index()
         {
             return View(await _context.Certificate_Of_Indigencies.ToListAsync());
         }
+
         [Authorize(Roles = "Admin,Staff1,Staff2")]
         public async Task<IActionResult> GetAllApplications()
         {
@@ -45,7 +46,7 @@ namespace SocialWelfarre.Controllers
                         a.MiddleName1,
                         a.LastName1,
                         a.Age1,
-                        a.Barangay1,
+                        Barangay1 = a.Barangay1.ToString(), // Convert enum to string
                         a.No_Rquested1,
                         a.Address1,
                         a.ContactNumber1,
@@ -53,18 +54,25 @@ namespace SocialWelfarre.Controllers
                         a.Brgy_Cert_Path1,
                         a.Valid_ID1,
                         a.Valid_ID_Path1,
-                        a.Reason1,
-                        Status1 = a.Status1.ToString(), // Convert enum to string
+                        Reason1 = a.Reason1.ToString(), // Convert enum to string
+                        Status1 = a.Status1.ToString(),
                         a.RequestDate1
                     })
                     .ToListAsync();
-                return Json(applications);
+
+                // Use System.Text.Json to serialize with enum string conversion
+                var options = new JsonSerializerOptions
+                {
+                    Converters = { new System.Text.Json.Serialization.JsonStringEnumConverter() }
+                };
+                return Json(applications, options);
             }
             catch (Exception ex)
             {
                 return StatusCode(500, new { error = "Failed to fetch applications", details = ex.Message });
             }
         }
+
         [Authorize(Roles = "Admin,Staff1,Staff2")]
         public async Task<IActionResult> GetDashboardCounts()
         {
@@ -86,7 +94,6 @@ namespace SocialWelfarre.Controllers
         }
 
         [Authorize(Roles = "Admin,Staff1,Staff2")]
-        // GET: Certificate_Of_Indigency/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -104,14 +111,13 @@ namespace SocialWelfarre.Controllers
             return View(certificate_Of_Indigency);
         }
 
-        // POST: Certificate_Of_Indigency/Create
         [HttpPost]
         [Authorize(Roles = "Admin,Staff1,Staff2")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,FirstName1,MiddleName1,LastName1,Age1,Barangay1,No_Rquested1,Address1,ContactNumber1,Reason1,Status1", "RequestDate1")] Certificate_Of_Indigency certificate_Of_Indigency, IFormFile brgyCertFile, IFormFile validIdFile)
+        public async Task<IActionResult> Create([Bind("Id,FirstName1,MiddleName1,LastName1,Age1,Barangay1,No_Rquested1,Address1,ContactNumber1,Reason1,Status1,RequestDate1")] Certificate_Of_Indigency certificate_Of_Indigency, IFormFile brgyCertFile, IFormFile validIdFile)
         {
             var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".pdf" };
-            var maxFileSize = 5 * 1024 * 1024; // 5 MB
+            var maxFileSize = 5 * 1024 * 1024;
 
             if (brgyCertFile != null && brgyCertFile.Length > 0)
             {
@@ -218,15 +224,14 @@ namespace SocialWelfarre.Controllers
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> CertificateOfIndigencyPending(
-       [Bind("Id,FirstName1,MiddleName1,LastName1,Age1,Barangay1,No_Rquested1,Address1,ContactNumber1,Reason1,Status1,RequestDate1")]
-    Certificate_Of_Indigency certificate_Of_Indigency,
-       IFormFile brgyCertFile,
-       IFormFile validIdFile)
+            [Bind("Id,FirstName1,MiddleName1,LastName1,Age1,Barangay1,No_Rquested1,Address1,ContactNumber1,Reason1,Status1,RequestDate1")]
+            Certificate_Of_Indigency certificate_Of_Indigency,
+            IFormFile brgyCertFile,
+            IFormFile validIdFile)
         {
             var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".pdf" };
-            var maxFileSize = 5 * 1024 * 1024; // 5 MB
+            var maxFileSize = 5 * 1024 * 1024;
 
-            // === Barangay Certificate File Validation ===
             if (brgyCertFile != null && brgyCertFile.Length > 0)
             {
                 var extension = Path.GetExtension(brgyCertFile.FileName).ToLower();
@@ -243,7 +248,7 @@ namespace SocialWelfarre.Controllers
                 }
 
                 var directoryPath = Path.Combine(_hostingEnvironment.WebRootPath, "uploads", "brgy_certs");
-                Directory.CreateDirectory(directoryPath); // Safe even if exists
+                Directory.CreateDirectory(directoryPath);
 
                 var fileName = Guid.NewGuid() + extension;
                 var filePath = Path.Combine(directoryPath, fileName);
@@ -262,7 +267,6 @@ namespace SocialWelfarre.Controllers
                 return View("Index", await _context.Certificate_Of_Indigencies.ToListAsync());
             }
 
-            // === Valid ID File Validation ===
             if (validIdFile != null && validIdFile.Length > 0)
             {
                 var extension = Path.GetExtension(validIdFile.FileName).ToLower();
@@ -298,19 +302,15 @@ namespace SocialWelfarre.Controllers
                 return View("Index", await _context.Certificate_Of_Indigencies.ToListAsync());
             }
 
-            // === Save Record ===
             certificate_Of_Indigency.Status1 = (ActiveStatus1)Enum.Parse(typeof(ActiveStatus1), "Pending");
 
             _context.Add(certificate_Of_Indigency);
             await _context.SaveChangesAsync();
 
-
-
             return RedirectToAction(nameof(CertificateOfIndigencyPending));
         }
 
         [Authorize(Roles = "Admin,Staff1,Staff2")]
-        // GET: Certificate_Of_Indigency/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -330,7 +330,7 @@ namespace SocialWelfarre.Controllers
         [HttpPost]
         [Authorize(Roles = "Admin,Staff1,Staff2")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,FirstName1,MiddleName1,LastName1,Age1,Barangay1,No_Rquested1,Address1,ContactNumber1,Brgy_Cert1,Brgy_Cert_Path1,Valid_ID1,Valid_ID_Path1,Reason1,Status1, RequestDate1")] Certificate_Of_Indigency certificate, IFormFile brgyCertFile, IFormFile validIdFile)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,FirstName1,MiddleName1,LastName1,Age1,Barangay1,No_Rquested1,Address1,ContactNumber1,Brgy_Cert1,Brgy_Cert_Path1,Valid_ID1,Valid_ID_Path1,Reason1,Status1,RequestDate1")] Certificate_Of_Indigency certificate, IFormFile brgyCertFile, IFormFile validIdFile)
         {
             if (id != certificate.Id)
             {
@@ -345,7 +345,6 @@ namespace SocialWelfarre.Controllers
                     return NotFound();
                 }
 
-                // Update text fields
                 existingRecord.FirstName1 = certificate.FirstName1;
                 existingRecord.MiddleName1 = certificate.MiddleName1;
                 existingRecord.LastName1 = certificate.LastName1;
@@ -357,11 +356,10 @@ namespace SocialWelfarre.Controllers
                 existingRecord.Reason1 = certificate.Reason1;
                 existingRecord.Status1 = certificate.Status1;
                 existingRecord.RequestDate1 = certificate.RequestDate1;
-                // File validation setup
-                var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".pdf" };
-                var maxFileSize = 5 * 1024 * 1024; // 5 MB
 
-                // Barangay Certificate upload
+                var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".pdf" };
+                var maxFileSize = 5 * 1024 * 1024;
+
                 if (brgyCertFile != null && brgyCertFile.Length > 0)
                 {
                     var extension = Path.GetExtension(brgyCertFile.FileName).ToLower();
@@ -397,7 +395,6 @@ namespace SocialWelfarre.Controllers
                     existingRecord.Brgy_Cert_Path1 = "/Uploads/brgy_certs/" + fileName;
                 }
 
-                // Valid ID upload
                 if (validIdFile != null && validIdFile.Length > 0)
                 {
                     var extension = Path.GetExtension(validIdFile.FileName).ToLower();
@@ -465,7 +462,6 @@ namespace SocialWelfarre.Controllers
         }
 
         [Authorize(Roles = "Admin,Staff1,Staff2")]
-        // GET: Certificate_Of_Indigency/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -481,8 +477,8 @@ namespace SocialWelfarre.Controllers
 
             return View(certificate_Of_Indigency);
         }
+
         [Authorize(Roles = "Admin,Staff1,Staff2")]
-        // POST: Certificate_Of_Indigency/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
@@ -491,7 +487,6 @@ namespace SocialWelfarre.Controllers
             var certificate_Of_Indigency = await _context.Certificate_Of_Indigencies.FindAsync(id);
             if (certificate_Of_Indigency != null)
             {
-                // Delete associated files
                 if (!string.IsNullOrEmpty(certificate_Of_Indigency.Brgy_Cert_Path1))
                 {
                     var filePath = Path.Combine(_hostingEnvironment.WebRootPath, certificate_Of_Indigency.Brgy_Cert_Path1.TrimStart('/'));
@@ -526,7 +521,7 @@ namespace SocialWelfarre.Controllers
 
             return RedirectToAction(nameof(Index));
         }
-        // POST: Picture/UpdateStatus/5
+
         [HttpPost]
         [Authorize(Roles = "Admin,Staff1")]
         [ValidateAntiForgeryToken]
@@ -583,6 +578,7 @@ namespace SocialWelfarre.Controllers
 
             return RedirectToAction(nameof(Index));
         }
+
         [HttpPost]
         [Authorize(Roles = "Admin,Staff2")]
         [ValidateAntiForgeryToken]
@@ -604,13 +600,13 @@ namespace SocialWelfarre.Controllers
             {
                 picture.Status1 = ActiveStatus1.Approved;
                 auditAction = "Accepted";
-                picture.ApprovedById = userId; // Set the approver to current user
+                picture.ApprovedById = userId;
             }
             else if (status.Equals("Rejected", StringComparison.OrdinalIgnoreCase))
             {
                 picture.Status1 = ActiveStatus1.Denied;
                 auditAction = "Rejected";
-                picture.ApprovedById = null; // Clear approver if rejected
+                picture.ApprovedById = null;
             }
             else
             {
@@ -620,13 +616,11 @@ namespace SocialWelfarre.Controllers
             _context.Update(picture);
             await _context.SaveChangesAsync();
 
-            // Send SMS message
             string message = picture.Status1 == ActiveStatus1.Approved
                 ? "Your request has been accepted. Please proceed to Magsaysay CSWDO Office, Door 11."
                 : "Your request has been rejected.";
 
             await _smsService.SendSmsAsync(picture.ContactNumber1, message);
-
 
             var activity = new AuditTrail
             {
@@ -649,3 +643,5 @@ namespace SocialWelfarre.Controllers
         }
     }
 }
+
+

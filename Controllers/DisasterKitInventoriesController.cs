@@ -25,7 +25,10 @@ namespace SocialWelfarre.Controllers
         {
             await RecalculateInventory(); // Recalculate before displaying to ensure accurate data
             var inventories = await _context.DisasterKitInventories.ToListAsync();
-            return View(inventories);
+            var stockHistory = await _context.StockIn_DisasterKit
+                .OrderByDescending(s => s.StockInDate)
+                .ToListAsync();
+            return View(Tuple.Create(inventories.AsEnumerable(), stockHistory.AsEnumerable()));
         }
 
         // GET: DisasterKitInventories/Dashboard
